@@ -14,6 +14,17 @@ import {
 const root = fileURLToPath(new URL("../..", import.meta.url));
 const runCli = promisify(execFile);
 
+function codePointCompare(left: string, right: string): number {
+  const a = Array.from(left);
+  const b = Array.from(right);
+  const length = Math.min(a.length, b.length);
+  for (let index = 0; index < length; index += 1) {
+    const difference = a[index].codePointAt(0)! - b[index].codePointAt(0)!;
+    if (difference !== 0) return difference;
+  }
+  return a.length - b.length;
+}
+
 const CATALOG_PATH = `${root}/docs/design/v0.1.0-design-scope-catalog.json`;
 const CONTRACT_PATH = `${root}/docs/design/contracts/artifact-design-dossier.v1.json`;
 const REGISTRY_PATH = `${root}/docs/design/document-registry.json`;
@@ -150,19 +161,30 @@ async function baseFacts(): Promise<any> {
     const contract = await readJson(CONTRACT_PATH);
     const registry = await readJson(REGISTRY_PATH);
     const governanceMarkdown = await readFile(GOVERNANCE_DOC_PATH, "utf8");
-    const extendedRegistry = structuredClone(registry);
-    extendedRegistry.documents.push({
-      documentId: FIXTURE_DOSSIER_ID,
-      documentRevision: 1,
-      path: "(test fixture)",
-      status: "proposed",
-      sectionIds: [...REQUIRED_SECTIONS],
-    });
+    const capsule = registry.documents.find((document: any) => document.documentId === DESIGN_CAPSULE_ID);
+    if (!capsule) {
+      throw new Error("governance capsule is not registered in the document registry");
+    }
+    const syntheticRegistry = {
+      schema: registry.schema,
+      registryId: registry.registryId,
+      registryRevision: registry.registryRevision,
+      documents: [
+        structuredClone(capsule),
+        {
+          documentId: FIXTURE_DOSSIER_ID,
+          documentRevision: 1,
+          path: "(test fixture)",
+          status: "proposed",
+          sectionIds: [...REQUIRED_SECTIONS],
+        },
+      ],
+    };
     baseCache = {
       phase: "closure",
       catalog,
       contract,
-      registry: extendedRegistry,
+      registry: syntheticRegistry,
       documents: {
         [DESIGN_CAPSULE_ID]: governanceMarkdown,
         [FIXTURE_DOSSIER_ID]: dossierMarkdown(),
@@ -218,16 +240,45 @@ describe("bootstrap dossier contract artifacts", () => {
 
   test("document registry pins the local design capsule at revision 2 with Task 1 section IDs", async () => {
     const registry = await readJson(REGISTRY_PATH);
-    expect(registry.documents).toHaveLength(1);
-    expect(registry.documents[0].documentId).toBe(DESIGN_CAPSULE_ID);
-    expect(registry.documents[0].documentRevision).toBe(2);
-    expect(registry.documents[0].sectionIds).toEqual(CAPSULE_SECTION_IDS);
+    const capsule = registry.documents.find((document: any) => document.documentId === DESIGN_CAPSULE_ID);
+    expect(capsule).toBeDefined();
+    expect(capsule.documentRevision).toBe(2);
+    expect(capsule.sectionIds).toEqual(CAPSULE_SECTION_IDS);
   });
 
-  test("registrations file starts structurally valid and empty", async () => {
+  test("registrations file stays a structurally valid closed collection", async () => {
     const registrations = await readJson(REGISTRATIONS_PATH);
     expect(registrations.schema).toBe("sothoth.artifact-design-registrations/v1");
-    expect(registrations.registrations).toEqual([]);
+    expect(registrations.collectionId).toBe("SOTHOTH-ARTIFACT-DESIGN-REGISTRATIONS");
+    expect(registrations.collectionRevision).toBe(1);
+    expect(Array.isArray(registrations.registrations)).toBe(true);
+    const registrationFields = [
+      "acceptanceCriteria",
+      "componentId",
+      "consumedStateRefs",
+      "designId",
+      "designRequirement",
+      "designRevision",
+      "deploymentDependencyRefs",
+      "documentRef",
+      "emittedObservationRefs",
+      "issuedAuthorityRefs",
+      "producedStateRefs",
+      "providedContractRefs",
+      "requiredAuthorityRefs",
+      "requiredContractRefs",
+      "status",
+      "supersedes",
+      "topicCoverage",
+    ].sort(codePointCompare);
+    const componentIds = new Set<string>();
+    for (const registration of registrations.registrations) {
+      expect(Object.keys(registration).sort(codePointCompare)).toEqual(registrationFields);
+      expect(["proposed", "accepted", "superseded"]).toContain(registration.status);
+      expect(["full", "projection", "compatibility"]).toContain(registration.designRequirement);
+      expect(componentIds.has(registration.componentId)).toBe(false);
+      componentIds.add(registration.componentId);
+    }
   });
 });
 
@@ -719,23 +770,30 @@ describe("fix round 1: schema violations are invalid input", () => {
 });
 
 describe("check-pre-design CLI", () => {
-  test("repository dossiers check exits 1 reporting exactly the eleven missing registrations", async () => {
+  test("repository dossiers check reports exactly the unregistered candidates", async () => {
     const catalog = await readJson(CATALOG_PATH);
-    const expected = catalog.candidates.map((candidate: any) => ({
-      code: "sothoth.pre-design/registration-missing",
-      subject: candidate.componentId,
-    }));
+    const registrations = await readJson(REGISTRATIONS_PATH);
+    const registered = new Set(
+      registrations.registrations.map((registration: any) => registration.componentId),
+    );
+    const expected = catalog.candidates
+      .filter((candidate: any) => !registered.has(candidate.componentId))
+      .map((candidate: any) => ({
+        code: "sothoth.pre-design/registration-missing",
+        subject: candidate.componentId,
+      }))
+      .sort((left: any, right: any) => codePointCompare(left.subject, right.subject));
     const first = await runCli("node", [`${root}/scripts/check-pre-design.mjs`, "--phase", "dossiers"]).catch(
       (error: any) => error,
     );
     const second = await runCli("node", [`${root}/scripts/check-pre-design.mjs`, "--phase", "dossiers"]).catch(
       (error: any) => error,
     );
-    expect(first.code).toBe(1);
+    expect(first.code).toBe(expected.length > 0 ? 1 : 0);
     expect(second.stdout).toBe(first.stdout);
     const parsed = JSON.parse(first.stdout);
     expect(parsed.phase).toBe("dossiers");
-    expect(parsed.outcome).toBe("invalid");
+    expect(parsed.outcome).toBe(expected.length > 0 ? "invalid" : "valid");
     expect(parsed.issues).toEqual(expected);
     expect(`${canonicalJsonStringify(parsed)}\n`).toBe(first.stdout);
   });

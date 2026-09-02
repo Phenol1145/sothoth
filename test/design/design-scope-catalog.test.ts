@@ -39,7 +39,8 @@ describe("Sothoth v0.1 Design Scope Catalog", () => {
   test("does not claim that intended candidates are admitted release members", async () => {
     const catalog = await readCatalog();
     expect(catalog.status).toBe("working");
-    expect(catalog.candidates.every((candidate) => candidate.coverage === "missing")).toBe(true);
+    const designCoverageStates = new Set(["complete", "partial", "conflicting", "obsolete", "missing"]);
+    expect(catalog.candidates.every((candidate) => designCoverageStates.has(candidate.coverage))).toBe(true);
   });
 
   test("rejects a Design Scope Catalog that omits an intended package candidate", async () => {

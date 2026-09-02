@@ -19,6 +19,84 @@
         "diagnostics-and-process-outcomes",
         "release-boundary"
       ]
+    },
+    {
+      "documentId": "DOC-SOTHOTH-CONTRACTS-DOSSIER",
+      "documentRevision": 1,
+      "path": "docs/design/dossiers/contracts.md",
+      "status": "proposed",
+      "sectionIds": [
+        "decision-summary",
+        "artifact-identity-and-classification",
+        "purpose-and-non-goals",
+        "responsibility-and-truth-ownership",
+        "public-surface-and-consumers",
+        "core-sdk-protocol-boundary",
+        "dependency-and-topology",
+        "state-lifecycle-and-data-flow",
+        "authority-security-and-effects",
+        "failure-recovery-and-consistency",
+        "observation-and-audit",
+        "deployment-configuration-and-operations",
+        "compatibility-and-migration",
+        "developer-and-operator-experience",
+        "verification-and-acceptance-criteria",
+        "future-capability-compatibility",
+        "traceability-and-exact-references",
+        "topic-coverage-declaration"
+      ]
+    },
+    {
+      "documentId": "DOC-SOTHOTH-CORE-DOSSIER",
+      "documentRevision": 1,
+      "path": "docs/design/dossiers/core.md",
+      "status": "proposed",
+      "sectionIds": [
+        "decision-summary",
+        "artifact-identity-and-classification",
+        "purpose-and-non-goals",
+        "responsibility-and-truth-ownership",
+        "public-surface-and-consumers",
+        "core-sdk-protocol-boundary",
+        "dependency-and-topology",
+        "state-lifecycle-and-data-flow",
+        "authority-security-and-effects",
+        "failure-recovery-and-consistency",
+        "observation-and-audit",
+        "deployment-configuration-and-operations",
+        "compatibility-and-migration",
+        "developer-and-operator-experience",
+        "verification-and-acceptance-criteria",
+        "future-capability-compatibility",
+        "traceability-and-exact-references",
+        "topic-coverage-declaration"
+      ]
+    },
+    {
+      "documentId": "DOC-SOTHOTH-GRAPH-DOSSIER",
+      "documentRevision": 1,
+      "path": "docs/design/dossiers/graph.md",
+      "status": "proposed",
+      "sectionIds": [
+        "decision-summary",
+        "artifact-identity-and-classification",
+        "purpose-and-non-goals",
+        "responsibility-and-truth-ownership",
+        "public-surface-and-consumers",
+        "core-sdk-protocol-boundary",
+        "dependency-and-topology",
+        "state-lifecycle-and-data-flow",
+        "authority-security-and-effects",
+        "failure-recovery-and-consistency",
+        "observation-and-audit",
+        "deployment-configuration-and-operations",
+        "compatibility-and-migration",
+        "developer-and-operator-experience",
+        "verification-and-acceptance-criteria",
+        "future-capability-compatibility",
+        "traceability-and-exact-references",
+        "topic-coverage-declaration"
+      ]
     }
   ]
 }

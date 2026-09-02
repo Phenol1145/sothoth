@@ -18,7 +18,7 @@
       "designId": "SOTHOTH-CONTRACTS-DOSSIER",
       "artifactType": "npm-package",
       "designRequirement": "full",
-      "coverage": "missing",
+      "coverage": "complete",
       "owner": "sothoth"
     },
     {
@@ -26,7 +26,7 @@
       "designId": "SOTHOTH-CORE-DOSSIER",
       "artifactType": "npm-package",
       "designRequirement": "full",
-      "coverage": "missing",
+      "coverage": "complete",
       "owner": "sothoth"
     },
     {
@@ -58,7 +58,7 @@
       "designId": "SOTHOTH-GRAPH-DOSSIER",
       "artifactType": "npm-package",
       "designRequirement": "full",
-      "coverage": "missing",
+      "coverage": "complete",
       "owner": "sothoth"
     },
     {
