@@ -143,9 +143,13 @@ const DOCUMENT_GOVERNANCE: GovernanceSpec[] = [
     designId: "SOTHOTH-DOCUMENT-INDEX-DOSSIER",
     documentId: "DOC-SOTHOTH-DOCUMENT-INDEX-DOSSIER",
     path: "docs/design/dossiers/document-index.md",
-    importAllowlist: ["@sothoth/core", "@sothoth/graph"],
+    importAllowlist: ["@sothoth/contracts", "@sothoth/core", "@sothoth/graph"],
     providedContracts: ["CONTRACT/SOTHOTH/DOCUMENT-INDEX@1"],
-    requiredContracts: ["CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1", "CONTRACT/SOTHOTH/GENERIC-GRAPH@1"],
+    requiredContracts: [
+      "CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1",
+      "CONTRACT/SOTHOTH/GENERIC-GRAPH@1",
+      "CONTRACT/SOTHOTH/SCHEMAS@1",
+    ],
     producedStateRefs: [
       "sothoth.document-index/document-index@1",
       "sothoth.document-index/blob-cache-entry@1",
@@ -204,9 +208,13 @@ const DOCUMENT_GOVERNANCE: GovernanceSpec[] = [
     designId: "SOTHOTH-SELECTORS-DOSSIER",
     documentId: "DOC-SOTHOTH-SELECTORS-DOSSIER",
     path: "docs/design/dossiers/selectors.md",
-    importAllowlist: ["@sothoth/core", "@sothoth/document-index"],
+    importAllowlist: ["@sothoth/contracts", "@sothoth/core", "@sothoth/document-index"],
     providedContracts: ["CONTRACT/SOTHOTH/SELECTOR@1"],
-    requiredContracts: ["CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1", "CONTRACT/SOTHOTH/DOCUMENT-INDEX@1"],
+    requiredContracts: [
+      "CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1",
+      "CONTRACT/SOTHOTH/DOCUMENT-INDEX@1",
+      "CONTRACT/SOTHOTH/SCHEMAS@1",
+    ],
     producedStateRefs: [
       "sothoth.selectors/selector-canonical-ast@1",
       "sothoth.selectors/selection-result@1",
@@ -269,15 +277,23 @@ const DOCUMENT_GOVERNANCE: GovernanceSpec[] = [
     designId: "SOTHOTH-GOVERNANCE-DOSSIER",
     documentId: "DOC-SOTHOTH-GOVERNANCE-DOSSIER",
     path: "docs/design/dossiers/governance.md",
-    importAllowlist: ["@sothoth/document-index", "@sothoth/graph", "@sothoth/selectors"],
+    importAllowlist: [
+      "@sothoth/contracts",
+      "@sothoth/core",
+      "@sothoth/document-index",
+      "@sothoth/graph",
+      "@sothoth/selectors",
+    ],
     providedContracts: [
       "CONTRACT/SOTHOTH/CHANGE-PLAN@1",
       "CONTRACT/SOTHOTH/GOVERNANCE-COMPILATION@1",
       "CONTRACT/SOTHOTH/PRE-DESIGN@1",
     ],
     requiredContracts: [
+      "CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1",
       "CONTRACT/SOTHOTH/DOCUMENT-INDEX@1",
       "CONTRACT/SOTHOTH/GENERIC-GRAPH@1",
+      "CONTRACT/SOTHOTH/SCHEMAS@1",
       "CONTRACT/SOTHOTH/SELECTOR@1",
     ],
     producedStateRefs: [
@@ -385,17 +401,20 @@ async function readText(path: string): Promise<string> {
   }
 }
 
+function codePointCompare(left: string, right: string): -1 | 0 | 1 {
+  const a = Array.from(left);
+  const b = Array.from(right);
+  const length = Math.min(a.length, b.length);
+  for (let index = 0; index < length; index += 1) {
+    const difference = a[index].codePointAt(0)! - b[index].codePointAt(0)!;
+    if (difference < 0) return -1;
+    if (difference > 0) return 1;
+  }
+  return a.length < b.length ? -1 : a.length > b.length ? 1 : 0;
+}
+
 function codePointSorted(values: string[]): string[] {
-  return [...values].sort((left, right) => {
-    const a = Array.from(left);
-    const b = Array.from(right);
-    const length = Math.min(a.length, b.length);
-    for (let index = 0; index < length; index += 1) {
-      const difference = a[index].codePointAt(0)! - b[index].codePointAt(0)!;
-      if (difference !== 0) return difference;
-    }
-    return a.length - b.length;
-  });
+  return [...values].sort(codePointCompare);
 }
 
 function arraysEqual(left: any, right: any): boolean {
@@ -925,13 +944,14 @@ function validateDocumentGovernanceDesign(facts: {
   return sortIssues(issues);
 }
 
+/**
+ * A valid total-order comparator: code first, then subject, each by Unicode code point. It returns
+ * `-1 | 0 | 1` so the ordering is antisymmetric and engine-independent.
+ */
 function sortIssues(issues: Issue[]): Issue[] {
   return [...issues].sort((left, right) => {
-    const codes = codePointSorted([left.code, right.code]);
-    if (codes[0] === right.code && left.code !== right.code) return 1;
-    const subjects = codePointSorted([left.subject, right.subject]);
-    if (subjects[0] === right.subject && left.subject !== right.subject) return 1;
-    return 0;
+    const byCode = codePointCompare(left.code, right.code);
+    return byCode !== 0 ? byCode : codePointCompare(left.subject, right.subject);
   });
 }
 
@@ -1093,7 +1113,7 @@ async function syntheticClosureFacts(): Promise<any> {
 describe("document governance dossier structured design facts", () => {
   test("the three document/governance Dossiers and their registry, registration, and catalog facts validate", async () => {
     const issues = validateDocumentGovernanceDesign(await repositoryFacts());
-    expect(sortIssues(issues)).toEqual([]);
+    expect(issues).toEqual([]);
   });
 
   test.each(DOCUMENT_GOVERNANCE.map((spec) => [spec.packageId, spec]))(
@@ -1142,7 +1162,7 @@ describe("document governance dossier mutation tests", () => {
   }
 
   function expectBaselineValid(facts: any) {
-    expect(sortIssues(validateDocumentGovernanceDesign(facts))).toEqual([]);
+    expect(validateDocumentGovernanceDesign(facts)).toEqual([]);
   }
 
   test("rejects downgrading Document Contract checks to prose substring matching", async () => {
@@ -1153,7 +1173,7 @@ describe("document governance dossier mutation tests", () => {
         value.capabilityClasses["source-text-substring-matching"] = "permitted";
       }),
     );
-    expect(sortIssues(validateDocumentGovernanceDesign(indexFacts))).toContainEqual({
+    expect(validateDocumentGovernanceDesign(indexFacts)).toContainEqual({
       code: "sothoth.document-governance/capability-not-forbidden",
       subject: "@sothoth/document-index:source-text-substring-matching",
     });
@@ -1163,7 +1183,7 @@ describe("document governance dossier mutation tests", () => {
         value.capabilityClasses["prose-substring-conformance"] = "permitted";
       }),
     );
-    expect(sortIssues(validateDocumentGovernanceDesign(governanceFacts))).toContainEqual({
+    expect(validateDocumentGovernanceDesign(governanceFacts)).toContainEqual({
       code: "sothoth.document-governance/capability-not-forbidden",
       subject: "@sothoth/governance:prose-substring-conformance",
     });
@@ -1176,7 +1196,7 @@ describe("document governance dossier mutation tests", () => {
         value.capabilityClasses["unrestricted-backtracking-regexp"] = "permitted";
       }),
     );
-    expect(sortIssues(validateDocumentGovernanceDesign(facts))).toContainEqual({
+    expect(validateDocumentGovernanceDesign(facts)).toContainEqual({
       code: "sothoth.document-governance/capability-not-forbidden",
       subject: "@sothoth/selectors:unrestricted-backtracking-regexp",
     });
@@ -1189,7 +1209,7 @@ describe("document governance dossier mutation tests", () => {
         value.capabilityClasses["implicit-ordering-edge-promotion"] = "permitted";
       }),
     );
-    expect(sortIssues(validateDocumentGovernanceDesign(facts))).toContainEqual({
+    expect(validateDocumentGovernanceDesign(facts)).toContainEqual({
       code: "sothoth.document-governance/capability-not-forbidden",
       subject: "@sothoth/governance:implicit-ordering-edge-promotion",
     });
@@ -1203,7 +1223,7 @@ describe("document governance dossier mutation tests", () => {
         value.capabilityClasses["acceptance-state-marking"] = "permitted";
       }),
     );
-    expect(sortIssues(validateDocumentGovernanceDesign(capabilityFacts))).toContainEqual({
+    expect(validateDocumentGovernanceDesign(capabilityFacts)).toContainEqual({
       code: "sothoth.document-governance/capability-not-forbidden",
       subject: "@sothoth/governance:acceptance-state-marking",
     });
@@ -1214,7 +1234,7 @@ describe("document governance dossier mutation tests", () => {
       );
       registration.status = "accepted";
     });
-    expect(sortIssues(validateDocumentGovernanceDesign(statusFacts))).toContainEqual({
+    expect(validateDocumentGovernanceDesign(statusFacts)).toContainEqual({
       code: "sothoth.document-governance/registration-status-invalid",
       subject: "@sothoth/governance:accepted",
     });
@@ -1227,7 +1247,7 @@ describe("document governance dossier mutation tests", () => {
         value.capabilityClasses["authoritative-scope-bom-write"] = "permitted";
       }),
     );
-    expect(sortIssues(validateDocumentGovernanceDesign(facts))).toContainEqual({
+    expect(validateDocumentGovernanceDesign(facts)).toContainEqual({
       code: "sothoth.document-governance/capability-not-forbidden",
       subject: "@sothoth/governance:authoritative-scope-bom-write",
     });
@@ -1244,7 +1264,7 @@ describe("document governance dossier mutation tests", () => {
       const duplicate = `\n\n\`\`\`json\n${JSON.stringify(site.value, null, 2)}\n\`\`\``;
       return markdown.slice(0, site.end) + duplicate + markdown.slice(site.end);
     });
-    expect(sortIssues(validateDocumentGovernanceDesign(facts))).toContainEqual({
+    expect(validateDocumentGovernanceDesign(facts)).toContainEqual({
       code: "sothoth.document-governance/declaration-duplicate",
       subject: `@sothoth/selectors:${DEPENDENCY_KIND}`,
     });
@@ -1254,6 +1274,132 @@ describe("document governance dossier mutation tests", () => {
     const facts = await mutatedFacts("@sothoth/governance", (markdown) =>
       rewriteDeclarationWithReversedKeys(markdown, "responsibility-and-truth-ownership", TRUTH_KIND),
     );
-    expect(sortIssues(validateDocumentGovernanceDesign(facts))).toEqual([]);
+    expect(validateDocumentGovernanceDesign(facts)).toEqual([]);
   });
+});
+
+describe("validator determinism regression", () => {
+  test("diagnostics sort strictly by Unicode code point over code, then subject", () => {
+    const issues: Issue[] = [
+      { code: "a", subject: "z" },
+      { code: "b", subject: "a" },
+      { code: "a", subject: "a" },
+      { code: "c", subject: "m" },
+    ];
+    expect(sortIssues(issues)).toEqual([
+      { code: "a", subject: "a" },
+      { code: "a", subject: "z" },
+      { code: "b", subject: "a" },
+      { code: "c", subject: "m" },
+    ]);
+  });
+});
+
+describe("controller dependency ruling regression", () => {
+  const SCHEMAS_REF = "CONTRACT/SOTHOTH/SCHEMAS@1";
+  const CANONICAL_REF = "CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1";
+
+  function dependencyDeclarationOf(markdown: string): any {
+    const site = extractDeclarations(markdown).declarations.find((entry) => entry.kind === DEPENDENCY_KIND);
+    if (!site) throw new Error("dependency declaration not found");
+    return site.value;
+  }
+
+  test("SCHEMAS@1 and @sothoth/contracts are declared directly by every Dossier, registration, and spec", async () => {
+    const facts = await repositoryFacts();
+    const registrationsByComponent = new Map<string, any>(
+      (facts.registrations.registrations ?? []).map((registration: any) => [registration.componentId, registration]),
+    );
+
+    for (const spec of DOCUMENT_GOVERNANCE) {
+      expect(spec.requiredContracts).toContain(SCHEMAS_REF);
+      expect(spec.importAllowlist).toContain("@sothoth/contracts");
+
+      const declaration = dependencyDeclarationOf(facts.documents[spec.packageId]);
+      expect(declaration.runtimeImportAllowlist).toContain("@sothoth/contracts");
+      expect(declaration.requiredContracts).toContain(SCHEMAS_REF);
+
+      const registration = registrationsByComponent.get(spec.packageId);
+      expect(registration.requiredContractRefs).toContain(SCHEMAS_REF);
+
+      expect(declaration.requiredContracts).toEqual(registration.requiredContractRefs);
+    }
+
+    const governance = DOCUMENT_GOVERNANCE.find((spec) => spec.packageId === "@sothoth/governance")!;
+    expect(governance.requiredContracts).toContain(CANONICAL_REF);
+    expect(governance.importAllowlist).toContain("@sothoth/core");
+
+    const governanceDeclaration = dependencyDeclarationOf(facts.documents["@sothoth/governance"]);
+    expect(governanceDeclaration.runtimeImportAllowlist).toContain("@sothoth/core");
+    expect(governanceDeclaration.requiredContracts).toContain(CANONICAL_REF);
+    expect(registrationsByComponent.get("@sothoth/governance").requiredContractRefs).toContain(CANONICAL_REF);
+  });
+
+  test.each([
+    {
+      packageId: "@sothoth/document-index",
+      field: "requiredContracts",
+      removed: "CONTRACT/SOTHOTH/SCHEMAS@1",
+      code: "sothoth.document-governance/required-contracts-mismatch",
+    },
+    {
+      packageId: "@sothoth/selectors",
+      field: "requiredContracts",
+      removed: "CONTRACT/SOTHOTH/SCHEMAS@1",
+      code: "sothoth.document-governance/required-contracts-mismatch",
+    },
+    {
+      packageId: "@sothoth/governance",
+      field: "requiredContracts",
+      removed: "CONTRACT/SOTHOTH/SCHEMAS@1",
+      code: "sothoth.document-governance/required-contracts-mismatch",
+    },
+    {
+      packageId: "@sothoth/governance",
+      field: "requiredContracts",
+      removed: "CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1",
+      code: "sothoth.document-governance/required-contracts-mismatch",
+    },
+    {
+      packageId: "@sothoth/document-index",
+      field: "runtimeImportAllowlist",
+      removed: "@sothoth/contracts",
+      code: "sothoth.document-governance/import-allowlist-mismatch",
+    },
+    {
+      packageId: "@sothoth/selectors",
+      field: "runtimeImportAllowlist",
+      removed: "@sothoth/contracts",
+      code: "sothoth.document-governance/import-allowlist-mismatch",
+    },
+    {
+      packageId: "@sothoth/governance",
+      field: "runtimeImportAllowlist",
+      removed: "@sothoth/contracts",
+      code: "sothoth.document-governance/import-allowlist-mismatch",
+    },
+    {
+      packageId: "@sothoth/governance",
+      field: "runtimeImportAllowlist",
+      removed: "@sothoth/core",
+      code: "sothoth.document-governance/import-allowlist-mismatch",
+    },
+  ])(
+    "removing the direct binding %s -> %s is reported with one stable, precise diagnostic",
+    async (row) => {
+      const facts = await repositoryFacts();
+      facts.documents[row.packageId] = mutateDeclaration(
+        facts.documents[row.packageId],
+        "dependency-and-topology",
+        DEPENDENCY_KIND,
+        (value) => {
+          value[row.field] = value[row.field].filter((entry: string) => entry !== row.removed);
+        },
+      );
+      facts.allDossierMarkdown = facts.allDossierMarkdown.map((dossier: any) =>
+        dossier.componentId === row.packageId ? { ...dossier, markdown: facts.documents[row.packageId] } : dossier,
+      );
+      expect(validateDocumentGovernanceDesign(facts)).toEqual([{ code: row.code, subject: row.packageId }]);
+    },
+  );
 });

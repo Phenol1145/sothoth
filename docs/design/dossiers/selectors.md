@@ -171,7 +171,10 @@ The protocol is a closed value protocol. A Selector arrives as declarative sourc
 as an executable — and compiles against the canonical identity, digest, and canonical JSON
 utilities of `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` from `@sothoth/core`; matching consumes
 only the structural facts of `CONTRACT/SOTHOTH/DOCUMENT-INDEX@1` from `@sothoth/document-index`.
-The package never calls a compilation driver, and no driver calls back into a running match.
+The typed Selector terms, the selection-result shapes, and the zero-match diagnostic identity are
+expressed in the `CONTRACT/SOTHOTH/SCHEMAS@1` vocabulary of `@sothoth/contracts`, required and
+imported directly rather than through any transitive surface. The package never calls a
+compilation driver, and no driver calls back into a running match.
 
 The SDK exposes Selector compilation, execution, and explain-trace hooks as public library
 surface. There is no ambient index, no lazy fetching, and no mutable compilation context to drift
@@ -189,6 +192,7 @@ byte for byte.
   "kind": "sothoth-dossier/dependency-declaration@1",
   "packageId": "@sothoth/selectors",
   "runtimeImportAllowlist": [
+    "@sothoth/contracts",
     "@sothoth/core",
     "@sothoth/document-index"
   ],
@@ -197,10 +201,17 @@ byte for byte.
   ],
   "requiredContracts": [
     "CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1",
-    "CONTRACT/SOTHOTH/DOCUMENT-INDEX@1"
+    "CONTRACT/SOTHOTH/DOCUMENT-INDEX@1",
+    "CONTRACT/SOTHOTH/SCHEMAS@1"
   ]
 }
 ```
+
+`CONTRACT/SOTHOTH/SCHEMAS@1` is required directly from `@sothoth/contracts` because the algebra's
+typed terms, result shapes, and diagnostic identities are expressed in the shared schema,
+identity, and diagnostic vocabulary. The allowlist is the closed import boundary for runtime and
+type-level internal imports alike, so no vocabulary and no capability may arrive through a
+transitive dependency.
 
 The provided contract `CONTRACT/SOTHOTH/SELECTOR@1` is the selector algebra: the canonical AST,
 its closed term vocabulary, matching, cardinality, explain traces, and the hostile-input budget
@@ -289,10 +300,10 @@ declared in `@sothoth/contracts` vocabulary; the engine never invents observatio
 ## Deployment, configuration and operations
 
 Deployment is one reproducible npm package — compiled ESM, declarations, explicit exports map,
-Apache-2.0 inclusion, clean CI publication — with runtime dependencies exactly the two packages
-whose contracts it requires. Conformance fixtures published alongside the algebra let any
-consumer verify closed-vocabulary rejections, budget determinism, and ordering claims on its own
-machine.
+Apache-2.0 inclusion, clean CI publication — with runtime dependencies exactly the three declared
+packages beneath it: `@sothoth/contracts`, `@sothoth/core`, and `@sothoth/document-index`.
+Conformance fixtures published alongside the algebra let any consumer verify
+closed-vocabulary rejections, budget determinism, and ordering claims on its own machine.
 
 There is nothing to configure or operate: budgets are declared per Selector or per caller as
 data, not read from environment variables or flags, and the package acquires nothing itself.
@@ -388,14 +399,15 @@ rather than a convenience feature.
 This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` sections `decision`,
 `authority-boundary`, `package-architecture`, `documents-and-selectors`, and
 `diagnostics-and-process-outcomes`; to `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` consumed from
-`@sothoth/core` and `CONTRACT/SOTHOTH/DOCUMENT-INDEX@1` consumed from `@sothoth/document-index`;
-and to the catalog candidate `@sothoth/selectors` in `SOTHOTH-DESIGN-SCOPE-0.1@1`.
+`@sothoth/core`, `CONTRACT/SOTHOTH/DOCUMENT-INDEX@1` consumed from `@sothoth/document-index`, and
+`CONTRACT/SOTHOTH/SCHEMAS@1` consumed directly from `@sothoth/contracts`; and to the catalog
+candidate `@sothoth/selectors` in `SOTHOTH-DESIGN-SCOPE-0.1@1`.
 
 The registration for this component is `SOTHOTH-SELECTORS-DOSSIER@1` bound to
 `DOC-SOTHOTH-SELECTORS-DOSSIER@1`, providing `CONTRACT/SOTHOTH/SELECTOR@1` and requiring
-`CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` plus `CONTRACT/SOTHOTH/DOCUMENT-INDEX@1`. Every
-reference follows the exact grammar `<identity>@<positive integer revision>` with the last `@`
-separating the revision.
+`CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1`, `CONTRACT/SOTHOTH/DOCUMENT-INDEX@1`, and
+`CONTRACT/SOTHOTH/SCHEMAS@1`. Every reference follows the exact grammar
+`<identity>@<positive integer revision>` with the last `@` separating the revision.
 
 <!-- sothoth:section id="topic-coverage-declaration" -->
 

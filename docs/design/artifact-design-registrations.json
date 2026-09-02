@@ -160,7 +160,11 @@
         "future-compatibility": { "resolution": "local", "sectionId": "future-capability-compatibility", "refs": [], "reason": null }
       },
       "providedContractRefs": ["CONTRACT/SOTHOTH/DOCUMENT-INDEX@1"],
-      "requiredContractRefs": ["CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1", "CONTRACT/SOTHOTH/GENERIC-GRAPH@1"],
+      "requiredContractRefs": [
+        "CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1",
+        "CONTRACT/SOTHOTH/GENERIC-GRAPH@1",
+        "CONTRACT/SOTHOTH/SCHEMAS@1"
+      ],
       "producedStateRefs": ["sothoth.document-index/document-index@1", "sothoth.document-index/blob-cache-entry@1"],
       "consumedStateRefs": [],
       "issuedAuthorityRefs": [],
@@ -222,8 +226,10 @@
         "CONTRACT/SOTHOTH/PRE-DESIGN@1"
       ],
       "requiredContractRefs": [
+        "CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1",
         "CONTRACT/SOTHOTH/DOCUMENT-INDEX@1",
         "CONTRACT/SOTHOTH/GENERIC-GRAPH@1",
+        "CONTRACT/SOTHOTH/SCHEMAS@1",
         "CONTRACT/SOTHOTH/SELECTOR@1"
       ],
       "producedStateRefs": [
@@ -354,7 +360,11 @@
         "future-compatibility": { "resolution": "local", "sectionId": "future-capability-compatibility", "refs": [], "reason": null }
       },
       "providedContractRefs": ["CONTRACT/SOTHOTH/SELECTOR@1"],
-      "requiredContractRefs": ["CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1", "CONTRACT/SOTHOTH/DOCUMENT-INDEX@1"],
+      "requiredContractRefs": [
+        "CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1",
+        "CONTRACT/SOTHOTH/DOCUMENT-INDEX@1",
+        "CONTRACT/SOTHOTH/SCHEMAS@1"
+      ],
       "producedStateRefs": [
         "sothoth.selectors/selector-canonical-ast@1",
         "sothoth.selectors/selection-result@1",

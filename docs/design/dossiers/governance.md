@@ -190,10 +190,14 @@ domains independent.
 
 The protocol is a value protocol over exact facts: Source Fact values in, typed compilations and
 projections out. Canonical identity, canonical bytes, digests, and outcome aggregation come from
-`@sothoth/core`'s `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` surface; structural document facts
-come from `CONTRACT/SOTHOTH/DOCUMENT-INDEX@1`; scoping comes from
-`CONTRACT/SOTHOTH/SELECTOR@1`; graph assembly comes from `CONTRACT/SOTHOTH/GENERIC-GRAPH@1`. The
-package never re-implements canonicalization or traversal and never calls back into a driver.
+`@sothoth/core`'s `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` surface, required and imported
+directly because this package emits canonical, digest-bearing projections; structural document
+facts come from `CONTRACT/SOTHOTH/DOCUMENT-INDEX@1`; scoping comes from
+`CONTRACT/SOTHOTH/SELECTOR@1`; graph assembly comes from `CONTRACT/SOTHOTH/GENERIC-GRAPH@1`; and
+the shared schema, identity, and diagnostic vocabulary that types every fact and finding is
+consumed directly as `CONTRACT/SOTHOTH/SCHEMAS@1` from `@sothoth/contracts`. The package never
+re-implements canonicalization or traversal, never calls back into a driver, and reaches none of
+these surfaces through a transitive re-export or an undeclared type-only path.
 
 Gate Macro handling is the sharpest protocol edge, so it is closed here: a macro is expanded and
 validated deterministically — parameters bound, references resolved, acyclicity and bounds proven
@@ -215,6 +219,8 @@ bindings, and never starts the process itself.
   "kind": "sothoth-dossier/dependency-declaration@1",
   "packageId": "@sothoth/governance",
   "runtimeImportAllowlist": [
+    "@sothoth/contracts",
+    "@sothoth/core",
     "@sothoth/document-index",
     "@sothoth/graph",
     "@sothoth/selectors"
@@ -225,12 +231,23 @@ bindings, and never starts the process itself.
     "CONTRACT/SOTHOTH/PRE-DESIGN@1"
   ],
   "requiredContracts": [
+    "CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1",
     "CONTRACT/SOTHOTH/DOCUMENT-INDEX@1",
     "CONTRACT/SOTHOTH/GENERIC-GRAPH@1",
+    "CONTRACT/SOTHOTH/SCHEMAS@1",
     "CONTRACT/SOTHOTH/SELECTOR@1"
   ]
 }
 ```
+
+`CONTRACT/SOTHOTH/SCHEMAS@1` is required directly from `@sothoth/contracts` because every fact
+type, identity, and diagnostic this compiler consumes or emits is expressed in the shared schema,
+identity, and diagnostic vocabulary, and `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` is required
+directly from `@sothoth/core` because the Design Closure, Admissibility, and Change Plan
+projections are canonical and digest-bearing. The allowlist is the closed import boundary for
+runtime and type-level internal imports alike, so no vocabulary, canonicalization, or capability
+may arrive through a transitive dependency, and the package still never re-implements
+canonicalization itself.
 
 The provided contracts are the governance compilation surface at revision 1:
 `CONTRACT/SOTHOTH/GOVERNANCE-COMPILATION@1` for Registry/Ledger/Traceability/Manifest
@@ -331,9 +348,10 @@ bytes; the package keeps no logs, counters, or telemetry of its own.
 ## Deployment, configuration and operations
 
 Deployment is one reproducible npm package — compiled ESM, declarations, explicit exports map,
-Apache-2.0 inclusion, clean CI publication — with runtime dependencies exactly the three pure
-packages whose contracts it requires. Conformance fixtures published alongside the compiler let
-any consumer verify closure, admissibility, append-only, and determinism claims on its own
+Apache-2.0 inclusion, clean CI publication — with runtime dependencies exactly the five declared
+pure packages beneath it: `@sothoth/contracts`, `@sothoth/core`, `@sothoth/document-index`,
+`@sothoth/graph`, and `@sothoth/selectors`. Conformance fixtures published alongside the compiler
+let any consumer verify closure, admissibility, append-only, and determinism claims on its own
 machine.
 
 There is nothing to configure or operate in the package itself: fact sets arrive as values,
@@ -445,13 +463,16 @@ This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` sections 
 `graphs-change-order-and-scheduling`, `pre-design-boundary`, `extensions-and-evidence`,
 `diagnostics-and-process-outcomes`, and `release-boundary`; to
 `CONTRACT/SOTHOTH/DOCUMENT-INDEX@1`, `CONTRACT/SOTHOTH/GENERIC-GRAPH@1`, and
-`CONTRACT/SOTHOTH/SELECTOR@1` consumed from the packages beneath it; and to the catalog candidate
-`@sothoth/governance` in `SOTHOTH-DESIGN-SCOPE-0.1@1`.
+`CONTRACT/SOTHOTH/SELECTOR@1` consumed from the domain packages beneath it, to
+`CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` consumed directly from `@sothoth/core`, and to
+`CONTRACT/SOTHOTH/SCHEMAS@1` consumed directly from `@sothoth/contracts`; and to the catalog
+candidate `@sothoth/governance` in `SOTHOTH-DESIGN-SCOPE-0.1@1`.
 
 The registration for this component is `SOTHOTH-GOVERNANCE-DOSSIER@1` bound to
 `DOC-SOTHOTH-GOVERNANCE-DOSSIER@1`, providing `CONTRACT/SOTHOTH/CHANGE-PLAN@1`,
 `CONTRACT/SOTHOTH/GOVERNANCE-COMPILATION@1`, and `CONTRACT/SOTHOTH/PRE-DESIGN@1`, and requiring
-`CONTRACT/SOTHOTH/DOCUMENT-INDEX@1`, `CONTRACT/SOTHOTH/GENERIC-GRAPH@1`, and
+`CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1`, `CONTRACT/SOTHOTH/DOCUMENT-INDEX@1`,
+`CONTRACT/SOTHOTH/GENERIC-GRAPH@1`, `CONTRACT/SOTHOTH/SCHEMAS@1`, and
 `CONTRACT/SOTHOTH/SELECTOR@1`. Every reference follows the exact grammar
 `<identity>@<positive integer revision>` with the last `@` separating the revision.
 

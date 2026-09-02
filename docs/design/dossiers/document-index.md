@@ -178,9 +178,11 @@ re-implements traversal or canonicalization and never calls back into a compilat
 
 The SDK boundary is likewise structural: callers construct an index from exact inputs and receive
 an immutable projection. There is no registration hook, no mutation surface, and no ambient
-document discovery to drift from the contract. Diagnostic identity for structural findings is
-declared by `@sothoth/contracts`; this package returns typed structural results the calling
-compiler turns into Structured Diagnostics.
+document discovery to drift from the contract. Diagnostic identity and the shared schema
+vocabulary for structural findings are owned by `@sothoth/contracts` and consumed directly through
+the required `CONTRACT/SOTHOTH/SCHEMAS@1` surface — never via a transitive re-export or an
+undeclared type-only path; this package returns typed structural results the calling compiler
+turns into Structured Diagnostics.
 
 <!-- sothoth:section id="dependency-and-topology" -->
 
@@ -194,6 +196,7 @@ the pure foundation packages whose contracts it requires:
   "kind": "sothoth-dossier/dependency-declaration@1",
   "packageId": "@sothoth/document-index",
   "runtimeImportAllowlist": [
+    "@sothoth/contracts",
     "@sothoth/core",
     "@sothoth/graph"
   ],
@@ -202,10 +205,16 @@ the pure foundation packages whose contracts it requires:
   ],
   "requiredContracts": [
     "CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1",
-    "CONTRACT/SOTHOTH/GENERIC-GRAPH@1"
+    "CONTRACT/SOTHOTH/GENERIC-GRAPH@1",
+    "CONTRACT/SOTHOTH/SCHEMAS@1"
   ]
 }
 ```
+
+`CONTRACT/SOTHOTH/SCHEMAS@1` is required directly from `@sothoth/contracts` because the index's
+typed inputs and findings are expressed in the shared schema, identity, and diagnostic vocabulary.
+The allowlist is the closed import boundary for runtime and type-level internal imports alike, so
+no vocabulary and no capability may arrive through a transitive dependency.
 
 The provided contract `CONTRACT/SOTHOTH/DOCUMENT-INDEX@1` is the structural index surface:
 parsing, stable section identity, anchors, spans, and the reference/supersession/traceability
@@ -294,8 +303,9 @@ Structured Diagnostics only when the calling compiler emits them under the ident
 ## Deployment, configuration and operations
 
 Deployment is one reproducible npm package — compiled ESM, declarations, explicit exports map,
-Apache-2.0 inclusion, clean CI publication — with runtime dependencies exactly the two foundation
-packages beneath it. Conformance fixtures published alongside the package let any consumer verify
+Apache-2.0 inclusion, clean CI publication — with runtime dependencies exactly the three declared
+foundation packages beneath it: `@sothoth/contracts`, `@sothoth/core`, and `@sothoth/graph`.
+Conformance fixtures published alongside the package let any consumer verify
 the structural and determinism claims on its own machine.
 
 There is nothing to configure or operate: no environment variables, flags, paths, or services,
@@ -391,15 +401,16 @@ parser feature.
 
 This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` sections `decision`,
 `authority-boundary`, `package-architecture`, `documents-and-selectors`, and
-`pre-design-boundary`; to `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` and
-`CONTRACT/SOTHOTH/GENERIC-GRAPH@1` consumed from the foundation packages beneath it; and to the
-catalog candidate `@sothoth/document-index` in `SOTHOTH-DESIGN-SCOPE-0.1@1`.
+`pre-design-boundary`; to `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1`,
+`CONTRACT/SOTHOTH/GENERIC-GRAPH@1`, and `CONTRACT/SOTHOTH/SCHEMAS@1` consumed directly from the
+foundation packages beneath it; and to the catalog candidate `@sothoth/document-index` in
+`SOTHOTH-DESIGN-SCOPE-0.1@1`.
 
 The registration for this component is `SOTHOTH-DOCUMENT-INDEX-DOSSIER@1` bound to
 `DOC-SOTHOTH-DOCUMENT-INDEX-DOSSIER@1`, providing `CONTRACT/SOTHOTH/DOCUMENT-INDEX@1` and
-requiring `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` plus `CONTRACT/SOTHOTH/GENERIC-GRAPH@1`.
-Every reference follows the exact grammar `<identity>@<positive integer revision>` with the last
-`@` separating the revision.
+requiring `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1`, `CONTRACT/SOTHOTH/GENERIC-GRAPH@1`, and
+`CONTRACT/SOTHOTH/SCHEMAS@1`. Every reference follows the exact grammar
+`<identity>@<positive integer revision>` with the last `@` separating the revision.
 
 <!-- sothoth:section id="topic-coverage-declaration" -->
 
