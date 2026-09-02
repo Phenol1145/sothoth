@@ -14,6 +14,26 @@ import {
 const root = fileURLToPath(new URL("../..", import.meta.url));
 const runCli = promisify(execFile);
 
+// A fulfilled promisified `execFile` result carries only `stdout` and `stderr`: the process exited
+// 0, so an absent `code` normalizes to exit 0. Rejected results keep their real nonzero exit code.
+function exitCodeOf(result: any): number {
+  return typeof result?.code === "number" ? result.code : 0;
+}
+
+// The repository CLI maps result outcomes to process exits; assertions compare the normalized
+// actual exit against the emitted outcome instead of freezing a phase as permanently invalid.
+const OUTCOME_EXIT: Record<string, number> = {
+  valid: 0,
+  invalid: 1,
+  "invalid-input": 2,
+};
+
+function expectedExitForOutcome(outcome: string): number {
+  const exit = OUTCOME_EXIT[outcome];
+  if (exit === undefined) throw new Error(`unexpected outcome: ${outcome}`);
+  return exit;
+}
+
 function codePointCompare(left: string, right: string): number {
   const a = Array.from(left);
   const b = Array.from(right);
@@ -789,7 +809,7 @@ describe("check-pre-design CLI", () => {
     const second = await runCli("node", [`${root}/scripts/check-pre-design.mjs`, "--phase", "dossiers"]).catch(
       (error: any) => error,
     );
-    expect(first.code).toBe(expected.length > 0 ? 1 : 0);
+    expect(exitCodeOf(first)).toBe(expected.length > 0 ? 1 : 0);
     expect(second.stdout).toBe(first.stdout);
     const parsed = JSON.parse(first.stdout);
     expect(parsed.phase).toBe("dossiers");
@@ -804,7 +824,10 @@ describe("check-pre-design CLI", () => {
       const defaultRun = await runCli("node", [`${root}/scripts/check-pre-design.mjs`, "--phase", "scope"]).catch(
         (error: any) => error,
       );
-      expect(defaultRun.code).toBe(1);
+      const defaultParsed = JSON.parse(defaultRun.stdout);
+      expect(defaultParsed.phase).toBe("scope");
+      expect(defaultRun.stdout).toBe(`${canonicalJsonStringify(defaultParsed)}\n`);
+      expect(exitCodeOf(defaultRun)).toBe(expectedExitForOutcome(defaultParsed.outcome));
       expect(await readdir(dir)).toEqual([]);
 
       const outPath = join(dir, "closure.json");
@@ -815,7 +838,10 @@ describe("check-pre-design CLI", () => {
         "--output",
         outPath,
       ]).catch((error: any) => error);
-      expect(withOutput.code).toBe(1);
+      const outputParsed = JSON.parse(withOutput.stdout);
+      expect(outputParsed.phase).toBe("closure");
+      expect(withOutput.stdout).toBe(`${canonicalJsonStringify(outputParsed)}\n`);
+      expect(exitCodeOf(withOutput)).toBe(expectedExitForOutcome(outputParsed.outcome));
       const written = await readFile(outPath, "utf8");
       expect(written).toBe(withOutput.stdout);
       expect(await readdir(dir)).toEqual(["closure.json"]);

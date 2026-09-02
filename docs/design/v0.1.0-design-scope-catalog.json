@@ -10,7 +10,7 @@
       "designId": "SOTHOTH-CLI-DOSSIER",
       "artifactType": "npm-package",
       "designRequirement": "full",
-      "coverage": "missing",
+      "coverage": "complete",
       "owner": "sothoth"
     },
     {
@@ -82,7 +82,7 @@
       "designId": "SOTHOTH-SDK-DOSSIER",
       "artifactType": "npm-package",
       "designRequirement": "full",
-      "coverage": "missing",
+      "coverage": "complete",
       "owner": "sothoth"
     },
     {
