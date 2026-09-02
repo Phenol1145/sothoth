@@ -961,7 +961,7 @@ function validateIntegrationDesign(facts: {
       registration.designId !== spec.designId ||
       registration.designRevision !== 1 ||
       registration.designRequirement !== "full" ||
-      registration.status !== "proposed" ||
+      registration.status !== "accepted" ||
       registration.supersedes !== null
     ) {
       push("registration-identity-invalid", spec.packageId);
@@ -1396,8 +1396,10 @@ function validateIntegrationDesign(facts: {
   for (const spec of INTEGRATION) {
     const registryEntry = registryByDocument.get(spec.documentId);
     const registration = registrationsByComponent.get(spec.packageId);
+    // Registry documents stay proposed; only the registrations passed the external human gate, so
+    // the reviewed registrations must now be accepted and never silently rolled back.
     if (registryEntry?.status === "accepted") push("accepted-status-forbidden", spec.documentId);
-    if (registration?.status === "accepted") push("accepted-status-forbidden", spec.packageId);
+    if (registration?.status !== "accepted") push("registration-status-invalid", spec.packageId);
   }
 
   return sortIssues(issues);
@@ -1566,7 +1568,8 @@ describe("integration dossier structured design facts", () => {
     expect(result.projection.readyForAcceptance).toBe(true);
     for (const spec of INTEGRATION) {
       const member = result.projection.members.find((entry: any) => entry.componentId === spec.packageId);
-      expect(member.registrationStatus).toBe("proposed");
+      // Live reviewed registrations were accepted by the external human owner on 2026-09-03.
+      expect(member.registrationStatus).toBe("accepted");
       expect(member.documentRef.documentId).toBe(spec.documentId);
       expect(member.localTopics + member.inheritedTopics + member.notApplicableTopics).toBe(18);
       expect(member.inheritedTopics).toBe(1);

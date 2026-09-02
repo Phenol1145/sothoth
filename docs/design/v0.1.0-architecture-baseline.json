@@ -1,0 +1,124 @@
+{
+  "schema": "sothoth.architecture-baseline/v1",
+  "baselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
+  "baselineRevision": 1,
+  "targetRelease": "0.1.0",
+  "status": "accepted",
+  "acceptedBy": {
+    "principalType": "human",
+    "principalId": "anzhize"
+  },
+  "acceptedAt": "2026-09-03",
+  "members": [
+    {
+      "componentId": "@sothoth/cli",
+      "designId": "SOTHOTH-CLI-DOSSIER",
+      "designRevision": 1,
+      "documentRef": {
+        "documentId": "DOC-SOTHOTH-CLI-DOSSIER",
+        "documentRevision": 1
+      },
+      "dossierDigest": "sha256:4a601688dda2ac9b17dd21cb4a09647c923d728d533abcf177896b5e9dc3f9b6"
+    },
+    {
+      "componentId": "@sothoth/contracts",
+      "designId": "SOTHOTH-CONTRACTS-DOSSIER",
+      "designRevision": 1,
+      "documentRef": {
+        "documentId": "DOC-SOTHOTH-CONTRACTS-DOSSIER",
+        "documentRevision": 1
+      },
+      "dossierDigest": "sha256:fb58c975cacf789cc9073ba0d84aadaa8792965335a21f5a8e2cf9f576ed8930"
+    },
+    {
+      "componentId": "@sothoth/core",
+      "designId": "SOTHOTH-CORE-DOSSIER",
+      "designRevision": 1,
+      "documentRef": {
+        "documentId": "DOC-SOTHOTH-CORE-DOSSIER",
+        "documentRevision": 1
+      },
+      "dossierDigest": "sha256:dc5f7df911d4fc75480cc86395dfa585016c53b94ad32a63c9475b0ff5ea1a9f"
+    },
+    {
+      "componentId": "@sothoth/document-index",
+      "designId": "SOTHOTH-DOCUMENT-INDEX-DOSSIER",
+      "designRevision": 1,
+      "documentRef": {
+        "documentId": "DOC-SOTHOTH-DOCUMENT-INDEX-DOSSIER",
+        "documentRevision": 1
+      },
+      "dossierDigest": "sha256:f6183bbd2daee9e340255ec9492d4a2147b2b068f0384cdbc870b1768684c0af"
+    },
+    {
+      "componentId": "@sothoth/git",
+      "designId": "SOTHOTH-GIT-DOSSIER",
+      "designRevision": 1,
+      "documentRef": {
+        "documentId": "DOC-SOTHOTH-GIT-DOSSIER",
+        "documentRevision": 1
+      },
+      "dossierDigest": "sha256:3342df11e6bf872f8511b1b2e43a6c54b9c22a7a34b1c8c48ae6584eddbc53de"
+    },
+    {
+      "componentId": "@sothoth/governance",
+      "designId": "SOTHOTH-GOVERNANCE-DOSSIER",
+      "designRevision": 1,
+      "documentRef": {
+        "documentId": "DOC-SOTHOTH-GOVERNANCE-DOSSIER",
+        "documentRevision": 1
+      },
+      "dossierDigest": "sha256:cf2727044e0c15c434722aeb9f807a83aa5c4093da4f49e81c50ca9741f8c3dc"
+    },
+    {
+      "componentId": "@sothoth/graph",
+      "designId": "SOTHOTH-GRAPH-DOSSIER",
+      "designRevision": 1,
+      "documentRef": {
+        "documentId": "DOC-SOTHOTH-GRAPH-DOSSIER",
+        "documentRevision": 1
+      },
+      "dossierDigest": "sha256:34af71ae3950a8ca88e304b21b5ac36a77381e770a07f7c87e87dd265f2cc665"
+    },
+    {
+      "componentId": "@sothoth/planning",
+      "designId": "SOTHOTH-PLANNING-DOSSIER",
+      "designRevision": 1,
+      "documentRef": {
+        "documentId": "DOC-SOTHOTH-PLANNING-DOSSIER",
+        "documentRevision": 1
+      },
+      "dossierDigest": "sha256:b042075591825c170d4c97109242b099aa7d3302a2b714fcb00fd20bdcc25f69"
+    },
+    {
+      "componentId": "@sothoth/profile-sdk",
+      "designId": "SOTHOTH-PROFILE-SDK-DOSSIER",
+      "designRevision": 1,
+      "documentRef": {
+        "documentId": "DOC-SOTHOTH-PROFILE-SDK-DOSSIER",
+        "documentRevision": 1
+      },
+      "dossierDigest": "sha256:9ab71b36c0d18d6cfc0fb7d9073f52c8ed302b484ba6d47fc967cf26325f3201"
+    },
+    {
+      "componentId": "@sothoth/sdk",
+      "designId": "SOTHOTH-SDK-DOSSIER",
+      "designRevision": 1,
+      "documentRef": {
+        "documentId": "DOC-SOTHOTH-SDK-DOSSIER",
+        "documentRevision": 1
+      },
+      "dossierDigest": "sha256:25d9fc452994a9b2a35586786c65537c720a92b6bc26c2bfa952a53fe498f331"
+    },
+    {
+      "componentId": "@sothoth/selectors",
+      "designId": "SOTHOTH-SELECTORS-DOSSIER",
+      "designRevision": 1,
+      "documentRef": {
+        "documentId": "DOC-SOTHOTH-SELECTORS-DOSSIER",
+        "documentRevision": 1
+      },
+      "dossierDigest": "sha256:938e27f17d39b5e6215376a7765597b5452f4bb9eb0e68107ff06b4f7c9b81a9"
+    }
+  ]
+}

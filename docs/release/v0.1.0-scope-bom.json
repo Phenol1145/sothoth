@@ -1,0 +1,270 @@
+{
+  "schema": "sothoth.release-bom/v1",
+  "bomId": "SOTHOTH-RELEASE-SCOPE-BOM-0.1",
+  "bomRevision": 1,
+  "targetRelease": "0.1.0",
+  "members": [
+    {
+      "id": "@sothoth/cli",
+      "version": "0.1.0",
+      "type": "npm-package",
+      "layer": "required",
+      "owner": "sothoth",
+      "designRef": {
+        "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
+        "architectureBaselineRevision": 1,
+        "designId": "SOTHOTH-CLI-DOSSIER",
+        "designRevision": 1
+      },
+      "completionGates": [
+        {
+          "gateId": "cli-dossier-criteria",
+          "criterionIds": [
+            "cli-atomic-explicit-output",
+            "cli-command-surface-closure",
+            "cli-exit-mapping-frozen",
+            "cli-sdk-only-import-boundary",
+            "cli-stdout-single-document"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "@sothoth/contracts",
+      "version": "0.1.0",
+      "type": "npm-package",
+      "layer": "required",
+      "owner": "sothoth",
+      "designRef": {
+        "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
+        "architectureBaselineRevision": 1,
+        "designId": "SOTHOTH-CONTRACTS-DOSSIER",
+        "designRevision": 1
+      },
+      "completionGates": [
+        {
+          "gateId": "contracts-dossier-criteria",
+          "criterionIds": [
+            "contracts-identity-code-point-order",
+            "contracts-schema-closure",
+            "contracts-zero-dependency-floor"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "@sothoth/core",
+      "version": "0.1.0",
+      "type": "npm-package",
+      "layer": "required",
+      "owner": "sothoth",
+      "designRef": {
+        "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
+        "architectureBaselineRevision": 1,
+        "designId": "SOTHOTH-CORE-DOSSIER",
+        "designRevision": 1
+      },
+      "completionGates": [
+        {
+          "gateId": "core-dossier-criteria",
+          "criterionIds": [
+            "core-canonical-byte-stability",
+            "core-outcome-aggregation-closure",
+            "core-pure-kernel-boundary"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "@sothoth/document-index",
+      "version": "0.1.0",
+      "type": "npm-package",
+      "layer": "required",
+      "owner": "sothoth",
+      "designRef": {
+        "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
+        "architectureBaselineRevision": 1,
+        "designId": "SOTHOTH-DOCUMENT-INDEX-DOSSIER",
+        "designRevision": 1
+      },
+      "completionGates": [
+        {
+          "gateId": "document-index-dossier-criteria",
+          "criterionIds": [
+            "document-index-cache-byte-neutrality",
+            "document-index-deterministic-index-projection",
+            "document-index-structural-parse-boundary"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "@sothoth/git",
+      "version": "0.1.0",
+      "type": "npm-package",
+      "layer": "required",
+      "owner": "sothoth",
+      "designRef": {
+        "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
+        "architectureBaselineRevision": 1,
+        "designId": "SOTHOTH-GIT-DOSSIER",
+        "designRevision": 1
+      },
+      "completionGates": [
+        {
+          "gateId": "git-dossier-criteria",
+          "criterionIds": [
+            "git-command-allowlist-closure",
+            "git-no-mutation-boundary",
+            "git-path-and-ref-fail-closed",
+            "git-provenance-separation",
+            "git-snapshot-budget-fail-closed"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "@sothoth/governance",
+      "version": "0.1.0",
+      "type": "npm-package",
+      "layer": "required",
+      "owner": "sothoth",
+      "designRef": {
+        "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
+        "architectureBaselineRevision": 1,
+        "designId": "SOTHOTH-GOVERNANCE-DOSSIER",
+        "designRevision": 1
+      },
+      "completionGates": [
+        {
+          "gateId": "governance-dossier-criteria",
+          "criterionIds": [
+            "governance-gate-macro-static-expansion",
+            "governance-impact-edge-non-ordering",
+            "governance-projection-rebuild-determinism",
+            "governance-source-fact-non-authority"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "@sothoth/graph",
+      "version": "0.1.0",
+      "type": "npm-package",
+      "layer": "required",
+      "owner": "sothoth",
+      "designRef": {
+        "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
+        "architectureBaselineRevision": 1,
+        "designId": "SOTHOTH-GRAPH-DOSSIER",
+        "designRevision": 1
+      },
+      "completionGates": [
+        {
+          "gateId": "graph-dossier-criteria",
+          "criterionIds": [
+            "graph-deterministic-waves",
+            "graph-generic-algorithm-surface",
+            "graph-zero-domain-semantics"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "@sothoth/planning",
+      "version": "0.1.0",
+      "type": "npm-package",
+      "layer": "required",
+      "owner": "sothoth",
+      "designRef": {
+        "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
+        "architectureBaselineRevision": 1,
+        "designId": "SOTHOTH-PLANNING-DOSSIER",
+        "designRevision": 1
+      },
+      "completionGates": [
+        {
+          "gateId": "planning-dossier-criteria",
+          "criterionIds": [
+            "planning-dependency-wave-only",
+            "planning-deterministic-projection",
+            "planning-single-schedule-solution",
+            "planning-source-fact-read-only"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "@sothoth/profile-sdk",
+      "version": "0.1.0",
+      "type": "npm-package",
+      "layer": "required",
+      "owner": "sothoth",
+      "designRef": {
+        "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
+        "architectureBaselineRevision": 1,
+        "designId": "SOTHOTH-PROFILE-SDK-DOSSIER",
+        "designRevision": 1
+      },
+      "completionGates": [
+        {
+          "gateId": "profile-sdk-dossier-criteria",
+          "criterionIds": [
+            "profile-consumer-neutral-boundary",
+            "profile-fail-closed-conformance",
+            "profile-impact-no-ordering",
+            "profile-skills-curated-exact-only"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "@sothoth/sdk",
+      "version": "0.1.0",
+      "type": "npm-package",
+      "layer": "required",
+      "owner": "sothoth",
+      "designRef": {
+        "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
+        "architectureBaselineRevision": 1,
+        "designId": "SOTHOTH-SDK-DOSSIER",
+        "designRevision": 1
+      },
+      "completionGates": [
+        {
+          "gateId": "sdk-dossier-criteria",
+          "criterionIds": [
+            "sdk-facade-delegation-only",
+            "sdk-import-boundary-closure",
+            "sdk-no-domain-truth",
+            "sdk-no-exit-code-authority",
+            "sdk-no-generic-graph-wrap"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "@sothoth/selectors",
+      "version": "0.1.0",
+      "type": "npm-package",
+      "layer": "required",
+      "owner": "sothoth",
+      "designRef": {
+        "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
+        "architectureBaselineRevision": 1,
+        "designId": "SOTHOTH-SELECTORS-DOSSIER",
+        "designRevision": 1
+      },
+      "completionGates": [
+        {
+          "gateId": "selectors-dossier-criteria",
+          "criterionIds": [
+            "selectors-closed-selector-algebra",
+            "selectors-hostile-input-budgets",
+            "selectors-order-independence"
+          ]
+        }
+      ]
+    }
+  ]
+}

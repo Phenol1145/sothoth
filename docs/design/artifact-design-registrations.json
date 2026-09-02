@@ -8,7 +8,7 @@
       "componentId": "@sothoth/cli",
       "designRevision": 1,
       "designRequirement": "full",
-      "status": "proposed",
+      "status": "accepted",
       "documentRef": {
         "documentId": "DOC-SOTHOTH-CLI-DOSSIER",
         "documentRevision": 1
@@ -67,7 +67,7 @@
       "componentId": "@sothoth/contracts",
       "designRevision": 1,
       "designRequirement": "full",
-      "status": "proposed",
+      "status": "accepted",
       "documentRef": {
         "documentId": "DOC-SOTHOTH-CONTRACTS-DOSSIER",
         "documentRevision": 1
@@ -124,7 +124,7 @@
       "componentId": "@sothoth/core",
       "designRevision": 1,
       "designRequirement": "full",
-      "status": "proposed",
+      "status": "accepted",
       "documentRef": {
         "documentId": "DOC-SOTHOTH-CORE-DOSSIER",
         "documentRevision": 1
@@ -181,7 +181,7 @@
       "componentId": "@sothoth/document-index",
       "designRevision": 1,
       "designRequirement": "full",
-      "status": "proposed",
+      "status": "accepted",
       "documentRef": {
         "documentId": "DOC-SOTHOTH-DOCUMENT-INDEX-DOSSIER",
         "documentRevision": 1
@@ -242,7 +242,7 @@
       "componentId": "@sothoth/git",
       "designRevision": 1,
       "designRequirement": "full",
-      "status": "proposed",
+      "status": "accepted",
       "documentRef": {
         "documentId": "DOC-SOTHOTH-GIT-DOSSIER",
         "documentRevision": 1
@@ -308,7 +308,7 @@
       "componentId": "@sothoth/governance",
       "designRevision": 1,
       "designRequirement": "full",
-      "status": "proposed",
+      "status": "accepted",
       "documentRef": {
         "documentId": "DOC-SOTHOTH-GOVERNANCE-DOSSIER",
         "documentRevision": 1
@@ -385,7 +385,7 @@
       "componentId": "@sothoth/graph",
       "designRevision": 1,
       "designRequirement": "full",
-      "status": "proposed",
+      "status": "accepted",
       "documentRef": {
         "documentId": "DOC-SOTHOTH-GRAPH-DOSSIER",
         "documentRevision": 1
@@ -447,7 +447,7 @@
       "componentId": "@sothoth/planning",
       "designRevision": 1,
       "designRequirement": "full",
-      "status": "proposed",
+      "status": "accepted",
       "documentRef": {
         "documentId": "DOC-SOTHOTH-PLANNING-DOSSIER",
         "documentRevision": 1
@@ -510,7 +510,7 @@
       "componentId": "@sothoth/profile-sdk",
       "designRevision": 1,
       "designRequirement": "full",
-      "status": "proposed",
+      "status": "accepted",
       "documentRef": {
         "documentId": "DOC-SOTHOTH-PROFILE-SDK-DOSSIER",
         "documentRevision": 1
@@ -571,7 +571,7 @@
       "componentId": "@sothoth/sdk",
       "designRevision": 1,
       "designRequirement": "full",
-      "status": "proposed",
+      "status": "accepted",
       "documentRef": {
         "documentId": "DOC-SOTHOTH-SDK-DOSSIER",
         "documentRevision": 1
@@ -641,7 +641,7 @@
       "componentId": "@sothoth/selectors",
       "designRevision": 1,
       "designRequirement": "full",
-      "status": "proposed",
+      "status": "accepted",
       "documentRef": {
         "documentId": "DOC-SOTHOTH-SELECTORS-DOSSIER",
         "documentRevision": 1

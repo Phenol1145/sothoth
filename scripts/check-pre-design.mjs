@@ -9,7 +9,8 @@ const REGISTRY_SCHEMA = "sothoth.design-document-registry/v1";
 const REGISTRATIONS_SCHEMA = "sothoth.artifact-design-registrations/v1";
 const CONTRACT_SCHEMA = "sothoth.document-contract/v1";
 const CONTRACT_ID = "sothoth.design-dossier/full/v1";
-const SCOPE_BOM_SCHEMA = "sothoth.candidate-scope-bom/v1";
+const ARCHITECTURE_BASELINE_SCHEMA = "sothoth.architecture-baseline/v1";
+const RELEASE_BOM_SCHEMA = "sothoth.release-bom/v1";
 const CLOSURE_PROJECTION_SCHEMA = "sothoth.design-closure-projection/v1";
 const SCOPE_PROJECTION_SCHEMA = "sothoth.scope-bom-admissibility-projection/v1";
 
@@ -19,18 +20,34 @@ const APPLICABILITY_KINDS = ["adopts", "narrows", "specializes"];
 const REFERENCE_FIELDS = ["documentId", "documentRevision", "sectionId", "applicability"];
 const CRITERION_FIELDS = ["criterionId", "sectionId"];
 const DOCUMENT_REF_FIELDS = ["documentId", "documentRevision"];
-const BASELINE_FIELDS = ["baselineId", "baselineRevision", "status"];
+const ACCEPTED_BY_FIELDS = ["principalType", "principalId"];
+const BASELINE_MEMBER_FIELDS = ["componentId", "designId", "designRevision", "documentRef", "dossierDigest"];
+const RELEASE_BOM_MEMBER_FIELDS = ["id", "version", "type", "layer", "owner", "designRef", "completionGates"];
+const GATE_FIELDS = ["gateId", "criterionIds"];
 const DESIGN_REF_FIELDS = [
   "architectureBaselineId",
   "architectureBaselineRevision",
   "designId",
   "designRevision",
 ];
-const BOM_MEMBER_FIELDS = ["componentId", "designRef"];
+const RELEASE_MEMBER_EXACT_FIELDS = new Set(["version", "type", "layer", "owner"]);
 
 const REGISTRY_FIELDS = new Set(["schema", "registryId", "registryRevision", "documents"]);
 const DOCUMENT_FIELDS = new Set(["documentId", "documentRevision", "path", "status", "sectionIds"]);
 const REGISTRATIONS_FIELDS = new Set(["schema", "collectionId", "collectionRevision", "registrations"]);
+const ARCHITECTURE_BASELINE_FIELDS = new Set([
+  "schema",
+  "baselineId",
+  "baselineRevision",
+  "targetRelease",
+  "status",
+  "acceptedBy",
+  "acceptedAt",
+  "members",
+]);
+const RELEASE_BOM_FIELDS = new Set(["schema", "bomId", "bomRevision", "targetRelease", "members"]);
+const BASELINE_MEMBER_FIELD_SET = new Set(BASELINE_MEMBER_FIELDS);
+const RELEASE_BOM_MEMBER_FIELD_SET = new Set(RELEASE_BOM_MEMBER_FIELDS);
 const REGISTRATION_FIELDS = new Set([
   "designId",
   "componentId",
@@ -80,6 +97,8 @@ const DESIGN_REQUIREMENTS = new Set(["full", "projection", "compatibility"]);
 const SECTION_ID_PATTERN = /^[a-z][a-z0-9-]*$/;
 const MARKER_PATTERN = /^<!-- sothoth:section id="([a-z][a-z0-9-]*)" -->$/;
 const EXACT_REF_PATTERN = /^(.+)@([1-9][0-9]*)$/;
+const DOSSIER_DIGEST_PATTERN = /^sha256:[0-9a-f]{64}$/;
+const CALENDAR_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 function issue(code, subject) {
   return { code, subject };
@@ -122,6 +141,26 @@ function arraysEqual(left, right) {
     left.length === right.length &&
     left.every((value, index) => value === right[index])
   );
+}
+
+function isSortedCodePoint(values) {
+  return values.every((value, index) => index === 0 || codePointCompare(values[index - 1], value) <= 0);
+}
+
+function isValidCalendarDate(value) {
+  if (typeof value !== "string" || !CALENDAR_DATE_PATTERN.test(value)) return false;
+  const [year, month, day] = value.split("-").map((part) => Number.parseInt(part, 10));
+  const utc = Date.UTC(year, month - 1, day);
+  return (
+    Number.isSafeInteger(utc) &&
+    new Date(utc).getUTCFullYear() === year &&
+    new Date(utc).getUTCMonth() === month - 1 &&
+    new Date(utc).getUTCDate() === day
+  );
+}
+
+function sha256OfUtf8Text(text) {
+  return `sha256:${createHash("sha256").update(text, "utf8").digest("hex")}`;
 }
 
 function keysExactly(value, fields) {
@@ -648,25 +687,143 @@ function resolveDesignRef(registrations, componentId, designRef) {
   };
 }
 
+function retainedRegistrationOf(context, componentId) {
+  const retained = (context.registrationsByComponent.get(componentId) ?? []).filter(
+    (registration) =>
+      isPlainObject(registration) &&
+      (registration.status === "proposed" || registration.status === "accepted"),
+  );
+  return retained.length === 1 ? retained[0] : null;
+}
+
+/**
+ * Validates the accepted Architecture Baseline V1 and the formal `sothoth.release-bom/v1` Source
+ * Facts. The checker verifies externally authored facts; it never creates, repairs, or accepts
+ * them, and acceptance metadata is only ever read, never synthesized.
+ */
 function checkScopeFacts(facts, context, issues) {
   const baseline = facts.architectureBaseline;
   let baselineUsable = false;
+  const baselineMembersByIdentity = new Map();
   if (!isPlainObject(baseline)) {
     issues.push(issue("sothoth.pre-design/baseline-missing", "architectureBaseline"));
   } else {
-    for (const field of unknownFieldNames(baseline, new Set(BASELINE_FIELDS))) {
+    for (const field of unknownFieldNames(baseline, ARCHITECTURE_BASELINE_FIELDS)) {
       issues.push(issue("sothoth.pre-design/baseline-invalid", field));
     }
-    if (
-      !isNonEmptyString(baseline.baselineId) ||
-      !isPositiveInteger(baseline.baselineRevision) ||
-      !REGISTRATION_STATUSES.has(baseline.status)
-    ) {
-      issues.push(issue("sothoth.pre-design/baseline-invalid", "architectureBaseline"));
-    } else if (baseline.status !== "accepted") {
-      issues.push(issue("sothoth.pre-design/baseline-not-accepted", baseline.baselineId));
+    if (baseline.schema !== ARCHITECTURE_BASELINE_SCHEMA) {
+      issues.push(issue("sothoth.pre-design/baseline-invalid", "schema"));
+    }
+    if (!isNonEmptyString(baseline.baselineId)) {
+      issues.push(issue("sothoth.pre-design/baseline-invalid", "baselineId"));
+    }
+    if (!isPositiveInteger(baseline.baselineRevision)) {
+      issues.push(issue("sothoth.pre-design/baseline-invalid", "baselineRevision"));
+    }
+    if (baseline.targetRelease !== context.catalog.targetReleaseIntent) {
+      issues.push(issue("sothoth.pre-design/baseline-invalid", "targetRelease"));
+    }
+    if (!REGISTRATION_STATUSES.has(baseline.status)) {
+      issues.push(issue("sothoth.pre-design/baseline-invalid", "status"));
+    }
+    const acceptedBy = baseline.acceptedBy;
+    if (!keysExactly(acceptedBy, ACCEPTED_BY_FIELDS)) {
+      issues.push(issue("sothoth.pre-design/baseline-invalid", "acceptedBy"));
     } else {
-      baselineUsable = true;
+      if (acceptedBy.principalType !== "human") {
+        issues.push(issue("sothoth.pre-design/baseline-invalid", "acceptedBy:principalType"));
+      }
+      if (!isNonEmptyString(acceptedBy.principalId)) {
+        issues.push(issue("sothoth.pre-design/baseline-invalid", "acceptedBy:principalId"));
+      }
+    }
+    if (!isValidCalendarDate(baseline.acceptedAt)) {
+      issues.push(issue("sothoth.pre-design/baseline-invalid", "acceptedAt"));
+    }
+    if (!Array.isArray(baseline.members)) {
+      issues.push(issue("sothoth.pre-design/baseline-invalid", "members"));
+    } else {
+      const seenMembers = new Set();
+      for (const member of baseline.members) {
+        if (!isPlainObject(member)) {
+          issues.push(issue("sothoth.pre-design/baseline-member-invalid", "members"));
+          continue;
+        }
+        const componentId = isNonEmptyString(member.componentId) ? member.componentId : "members";
+        for (const field of unknownFieldNames(member, BASELINE_MEMBER_FIELD_SET)) {
+          issues.push(issue("sothoth.pre-design/baseline-member-invalid", `${componentId}:${field}`));
+        }
+        const missingFields = BASELINE_MEMBER_FIELDS.filter((field) => !(field in member));
+        for (const field of missingFields) {
+          issues.push(issue("sothoth.pre-design/baseline-member-invalid", `${componentId}:${field}`));
+        }
+        if (missingFields.length > 0) continue;
+        if (!isNonEmptyString(member.designId) || !isPositiveInteger(member.designRevision)) {
+          issues.push(issue("sothoth.pre-design/baseline-member-invalid", `${componentId}:designId`));
+          continue;
+        }
+        if (
+          !keysExactly(member.documentRef, DOCUMENT_REF_FIELDS) ||
+          !isNonEmptyString(member.documentRef.documentId) ||
+          !isPositiveInteger(member.documentRef.documentRevision)
+        ) {
+          issues.push(issue("sothoth.pre-design/baseline-member-invalid", `${componentId}:documentRef`));
+          continue;
+        }
+        if (typeof member.dossierDigest !== "string" || !DOSSIER_DIGEST_PATTERN.test(member.dossierDigest)) {
+          issues.push(issue("sothoth.pre-design/baseline-member-invalid", `${componentId}:dossierDigest`));
+          continue;
+        }
+        if (seenMembers.has(componentId)) {
+          issues.push(issue("sothoth.pre-design/baseline-member-duplicate", componentId));
+          continue;
+        }
+        seenMembers.add(componentId);
+        if (!context.candidatesByComponent.has(componentId)) {
+          issues.push(issue("sothoth.pre-design/baseline-member-unknown", componentId));
+          continue;
+        }
+        const registration = retainedRegistrationOf(context, componentId);
+        const registrationDocument = registrationDocumentRef(registration);
+        const designOwner = context.designIdOwner.get(member.designId);
+        if (designOwner !== undefined && designOwner !== componentId) {
+          issues.push(issue("sothoth.pre-design/baseline-member-component-mismatch", componentId));
+          continue;
+        }
+        if (
+          !registration ||
+          member.designId !== registration.designId ||
+          member.designRevision !== registration.designRevision ||
+          !registrationDocument ||
+          member.documentRef.documentId !== registrationDocument.documentId ||
+          member.documentRef.documentRevision !== registrationDocument.documentRevision
+        ) {
+          issues.push(issue("sothoth.pre-design/baseline-member-design-mismatch", componentId));
+          continue;
+        }
+        const state = context.documents.get(member.documentRef.documentId);
+        const markdown = state && typeof state.markdown === "string" ? state.markdown : null;
+        if (markdown === null || sha256OfUtf8Text(markdown) !== member.dossierDigest) {
+          issues.push(issue("sothoth.pre-design/baseline-dossier-digest-mismatch", componentId));
+          continue;
+        }
+        baselineMembersByIdentity.set(componentId, {
+          designId: member.designId,
+          designRevision: member.designRevision,
+        });
+      }
+      for (const candidate of context.candidates) {
+        if (!seenMembers.has(candidate.componentId)) {
+          issues.push(issue("sothoth.pre-design/baseline-member-missing", candidate.componentId));
+        }
+      }
+    }
+    if (isNonEmptyString(baseline.baselineId) && isPositiveInteger(baseline.baselineRevision)) {
+      if (baseline.status !== "accepted") {
+        issues.push(issue("sothoth.pre-design/baseline-not-accepted", baseline.baselineId));
+      } else {
+        baselineUsable = true;
+      }
     }
   }
 
@@ -685,28 +842,58 @@ function checkScopeFacts(facts, context, issues) {
     issues.push(issue("sothoth.pre-design/scope-bom-missing", "scopeBom"));
     return;
   }
-  if (scopeBom.schema !== SCOPE_BOM_SCHEMA) {
+  for (const field of unknownFieldNames(scopeBom, RELEASE_BOM_FIELDS)) {
+    issues.push(issue("sothoth.pre-design/scope-bom-invalid", field));
+  }
+  if (scopeBom.schema !== RELEASE_BOM_SCHEMA) {
     issues.push(issue("sothoth.pre-design/scope-bom-invalid", "schema"));
+  }
+  if (!isNonEmptyString(scopeBom.bomId)) {
+    issues.push(issue("sothoth.pre-design/scope-bom-invalid", "bomId"));
+  }
+  if (!isPositiveInteger(scopeBom.bomRevision)) {
+    issues.push(issue("sothoth.pre-design/scope-bom-invalid", "bomRevision"));
+  }
+  if (scopeBom.targetRelease !== context.catalog.targetReleaseIntent) {
+    issues.push(issue("sothoth.pre-design/scope-bom-invalid", "targetRelease"));
   }
   if (!Array.isArray(scopeBom.members)) {
     issues.push(issue("sothoth.pre-design/scope-bom-invalid", "members"));
     return;
   }
   const seenMembers = new Set();
+  const resolution = new Map();
   for (const member of scopeBom.members) {
     if (!isPlainObject(member)) {
       issues.push(issue("sothoth.pre-design/scope-bom-invalid", "members"));
       continue;
     }
-    const componentId = isNonEmptyString(member.componentId) ? member.componentId : "members";
-    if (!keysExactly(member, BOM_MEMBER_FIELDS)) {
-      issues.push(issue("sothoth.pre-design/scope-bom-invalid", `${componentId}:member`));
+    const id = isNonEmptyString(member.id) ? member.id : "members";
+    for (const field of unknownFieldNames(member, RELEASE_BOM_MEMBER_FIELD_SET)) {
+      issues.push(issue("sothoth.pre-design/scope-bom-invalid", `${id}:${field}`));
+    }
+    const missingFields = RELEASE_BOM_MEMBER_FIELDS.filter((field) => !(field in member));
+    for (const field of missingFields) {
+      issues.push(issue("sothoth.pre-design/scope-bom-invalid", `${id}:${field}`));
+    }
+    if (missingFields.length > 0) continue;
+    if (member.version !== context.catalog.targetReleaseIntent) {
+      issues.push(issue("sothoth.pre-design/scope-bom-invalid", `${id}:version`));
+    }
+    if (member.type !== "npm-package") {
+      issues.push(issue("sothoth.pre-design/scope-bom-invalid", `${id}:type`));
+    }
+    if (member.layer !== "required") {
+      issues.push(issue("sothoth.pre-design/scope-bom-invalid", `${id}:layer`));
+    }
+    if (member.owner !== "sothoth") {
+      issues.push(issue("sothoth.pre-design/scope-bom-invalid", `${id}:owner`));
+    }
+    if (seenMembers.has(id)) {
+      issues.push(issue("sothoth.pre-design/scope-bom-invalid", `${id}:member-duplicate`));
       continue;
     }
-    if (seenMembers.has(componentId)) {
-      issues.push(issue("sothoth.pre-design/scope-bom-invalid", `${componentId}:member-duplicate`));
-    }
-    seenMembers.add(componentId);
+    seenMembers.add(id);
     const designRef = member.designRef;
     if (
       !keysExactly(designRef, DESIGN_REF_FIELDS) ||
@@ -715,32 +902,119 @@ function checkScopeFacts(facts, context, issues) {
       !isNonEmptyString(designRef.architectureBaselineId) ||
       !isPositiveInteger(designRef.architectureBaselineRevision)
     ) {
-      issues.push(issue("sothoth.pre-design/scope-bom-invalid", `${componentId}:designRef`));
+      issues.push(issue("sothoth.pre-design/scope-bom-invalid", `${id}:designRef`));
       continue;
     }
-    if (!context.candidatesByComponent.has(componentId)) {
-      issues.push(issue("sothoth.pre-design/scope-bom-member-unknown", componentId));
+    if (!context.candidatesByComponent.has(id)) {
+      issues.push(issue("sothoth.pre-design/scope-bom-member-unknown", id));
       continue;
     }
-    const binding = resolveDesignRef(context.registrations, componentId, designRef);
+    const binding = resolveDesignRef(context.registrations, id, designRef);
     if (!binding.resolved) {
-      issues.push(issue("sothoth.pre-design/design-ref-unresolved", componentId));
+      issues.push(issue("sothoth.pre-design/design-ref-unresolved", id));
     } else if (!binding.own) {
-      issues.push(issue("sothoth.pre-design/design-ref-component-mismatch", componentId));
+      issues.push(issue("sothoth.pre-design/design-ref-component-mismatch", id));
     }
     if (
       baselineUsable &&
       (designRef.architectureBaselineId !== baseline.baselineId ||
         designRef.architectureBaselineRevision !== baseline.baselineRevision)
     ) {
-      issues.push(issue("sothoth.pre-design/design-ref-baseline-mismatch", componentId));
+      issues.push(issue("sothoth.pre-design/design-ref-baseline-mismatch", id));
     }
+    const baselineMember = baselineMembersByIdentity.get(id);
+    const baselineMemberResolved =
+      baselineUsable &&
+      baselineMember !== undefined &&
+      baselineMember.designId === designRef.designId &&
+      baselineMember.designRevision === designRef.designRevision;
+
+    const gates = member.completionGates;
+    let gatesValid = true;
+    let completionCriteriaResolved = false;
+    if (!Array.isArray(gates) || gates.length === 0) {
+      issues.push(issue("sothoth.pre-design/scope-bom-invalid", `${id}:completionGates`));
+      gatesValid = false;
+    } else {
+      const gateIds = [];
+      const criterionIds = [];
+      const duplicateGateIds = new Set();
+      const duplicateCriteria = new Set();
+      const seenCriteria = new Set();
+      for (const gate of gates) {
+        if (
+          !isPlainObject(gate) ||
+          !keysExactly(gate, GATE_FIELDS) ||
+          !isNonEmptyString(gate.gateId) ||
+          !Array.isArray(gate.criterionIds) ||
+          gate.criterionIds.length === 0 ||
+          !gate.criterionIds.every(isNonEmptyString)
+        ) {
+          const subject = isPlainObject(gate) && isNonEmptyString(gate.gateId) ? gate.gateId : "completionGates";
+          issues.push(issue("sothoth.pre-design/scope-bom-gate-invalid", `${id}:${subject}`));
+          gatesValid = false;
+          continue;
+        }
+        if (!isSortedCodePoint(gate.criterionIds)) {
+          issues.push(issue("sothoth.pre-design/scope-bom-criterion-order", `${id}:${gate.gateId}`));
+          gatesValid = false;
+        }
+        if (gateIds.includes(gate.gateId)) duplicateGateIds.add(gate.gateId);
+        gateIds.push(gate.gateId);
+        for (const criterionId of gate.criterionIds) {
+          if (seenCriteria.has(criterionId)) duplicateCriteria.add(criterionId);
+          seenCriteria.add(criterionId);
+          criterionIds.push(criterionId);
+        }
+      }
+      for (const gateId of duplicateGateIds) {
+        issues.push(issue("sothoth.pre-design/scope-bom-gate-duplicate", `${id}:${gateId}`));
+        gatesValid = false;
+      }
+      if (!isSortedCodePoint(gateIds)) {
+        issues.push(issue("sothoth.pre-design/scope-bom-gate-order", id));
+        gatesValid = false;
+      }
+      for (const criterionId of duplicateCriteria) {
+        issues.push(issue("sothoth.pre-design/scope-bom-criterion-duplicate", `${id}:${criterionId}`));
+        gatesValid = false;
+      }
+      const registration = retainedRegistrationOf(context, id);
+      const registrationCriteria = new Set(
+        Array.isArray(registration?.acceptanceCriteria)
+          ? registration.acceptanceCriteria
+              .map((criterion) => (isPlainObject(criterion) ? criterion.criterionId : null))
+              .filter(isNonEmptyString)
+          : [],
+      );
+      for (const criterionId of seenCriteria) {
+        if (!registrationCriteria.has(criterionId)) {
+          issues.push(issue("sothoth.pre-design/scope-bom-criterion-unknown", `${id}:${criterionId}`));
+          gatesValid = false;
+        }
+      }
+      for (const criterionId of registrationCriteria) {
+        if (!seenCriteria.has(criterionId)) {
+          issues.push(issue("sothoth.pre-design/scope-bom-criterion-missing", id));
+          gatesValid = false;
+          break;
+        }
+      }
+      completionCriteriaResolved =
+        gatesValid && seenCriteria.size === registrationCriteria.size && criterionIds.length === seenCriteria.size;
+    }
+    resolution.set(id, {
+      designRefResolved: binding.resolved && binding.own,
+      baselineMemberResolved,
+      completionCriteriaResolved,
+    });
   }
   for (const candidate of context.candidates) {
     if (!seenMembers.has(candidate.componentId)) {
       issues.push(issue("sothoth.pre-design/scope-bom-member-missing", candidate.componentId));
     }
   }
+  context.scopeMemberResolution = resolution;
 }
 
 function topicCounts(registration) {
@@ -793,6 +1067,9 @@ function scopeSourceFactsDigest(facts, context) {
   const scopeBom = isPlainObject(facts.scopeBom)
     ? { ...facts.scopeBom, members: canonicalEntryStrings(facts.scopeBom.members) }
     : null;
+  const architectureBaseline = isPlainObject(facts.architectureBaseline)
+    ? { ...facts.architectureBaseline, members: canonicalEntryStrings(facts.architectureBaseline.members) }
+    : null;
   return sha256OfCanonical({
     phase: "scope",
     contract: facts.contract,
@@ -800,7 +1077,7 @@ function scopeSourceFactsDigest(facts, context) {
     registry: { ...facts.registry, documents: canonicalEntryStrings(facts.registry.documents) },
     documents: consumedDocuments(facts),
     registrations: canonicalEntryStrings(context.registrations),
-    architectureBaseline: isPlainObject(facts.architectureBaseline) ? facts.architectureBaseline : null,
+    architectureBaseline,
     scopeBom,
   });
 }
@@ -873,24 +1150,23 @@ function buildClosureProjection(facts, context, outcome, issues) {
 
 function buildScopeProjection(facts, context, outcome, issues) {
   const baseline = isPlainObject(facts.architectureBaseline) ? facts.architectureBaseline : null;
-  const membersSource = isPlainObject(facts.scopeBom) && Array.isArray(facts.scopeBom.members) ? facts.scopeBom.members : [];
+  const scopeBom = isPlainObject(facts.scopeBom) ? facts.scopeBom : null;
+  const membersSource = Array.isArray(scopeBom?.members) ? scopeBom.members : [];
   const members = membersSource
-    .filter((member) => isPlainObject(member) && isNonEmptyString(member.componentId) && isPlainObject(member.designRef))
+    .filter((member) => isPlainObject(member) && isNonEmptyString(member.id) && isPlainObject(member.designRef))
     .map((member) => {
-      const binding = resolveDesignRef(context.registrations, member.componentId, member.designRef);
-      const retained = (context.registrationsByComponent.get(member.componentId) ?? []).filter(
-        (registration) =>
-          isPlainObject(registration) &&
-          (registration.status === "proposed" || registration.status === "accepted"),
-      );
-      const registration = retained.length === 1 ? retained[0] : null;
+      const binding = resolveDesignRef(context.registrations, member.id, member.designRef);
+      const registration = retainedRegistrationOf(context, member.id);
+      const resolution = context.scopeMemberResolution?.get(member.id);
       return {
-        componentId: member.componentId,
+        componentId: member.id,
         designId: typeof member.designRef.designId === "string" ? member.designRef.designId : null,
         designRevision: isPositiveInteger(member.designRef.designRevision) ? member.designRef.designRevision : 0,
         registrationStatus: registration ? registration.status : "unresolved",
         documentRef: registrationDocumentRef(registration),
         designRefResolved: binding.resolved && binding.own,
+        baselineMemberResolved: resolution ? resolution.baselineMemberResolved : false,
+        completionCriteriaResolved: resolution ? resolution.completionCriteriaResolved : false,
       };
     })
     .sort((left, right) => codePointCompare(left.componentId, right.componentId));
@@ -903,6 +1179,11 @@ function buildScopeProjection(facts, context, outcome, issues) {
       baselineId: baseline && typeof baseline.baselineId === "string" ? baseline.baselineId : null,
       baselineRevision: baseline && isPositiveInteger(baseline.baselineRevision) ? baseline.baselineRevision : null,
       status: baseline && typeof baseline.status === "string" ? baseline.status : "missing",
+    },
+    scopeBom: {
+      bomId: scopeBom && typeof scopeBom.bomId === "string" ? scopeBom.bomId : null,
+      bomRevision: scopeBom && isPositiveInteger(scopeBom.bomRevision) ? scopeBom.bomRevision : null,
+      targetRelease: scopeBom && typeof scopeBom.targetRelease === "string" ? scopeBom.targetRelease : null,
     },
     outcome,
     admissible: outcome === "valid",
@@ -955,6 +1236,8 @@ export function checkPreDesign(facts) {
     documents: new Map(),
     registrations: facts.registrations.registrations,
     registrationsByComponent: new Map(),
+    designIdOwner: new Map(),
+    scopeMemberResolution: new Map(),
   };
 
   const issues = [];
@@ -964,7 +1247,7 @@ export function checkPreDesign(facts) {
     const markdown = documentSources[entry.documentId];
     if (typeof markdown !== "string") {
       issues.push(issue("sothoth.pre-design/document-missing", entry.documentId));
-      context.documents.set(entry.documentId, { entry, sectionIds: [] });
+      context.documents.set(entry.documentId, { entry, sectionIds: [], markdown: null });
       continue;
     }
     const parsed = parseStableSections(markdown);
@@ -974,7 +1257,7 @@ export function checkPreDesign(facts) {
     if (!arraysEqual(parsed.sectionIds, entry.sectionIds)) {
       issues.push(issue("sothoth.pre-design/document-sections-mismatch", entry.documentId));
     }
-    context.documents.set(entry.documentId, { entry, sectionIds: parsed.sectionIds });
+    context.documents.set(entry.documentId, { entry, sectionIds: parsed.sectionIds, markdown });
   }
 
   for (const registration of context.registrations) {
@@ -985,6 +1268,17 @@ export function checkPreDesign(facts) {
       context.registrationsByComponent.set(registration.componentId, list);
     }
   }
+
+  const designIdOwner = new Map();
+  for (const [componentId, registrations] of context.registrationsByComponent) {
+    const retained = registrations.filter(
+      (registration) => registration.status === "proposed" || registration.status === "accepted",
+    );
+    if (retained.length === 1 && isNonEmptyString(retained[0].designId)) {
+      designIdOwner.set(retained[0].designId, componentId);
+    }
+  }
+  context.designIdOwner = designIdOwner;
 
   for (const candidate of context.candidates) {
     const count = (context.registrationsByComponent.get(candidate.componentId) ?? []).length;
@@ -1017,6 +1311,8 @@ const REPO_PATHS = {
   contract: "docs/design/contracts/artifact-design-dossier.v1.json",
   registry: "docs/design/document-registry.json",
   registrations: "docs/design/artifact-design-registrations.json",
+  baseline: "docs/design/v0.1.0-architecture-baseline.json",
+  scopeBom: "docs/release/v0.1.0-scope-bom.json",
 };
 
 const CLI_FLAGS = new Map([
@@ -1057,8 +1353,12 @@ async function runRepositoryCheck(root, options) {
     }
   }
   const facts = { phase: options.phase, catalog, contract, registry, documents, registrations };
-  if (options.baseline !== null) facts.architectureBaseline = await readJsonFile(options.baseline);
-  if (options.scopeBom !== null) facts.scopeBom = await readJsonFile(options.scopeBom);
+  // The scope phase defaults to the repository's formal Source Facts; explicit flags override the
+  // defaults for fixtures and external callers. Missing or unreadable files fail closed below.
+  const baselinePath = options.baseline ?? (options.phase === "scope" ? `${root}/${REPO_PATHS.baseline}` : null);
+  const scopeBomPath = options.scopeBom ?? (options.phase === "scope" ? `${root}/${REPO_PATHS.scopeBom}` : null);
+  if (baselinePath !== null) facts.architectureBaseline = await readJsonFile(baselinePath);
+  if (scopeBomPath !== null) facts.scopeBom = await readJsonFile(scopeBomPath);
   return checkPreDesign(facts);
 }
 

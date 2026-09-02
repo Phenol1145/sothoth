@@ -561,7 +561,7 @@ function validateFoundationDesign(facts: {
       registration.designId !== spec.designId ||
       registration.designRevision !== 1 ||
       registration.designRequirement !== "full" ||
-      registration.status !== "proposed" ||
+      registration.status !== "accepted" ||
       registration.supersedes !== null
     ) {
       push("registration-identity-invalid", spec.packageId);
@@ -861,7 +861,9 @@ describe("foundation dossier structured design facts", () => {
     expect(result.projection.readyForAcceptance).toBe(true);
     for (const spec of FOUNDATION) {
       const member = result.projection.members.find((entry: any) => entry.componentId === spec.packageId);
-      expect(member.registrationStatus).toBe("proposed");
+      // The live reviewed registrations were accepted by the external human owner on 2026-09-03;
+      // only the synthetic fixture registrations stay in the proposed stage.
+      expect(member.registrationStatus).toBe("accepted");
       expect(member.localTopics + member.inheritedTopics + member.notApplicableTopics).toBe(18);
       expect(member.criteria).toBe(spec.criteria.length);
     }

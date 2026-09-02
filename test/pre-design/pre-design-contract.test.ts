@@ -1,4 +1,5 @@
 import { execFile } from "node:child_process";
+import { createHash } from "node:crypto";
 import { mkdtemp, readFile, readdir, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -54,7 +55,8 @@ const GOVERNANCE_DOC_PATH = `${root}/docs/design/governance-control-plane.md`;
 const DESIGN_CAPSULE_ID = "DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN";
 const FIXTURE_DOSSIER_ID = "DOC-FIXTURE-PACKAGE-DOSSIER";
 const FIXTURE_DOSSIER_B_ID = "DOC-FIXTURE-PACKAGE-DOSSIER-B";
-const BASELINE_ID = "SOTHOTH-ARCHITECTURE-BASELINE";
+const BASELINE_ID = "SOTHOTH-ARCHITECTURE-BASELINE-0.1";
+const BOM_ID = "SOTHOTH-RELEASE-SCOPE-BOM-0.1";
 
 const CAPSULE_SECTION_IDS = [
   "decision",
@@ -222,29 +224,64 @@ async function baseFacts(): Promise<any> {
   return structuredClone(baseCache);
 }
 
+// The scope fixture uses the closed formal schemas: `sothoth.architecture-baseline/v1` and
+// `sothoth.release-bom/v1` with completion gates. A generic in-memory fixture may use another
+// non-empty principalId and a valid calendar date; only the committed Baseline records the exact
+// human principal and acceptance date.
 async function scopePhaseFacts(): Promise<any> {
   const facts = await baseFacts();
   facts.phase = "scope";
-  facts.architectureBaseline = {
-    baselineId: BASELINE_ID,
-    baselineRevision: 1,
-    status: "accepted",
-  };
-  facts.scopeBom = {
-    schema: "sothoth.candidate-scope-bom/v1",
-    members: facts.catalog.candidates.map((candidate: any) => ({
-      componentId: candidate.componentId,
-      designRef: {
-        designId: candidate.designId,
-        designRevision: 1,
-        architectureBaselineId: BASELINE_ID,
-        architectureBaselineRevision: 1,
-      },
-    })),
-  };
   for (const registration of facts.registrations.registrations) {
     registration.status = "accepted";
   }
+  const dossierDigest = `sha256:${createHash("sha256").update(facts.documents[FIXTURE_DOSSIER_ID], "utf8").digest("hex")}`;
+  facts.architectureBaseline = {
+    schema: "sothoth.architecture-baseline/v1",
+    baselineId: BASELINE_ID,
+    baselineRevision: 1,
+    targetRelease: "0.1.0",
+    status: "accepted",
+    acceptedBy: { principalType: "human", principalId: "fixture-owner" },
+    acceptedAt: "2026-09-01",
+    members: facts.catalog.candidates.map((candidate: any) => {
+      const registration = registrationOf(facts, candidate.componentId);
+      return {
+        componentId: candidate.componentId,
+        designId: registration.designId,
+        designRevision: registration.designRevision,
+        documentRef: structuredClone(registration.documentRef),
+        dossierDigest,
+      };
+    }),
+  };
+  facts.scopeBom = {
+    schema: "sothoth.release-bom/v1",
+    bomId: BOM_ID,
+    bomRevision: 1,
+    targetRelease: "0.1.0",
+    members: facts.catalog.candidates.map((candidate: any) => {
+      const registration = registrationOf(facts, candidate.componentId);
+      return {
+        id: candidate.componentId,
+        version: "0.1.0",
+        type: "npm-package",
+        layer: "required",
+        owner: "sothoth",
+        designRef: {
+          architectureBaselineId: BASELINE_ID,
+          architectureBaselineRevision: 1,
+          designId: registration.designId,
+          designRevision: registration.designRevision,
+        },
+        completionGates: [
+          {
+            gateId: `${candidate.componentId.slice("@sothoth/".length)}-dossier-criteria`,
+            criterionIds: ["criterion-1"],
+          },
+        ],
+      };
+    }),
+  };
   return facts;
 }
 
@@ -577,6 +614,25 @@ describe("checkPreDesign phased validation", () => {
     expect(result.outcome).toBe("valid");
     expect(result.projection.schema).toBe("sothoth.scope-bom-admissibility-projection/v1");
     expect(result.projection.admissible).toBe(true);
+    expect(result.projection.architectureBaseline).toEqual({
+      baselineId: BASELINE_ID,
+      baselineRevision: 1,
+      status: "accepted",
+    });
+    expect(result.projection.scopeBom).toEqual({
+      bomId: BOM_ID,
+      bomRevision: 1,
+      targetRelease: "0.1.0",
+    });
+    expect(
+      result.projection.members.every(
+        (member: any) =>
+          member.registrationStatus === "accepted" &&
+          member.designRefResolved &&
+          member.baselineMemberResolved &&
+          member.completionCriteriaResolved,
+      ),
+    ).toBe(true);
   });
 
   test("scope phase rejects a proposed Dossier referenced by a Scope BOM", async () => {
@@ -656,7 +712,7 @@ describe("fix round 1: Scope BOM membership and designRef binding", () => {
   test("scope phase rejects a Scope BOM that drops a candidate member", async () => {
     const facts = await scopePhaseFacts();
     facts.scopeBom.members = facts.scopeBom.members.filter(
-      (member: any) => member.componentId !== "@sothoth/sdk",
+      (member: any) => member.id !== "@sothoth/sdk",
     );
     const result = checkPreDesign(facts);
     expect(result.outcome).toBe("invalid");
@@ -669,10 +725,10 @@ describe("fix round 1: Scope BOM membership and designRef binding", () => {
 
   test("scope phase rejects a non-candidate member even when it copies a valid designRef", async () => {
     const facts = await scopePhaseFacts();
-    const core = facts.scopeBom.members.find((member: any) => member.componentId === "@sothoth/core");
+    const core = facts.scopeBom.members.find((member: any) => member.id === "@sothoth/core");
     facts.scopeBom.members.push({
-      componentId: "@sothoth/extra-widget",
-      designRef: structuredClone(core.designRef),
+      ...structuredClone(core),
+      id: "@sothoth/extra-widget",
     });
     const result = checkPreDesign(facts);
     expect(result.outcome).toBe("invalid");
@@ -684,8 +740,8 @@ describe("fix round 1: Scope BOM membership and designRef binding", () => {
 
   test("scope phase rejects a member whose designRef belongs to another component", async () => {
     const facts = await scopePhaseFacts();
-    const core = facts.scopeBom.members.find((member: any) => member.componentId === "@sothoth/core");
-    const sdk = facts.scopeBom.members.find((member: any) => member.componentId === "@sothoth/sdk");
+    const core = facts.scopeBom.members.find((member: any) => member.id === "@sothoth/core");
+    const sdk = facts.scopeBom.members.find((member: any) => member.id === "@sothoth/sdk");
     sdk.designRef = structuredClone(core.designRef);
     const result = checkPreDesign(facts);
     expect(result.outcome).toBe("invalid");

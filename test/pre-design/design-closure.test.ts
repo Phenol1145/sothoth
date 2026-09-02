@@ -556,7 +556,7 @@ function arraysEqualMultiset(left: string[], right: string[]): boolean {
 }
 
 describe("closure projection over real Source Facts", () => {
-  test("eleven proposed registrations project to a valid, acceptance-ready closure", async () => {
+  test("eleven accepted registrations project to a valid, acceptance-ready closure", async () => {
     const result = checkPreDesign(await loadFacts());
     expect(result.issues).toEqual([]);
     expect(result.outcome).toBe("valid");
@@ -580,8 +580,12 @@ describe("closure projection over real Source Facts", () => {
         "@sothoth/selectors",
       ],
     );
-    expect(projection.members.every((member: any) => member.registrationStatus === "proposed")).toBe(true);
-    expect(canonicalJsonStringify(projection.members)).not.toContain("accepted");
+    // The eleven registrations were accepted by the external human owner on 2026-09-03; the exact
+    // status assertion replaces the former broad pre-acceptance substring check.
+    expect(projection.members.every((member: any) => member.registrationStatus === "accepted")).toBe(true);
+    expect(new Set(projection.members.map((member: any) => member.registrationStatus))).toEqual(
+      new Set(["accepted"]),
+    );
   });
 });
 
@@ -606,10 +610,22 @@ describe("review record authority boundary", () => {
     expect(record.sourceFactsDigest).toMatch(DIGEST_PATTERN);
   });
 
-  test("sourceFactsDigest binds the live closure projection of the same facts", async () => {
+  test("sourceFactsDigest binds the pre-acceptance closure projection the review recorded", async () => {
     const { record } = await loadReview();
-    const projection = checkPreDesign(await loadFacts()).projection;
-    expect(record.sourceFactsDigest).toBe(projection.sourceFactsDigest);
+    // Task 7's review record binds the pre-acceptance facts. The in-memory pre-acceptance view
+    // clones the current registrations and rolls only the eleven reviewed statuses back to
+    // `proposed`; the review record itself is never rewritten.
+    const facts = await loadFacts();
+    const preAcceptance = structuredClone(facts);
+    for (const registration of preAcceptance.registrations.registrations) {
+      registration.status = "proposed";
+    }
+    const preAcceptanceProjection = checkPreDesign(preAcceptance).projection;
+    expect(preAcceptanceProjection.readyForAcceptance).toBe(true);
+    expect(record.sourceFactsDigest).toBe(preAcceptanceProjection.sourceFactsDigest);
+    // The live projection binds the accepted facts and therefore differs from the review digest.
+    const liveProjection = checkPreDesign(facts).projection;
+    expect(liveProjection.sourceFactsDigest).not.toBe(record.sourceFactsDigest);
   });
 
   test("the review record stays outside the document registry and registrations", async () => {
@@ -945,7 +961,7 @@ describe("RED mutation: criterion identity discipline", () => {
 });
 
 describe("deterministic disposable closure projection through the real CLI", () => {
-  test("two fresh closure invocations are byte-identical with the same digest and no accepted member", async () => {
+  test("two fresh closure invocations are byte-identical with the same digest and eleven accepted members", async () => {
     const dir = await mkdtemp(join(tmpdir(), "sothoth-design-closure-"));
     try {
       const firstPath = join(dir, "first.json");
@@ -980,23 +996,39 @@ describe("deterministic disposable closure projection through the real CLI", () 
       expect(firstParsed.projection.memberCount).toBe(11);
       expect(firstParsed.projection.readyForAcceptance).toBe(true);
       expect(firstParsed.projection.sourceFactsDigest).toBe(secondParsed.projection.sourceFactsDigest);
+      // Live closure CLI assertions expect the eleven human-accepted registration statuses; the
+      // exact status assertion replaces the former broad pre-acceptance substring check.
       expect(
-        firstParsed.projection.members.every((member: any) => member.registrationStatus === "proposed"),
+        firstParsed.projection.members.every((member: any) => member.registrationStatus === "accepted"),
       ).toBe(true);
-      expect(canonicalJsonStringify(firstParsed.projection.members)).not.toContain("accepted");
+      expect(
+        new Set(firstParsed.projection.members.map((member: any) => member.registrationStatus)),
+      ).toEqual(new Set(["accepted"]));
     } finally {
       await rm(dir, { recursive: true, force: true });
     }
   });
 
-  test("the review record digest equals the digest the real CLI projects", async () => {
+  test("the review record digest equals the pre-acceptance view, and the live CLI projects the accepted view", async () => {
     const { record } = await loadReview();
+    // The Task 7 review record binds the pre-acceptance facts: clone the current registrations and
+    // roll only the eleven reviewed statuses back to `proposed`; the review record is unchanged.
+    const facts = await loadFacts();
+    const preAcceptance = structuredClone(facts);
+    for (const registration of preAcceptance.registrations.registrations) {
+      registration.status = "proposed";
+    }
+    expect(record.sourceFactsDigest).toBe(checkPreDesign(preAcceptance).projection.sourceFactsDigest);
     const run = await runCli("node", [`${root}/scripts/check-pre-design.mjs`, "--phase", "closure"]).catch(
       (error: any) => error,
     );
     expect(exitCodeOf(run)).toBe(0);
     const parsed = JSON.parse(run.stdout);
     expect(parsed.outcome).toBe("valid");
-    expect(record.sourceFactsDigest).toBe(parsed.projection.sourceFactsDigest);
+    expect(
+      parsed.projection.members.every((member: any) => member.registrationStatus === "accepted"),
+    ).toBe(true);
+    expect(parsed.projection.sourceFactsDigest).toBe(checkPreDesign(facts).projection.sourceFactsDigest);
+    expect(parsed.projection.sourceFactsDigest).not.toBe(record.sourceFactsDigest);
   });
 });

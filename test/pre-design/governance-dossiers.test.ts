@@ -772,7 +772,7 @@ function validateDocumentGovernanceDesign(facts: {
     ) {
       push("registration-identity-invalid", spec.packageId);
     }
-    if (registration.status !== "proposed") {
+    if (registration.status !== "accepted") {
       push("registration-status-invalid", `${spec.packageId}:${registration.status}`);
     }
     if (
@@ -1133,7 +1133,8 @@ describe("document governance dossier structured design facts", () => {
     expect(result.projection.readyForAcceptance).toBe(true);
     for (const spec of DOCUMENT_GOVERNANCE) {
       const member = result.projection.members.find((entry: any) => entry.componentId === spec.packageId);
-      expect(member.registrationStatus).toBe("proposed");
+      // Live reviewed registrations were accepted by the external human owner on 2026-09-03.
+      expect(member.registrationStatus).toBe("accepted");
       expect(member.documentRef.documentId).toBe(spec.documentId);
       expect(member.localTopics + member.inheritedTopics + member.notApplicableTopics).toBe(18);
       expect(member.inheritedTopics).toBe(1);
@@ -1228,15 +1229,17 @@ describe("document governance dossier mutation tests", () => {
       subject: "@sothoth/governance:acceptance-state-marking",
     });
 
+    // After the human gate, rolling a reviewed registration back out of its accepted state is the
+    // unauthorized lifecycle change; the validator still fails closed on it.
     const statusFacts = await mutatedRegistrations((registrations) => {
       const registration = registrations.registrations.find(
         (entry: any) => entry.componentId === "@sothoth/governance",
       );
-      registration.status = "accepted";
+      registration.status = "proposed";
     });
     expect(validateDocumentGovernanceDesign(statusFacts)).toContainEqual({
       code: "sothoth.document-governance/registration-status-invalid",
-      subject: "@sothoth/governance:accepted",
+      subject: "@sothoth/governance:proposed",
     });
   });
 
