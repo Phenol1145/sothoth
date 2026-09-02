@@ -125,7 +125,7 @@ function validRegistration(componentId: string, designId: string) {
     topicCoverage,
     providedContractRefs: isContracts ? ["@sothoth/contracts@1"] : [],
     requiredContractRefs: isContracts ? [] : ["@sothoth/contracts@1"],
-    producedStateRefs: [`${componentId}:state`],
+    producedStateRefs: [`${componentId}:state@1`],
     consumedStateRefs: [],
     issuedAuthorityRefs: [],
     requiredAuthorityRefs: [],
@@ -432,10 +432,10 @@ describe("checkPreDesign phased validation", () => {
 
   test("rejects two registrations claiming the same truth", async () => {
     const facts = await baseFacts();
-    registrationOf(facts, "@sothoth/sdk").producedStateRefs.push("@sothoth/core:state");
+    registrationOf(facts, "@sothoth/sdk").producedStateRefs.push("@sothoth/core:state@1");
     expect(checkPreDesign(facts).issues).toContainEqual({
       code: "sothoth.pre-design/truth-owner-duplicate",
-      subject: "@sothoth/core:state",
+      subject: "@sothoth/core:state@1",
     });
   });
 
@@ -546,6 +546,178 @@ describe("deterministic diagnostics and canonical projections", () => {
   });
 });
 
+describe("fix round 1: exact bootstrap references", () => {
+  test.each([
+    ["producedStateRefs"],
+    ["consumedStateRefs"],
+    ["issuedAuthorityRefs"],
+    ["requiredAuthorityRefs"],
+    ["emittedObservationRefs"],
+    ["deploymentDependencyRefs"],
+  ])("rejects a bare reference in %s", async (field: string) => {
+    const facts = await baseFacts();
+    registrationOf(facts, "@sothoth/core")[field] = ["core-state-latest"];
+    expect(checkPreDesign(facts).issues).toContainEqual({
+      code: "sothoth.pre-design/reference-not-exact",
+      subject: `@sothoth/core:${field}:core-state-latest`,
+    });
+  });
+
+  test("rejects a zero revision in an exact state reference", async () => {
+    const facts = await baseFacts();
+    registrationOf(facts, "@sothoth/core").producedStateRefs = ["@sothoth/core:state@0"];
+    expect(checkPreDesign(facts).issues).toContainEqual({
+      code: "sothoth.pre-design/reference-not-exact",
+      subject: "@sothoth/core:producedStateRefs:@sothoth/core:state@0",
+    });
+  });
+
+  test("accepts scoped identities carrying a positive revision", async () => {
+    const facts = await baseFacts();
+    registrationOf(facts, "@sothoth/core").producedStateRefs = ["@sothoth/core:state@2"];
+    const result = checkPreDesign(facts);
+    expect(result.outcome).toBe("valid");
+    expect(result.issues).toEqual([]);
+  });
+});
+
+describe("fix round 1: Scope BOM membership and designRef binding", () => {
+  test("scope phase rejects a Scope BOM that drops a candidate member", async () => {
+    const facts = await scopePhaseFacts();
+    facts.scopeBom.members = facts.scopeBom.members.filter(
+      (member: any) => member.componentId !== "@sothoth/sdk",
+    );
+    const result = checkPreDesign(facts);
+    expect(result.outcome).toBe("invalid");
+    expect(result.issues).toContainEqual({
+      code: "sothoth.pre-design/scope-bom-member-missing",
+      subject: "@sothoth/sdk",
+    });
+    expect(result.projection.admissible).toBe(false);
+  });
+
+  test("scope phase rejects a non-candidate member even when it copies a valid designRef", async () => {
+    const facts = await scopePhaseFacts();
+    const core = facts.scopeBom.members.find((member: any) => member.componentId === "@sothoth/core");
+    facts.scopeBom.members.push({
+      componentId: "@sothoth/extra-widget",
+      designRef: structuredClone(core.designRef),
+    });
+    const result = checkPreDesign(facts);
+    expect(result.outcome).toBe("invalid");
+    expect(result.issues).toContainEqual({
+      code: "sothoth.pre-design/scope-bom-member-unknown",
+      subject: "@sothoth/extra-widget",
+    });
+  });
+
+  test("scope phase rejects a member whose designRef belongs to another component", async () => {
+    const facts = await scopePhaseFacts();
+    const core = facts.scopeBom.members.find((member: any) => member.componentId === "@sothoth/core");
+    const sdk = facts.scopeBom.members.find((member: any) => member.componentId === "@sothoth/sdk");
+    sdk.designRef = structuredClone(core.designRef);
+    const result = checkPreDesign(facts);
+    expect(result.outcome).toBe("invalid");
+    expect(result.issues).toContainEqual({
+      code: "sothoth.pre-design/design-ref-component-mismatch",
+      subject: "@sothoth/sdk",
+    });
+    const projected = result.projection.members.find(
+      (member: any) => member.componentId === "@sothoth/sdk",
+    );
+    expect(projected.designRefResolved).toBe(false);
+  });
+});
+
+describe("fix round 1: Source Facts digest and deterministic projections", () => {
+  test("reversing Scope BOM member order changes neither diagnostics, projection bytes, nor the digest", async () => {
+    const facts = await scopePhaseFacts();
+    const first = checkPreDesign(facts);
+    expect(first.projection.sourceFactsDigest).toMatch(/^sha256:[0-9a-f]{64}$/);
+    const reversed = structuredClone(facts);
+    reversed.scopeBom.members.reverse();
+    const second = checkPreDesign(reversed);
+    expect(second.issues).toEqual(first.issues);
+    expect(second.projection.sourceFactsDigest).toBe(first.projection.sourceFactsDigest);
+    expect(canonicalJsonStringify(second.projection)).toBe(canonicalJsonStringify(first.projection));
+  });
+
+  test("changing dossier prose without touching markers changes the digest and projection bytes", async () => {
+    const facts = await baseFacts();
+    const first = checkPreDesign(facts);
+    const edited = structuredClone(facts);
+    edited.documents[FIXTURE_DOSSIER_ID] = edited.documents[FIXTURE_DOSSIER_ID].replace(
+      "Fixture body.",
+      "Materially different body.",
+    );
+    const second = checkPreDesign(edited);
+    expect(second.outcome).toBe("valid");
+    expect(second.issues).toEqual([]);
+    expect(second.projection.sourceFactsDigest).not.toBe(first.projection.sourceFactsDigest);
+    expect(canonicalJsonStringify(second.projection)).not.toBe(canonicalJsonStringify(first.projection));
+  });
+
+  test("changing a topic resolution while keeping topic counts unchanged changes the digest and projection bytes", async () => {
+    const facts = await baseFacts();
+    const first = checkPreDesign(facts);
+    const edited = structuredClone(facts);
+    const coverage = registrationOf(edited, "@sothoth/core").topicCoverage;
+    const identity = coverage["identity"];
+    coverage["identity"] = coverage["intent-and-non-goals"];
+    coverage["intent-and-non-goals"] = identity;
+    const second = checkPreDesign(edited);
+    expect(second.outcome).toBe("valid");
+    const firstCore = first.projection.members.find((member: any) => member.componentId === "@sothoth/core");
+    const secondCore = second.projection.members.find(
+      (member: any) => member.componentId === "@sothoth/core",
+    );
+    expect(secondCore.localTopics).toBe(firstCore.localTopics);
+    expect(secondCore.inheritedTopics).toBe(firstCore.inheritedTopics);
+    expect(secondCore.notApplicableTopics).toBe(firstCore.notApplicableTopics);
+    expect(second.projection.sourceFactsDigest).not.toBe(first.projection.sourceFactsDigest);
+    expect(canonicalJsonStringify(second.projection)).not.toBe(canonicalJsonStringify(first.projection));
+  });
+
+  test("reversing the registration collection changes neither projection bytes nor the digest", async () => {
+    const facts = await baseFacts();
+    const first = checkPreDesign(facts);
+    expect(first.projection.sourceFactsDigest).toMatch(/^sha256:[0-9a-f]{64}$/);
+    const reversed = structuredClone(facts);
+    reversed.registrations.registrations.reverse();
+    const second = checkPreDesign(reversed);
+    expect(second.projection.sourceFactsDigest).toBe(first.projection.sourceFactsDigest);
+    expect(canonicalJsonStringify(second.projection)).toBe(canonicalJsonStringify(first.projection));
+  });
+});
+
+describe("fix round 1: schema violations are invalid input", () => {
+  test("schema violations in the contract, catalog, registry, and registrations wrapper are invalid-input", async () => {
+    const contractBad = await baseFacts();
+    contractBad.contract.schema = "sothoth.document-contract/v2";
+    const contractResult = checkPreDesign(contractBad);
+    expect(contractResult.outcome).toBe("invalid-input");
+    expect(contractResult.projection).toBe(null);
+
+    const catalogBad = await baseFacts();
+    catalogBad.catalog = { ...catalogBad.catalog, schema: "sothoth.design-scope-catalog/v2" };
+    const catalogResult = checkPreDesign(catalogBad);
+    expect(catalogResult.outcome).toBe("invalid-input");
+    expect(catalogResult.projection).toBe(null);
+
+    const registryBad = await baseFacts();
+    registryBad.registry.registryRevision = 0;
+    const registryResult = checkPreDesign(registryBad);
+    expect(registryResult.outcome).toBe("invalid-input");
+    expect(registryResult.projection).toBe(null);
+
+    const wrapperBad = await baseFacts();
+    wrapperBad.registrations.schema = "sothoth.artifact-design-registrations/v2";
+    const wrapperResult = checkPreDesign(wrapperBad);
+    expect(wrapperResult.outcome).toBe("invalid-input");
+    expect(wrapperResult.projection).toBe(null);
+  });
+});
+
 describe("check-pre-design CLI", () => {
   test("repository dossiers check exits 1 reporting exactly the eleven missing registrations", async () => {
     const catalog = await readJson(CATALOG_PATH);
@@ -589,6 +761,44 @@ describe("check-pre-design CLI", () => {
       const written = await readFile(outPath, "utf8");
       expect(written).toBe(withOutput.stdout);
       expect(await readdir(dir)).toEqual(["closure.json"]);
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("CLI exits 2 with one invalid-input result when a --baseline file is unreadable", async () => {
+    const run = await runCli("node", [
+      `${root}/scripts/check-pre-design.mjs`,
+      "--phase",
+      "scope",
+      "--baseline",
+      join(tmpdir(), "sothoth-no-such-baseline.json"),
+    ]).catch((error: any) => error);
+    expect(run.code).toBe(2);
+    const parsed = JSON.parse(run.stdout);
+    expect(parsed.outcome).toBe("invalid-input");
+    expect(parsed.issues[0].code).toBe("sothoth.pre-design/source-unreadable");
+    expect(`${canonicalJsonStringify(parsed)}\n`).toBe(run.stdout);
+  });
+
+  test("--output into a missing parent directory yields exactly one invalid-input result and exit 2", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "sothoth-pre-design-"));
+    try {
+      const outPath = join(dir, "missing-parent", "result.json");
+      const run = await runCli("node", [
+        `${root}/scripts/check-pre-design.mjs`,
+        "--phase",
+        "dossiers",
+        "--output",
+        outPath,
+      ]).catch((error: any) => error);
+      expect(run.code).toBe(2);
+      const parsed = JSON.parse(run.stdout);
+      expect(parsed.outcome).toBe("invalid-input");
+      expect(parsed.phase).toBe("dossiers");
+      expect(parsed.projection).toBe(null);
+      expect(parsed.issues).toEqual([{ code: "sothoth.pre-design/output-unwritable", subject: outPath }]);
+      expect(`${canonicalJsonStringify(parsed)}\n`).toBe(run.stdout);
     } finally {
       await rm(dir, { recursive: true, force: true });
     }

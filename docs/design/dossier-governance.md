@@ -39,6 +39,14 @@ Registrations follow the accepted design's `ArtifactDesignRegistrationV1` shape:
 `emittedObservationRefs`, `deploymentDependencyRefs`, and `acceptanceCriteria` of stable
 `DesignCriterionRefV1` entries. Every field set is closed; unknown fields fail closed.
 
+Every entry in all eight `*Refs` arrays uses one bootstrap exact-reference grammar:
+`<non-empty identity>@<positive integer revision>`, where the **last** `@` separates the revision, so
+scoped npm-style identities remain valid. Bare names, paths, `latest`, implicit-current references,
+and revision `0` are not exact. A non-conforming entry is diagnosed per field: contract refs report
+`sothoth.pre-design/contract-ref-not-exact` and the six non-contract fields report
+`sothoth.pre-design/reference-not-exact`, each with the componentId, the field name, and the original
+entry in the subject. Semver- and digest-shaped references remain future contract revisions.
+
 ## Stable section markers
 
 A stable section marker is an HTML comment that exactly matches
@@ -65,23 +73,43 @@ matches substrings, and never infers structure, topics, or permissions from text
   `readyForAcceptance: true` when every check passes. The checker never flips a Dossier, a
   registration, or a Baseline to `accepted`: acceptance is an external, accountable action.
 - `scope` — additionally requires an externally accepted Architecture Baseline, `accepted`
-  registration status for every candidate, and a candidate Scope BOM whose members each carry a
-  single `designRef` resolving into that exact Baseline. It emits a
-  `ScopeBomAdmissibilityProjectionV1` stating admissibility only; it never writes an authoritative
-  Scope BOM.
+  registration status for every candidate, and a candidate Scope BOM whose membership is bound to
+  the catalog: every catalog candidate must appear exactly once (`scope-bom-member-missing` /
+  `scope-bom-member-unknown`), and each member's single `designRef` must resolve into a registration
+  of that member's **own** component at the exact `designId` and `designRevision` and point at that
+  Baseline (`design-ref-unresolved` / `design-ref-component-mismatch` /
+  `design-ref-baseline-mismatch`). It emits a `ScopeBomAdmissibilityProjectionV1` stating
+  admissibility only; it never writes an authoritative Scope BOM.
 
 ## Projections, canonical JSON, and the CLI
 
 Both projections are non-authoritative, disposable, and rebuildable from exact input identities.
+Each records the readable identity and revision of every Source Fact it consumed — the contract
+(`contractId`/`contractRevision`), the catalog, the document registry, and the registrations
+collection — plus a `sourceFactsDigest` and, per member, the exact `documentRef` needed to trace the
+member back to its Dossier document. The `sourceFactsDigest` is a SHA-256 hash
+(`sha256:`-prefixed hex) over a deterministically normalized value of the consumed Source Facts:
+CommonMark document strings participate verbatim (changing prose without changing markers changes
+the digest), registration collections and Scope BOM member sets are canonically sorted (input order
+cannot change the digest or the projection bytes), and JSON object key insertion order is
+irrelevant. The closure projection binds the contract, catalog, registry, documents, and
+registrations; the scope projection additionally binds the Architecture Baseline and the Scope BOM.
+Projection members are sorted by `componentId` in Unicode code-point order.
+
 Canonical JSON serializes recursively key-sorted (Unicode code-point order) with compact separators;
 the projection's canonical bytes are its identity, so identical inputs always rebuild identical
 bytes. Diagnostic order is deterministic: issues are sorted by code, then subject, regardless of
 input traversal order.
 
 The default CLI writes only canonical JSON (one trailing newline) to stdout and creates no files.
-Exit codes follow the design: `0` valid, `1` invalid, `2` invalid-input. Projection files are
-written only when `--output <explicit-path>` is supplied, and the file bytes are exactly the stdout
-bytes. `--baseline <path>` and `--scope-bom <path>` supply the scope-phase Source Facts when they
+Exit codes follow the design: `0` valid, `1` invalid, `2` invalid-input. Schema or envelope
+violations in any of the four input Source Facts — the contract, the catalog, the registry, or the
+registrations wrapper — are `invalid-input` with a null projection, as are unreadable or
+unparseable source files. Projection files are written only when `--output <explicit-path>` is
+supplied, and the file bytes are exactly the stdout bytes; if the requested output path cannot be
+written, stdout carries exactly one canonical `invalid-input` result with the diagnostic
+`sothoth.pre-design/output-unwritable`, the process exits `2`, and no check result is emitted
+first. `--baseline <path>` and `--scope-bom <path>` supply the scope-phase Source Facts when they
 exist.
 
 ## Authority boundaries

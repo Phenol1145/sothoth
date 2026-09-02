@@ -1,4 +1,5 @@
 import { readFile, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { fromMarkdown } from "mdast-util-from-markdown";
 import { validateDesignScopeCatalog } from "./check-design-scope-catalog.mjs";
@@ -78,7 +79,7 @@ const DESIGN_REQUIREMENTS = new Set(["full", "projection", "compatibility"]);
 
 const SECTION_ID_PATTERN = /^[a-z][a-z0-9-]*$/;
 const MARKER_PATTERN = /^<!-- sothoth:section id="([a-z][a-z0-9-]*)" -->$/;
-const CONTRACT_REF_PATTERN = /^(.+)@([0-9]+)$/;
+const EXACT_REF_PATTERN = /^(.+)@([1-9][0-9]*)$/;
 
 function issue(code, subject) {
   return { code, subject };
@@ -360,11 +361,14 @@ function checkRegistration(registration, context, issues) {
     const value = registration[field];
     if (!Array.isArray(value) || !value.every(isNonEmptyString)) {
       issues.push(issue("sothoth.pre-design/registration-field-invalid", `${componentId}:${field}`));
-    } else if (CONTRACT_REF_FIELDS.has(field)) {
-      for (const entry of value) {
-        if (!CONTRACT_REF_PATTERN.test(entry)) {
-          issues.push(issue("sothoth.pre-design/contract-ref-not-exact", `${componentId}:${entry}`));
-        }
+      continue;
+    }
+    for (const entry of value) {
+      if (EXACT_REF_PATTERN.test(entry)) continue;
+      if (CONTRACT_REF_FIELDS.has(field)) {
+        issues.push(issue("sothoth.pre-design/contract-ref-not-exact", `${componentId}:${entry}`));
+      } else {
+        issues.push(issue("sothoth.pre-design/reference-not-exact", `${componentId}:${field}:${entry}`));
       }
     }
   }
@@ -557,7 +561,7 @@ function checkClosureFacts(facts, context, issues) {
       if (!Array.isArray(refs)) continue;
       for (const ref of refs) {
         if (typeof ref !== "string") continue;
-        const match = CONTRACT_REF_PATTERN.exec(ref);
+        const match = EXACT_REF_PATTERN.exec(ref);
         if (!match) continue;
         const identity = match[1];
         const record = contractIdentities.get(identity) ?? { provided: new Set(), revisions: new Set() };
@@ -577,11 +581,11 @@ function checkClosureFacts(facts, context, issues) {
   for (const registration of registrations) {
     if (!isPlainObject(registration) || !Array.isArray(registration.requiredContractRefs)) continue;
     for (const ref of registration.requiredContractRefs) {
-      if (typeof ref === "string" && CONTRACT_REF_PATTERN.test(ref)) requiredRefs.add(ref);
+      if (typeof ref === "string" && EXACT_REF_PATTERN.test(ref)) requiredRefs.add(ref);
     }
   }
   for (const ref of [...requiredRefs].sort(codePointCompare)) {
-    const match = CONTRACT_REF_PATTERN.exec(ref);
+    const match = EXACT_REF_PATTERN.exec(ref);
     const record = contractIdentities.get(match[1]);
     if (!record || !record.provided.has(ref)) {
       issues.push(issue("sothoth.pre-design/contract-edge-mismatch", ref));
@@ -628,6 +632,20 @@ function checkClosureFacts(facts, context, issues) {
   for (const documentId of findCycleNodes(adjacency)) {
     issues.push(issue("sothoth.pre-design/inheritance-cycle", documentId));
   }
+}
+
+function resolveDesignRef(registrations, componentId, designRef) {
+  if (!isPlainObject(designRef)) return { resolved: false, own: false };
+  const matches = registrations.filter(
+    (registration) =>
+      isPlainObject(registration) &&
+      registration.designId === designRef.designId &&
+      registration.designRevision === designRef.designRevision,
+  );
+  return {
+    resolved: matches.length > 0,
+    own: matches.some((registration) => registration.componentId === componentId),
+  };
 }
 
 function checkScopeFacts(facts, context, issues) {
@@ -700,14 +718,15 @@ function checkScopeFacts(facts, context, issues) {
       issues.push(issue("sothoth.pre-design/scope-bom-invalid", `${componentId}:designRef`));
       continue;
     }
-    const resolved = context.registrations.some(
-      (registration) =>
-        isPlainObject(registration) &&
-        registration.designId === designRef.designId &&
-        registration.designRevision === designRef.designRevision,
-    );
-    if (!resolved) {
+    if (!context.candidatesByComponent.has(componentId)) {
+      issues.push(issue("sothoth.pre-design/scope-bom-member-unknown", componentId));
+      continue;
+    }
+    const binding = resolveDesignRef(context.registrations, componentId, designRef);
+    if (!binding.resolved) {
       issues.push(issue("sothoth.pre-design/design-ref-unresolved", componentId));
+    } else if (!binding.own) {
+      issues.push(issue("sothoth.pre-design/design-ref-component-mismatch", componentId));
     }
     if (
       baselineUsable &&
@@ -715,6 +734,11 @@ function checkScopeFacts(facts, context, issues) {
         designRef.architectureBaselineRevision !== baseline.baselineRevision)
     ) {
       issues.push(issue("sothoth.pre-design/design-ref-baseline-mismatch", componentId));
+    }
+  }
+  for (const candidate of context.candidates) {
+    if (!seenMembers.has(candidate.componentId)) {
+      issues.push(issue("sothoth.pre-design/scope-bom-member-missing", candidate.componentId));
     }
   }
 }
@@ -732,7 +756,84 @@ function topicCounts(registration) {
   return counts;
 }
 
-function buildClosureProjection(context, outcome, issues) {
+function canonicalEntryStrings(values) {
+  if (!Array.isArray(values)) return [];
+  return values
+    .map((value) => String(canonicalJsonStringify(canonicalize(value))))
+    .sort(codePointCompare);
+}
+
+function consumedDocuments(facts) {
+  const documents = isPlainObject(facts.documents) ? facts.documents : {};
+  const consumed = {};
+  for (const entry of Array.isArray(facts.registry.documents) ? facts.registry.documents : []) {
+    if (isPlainObject(entry) && isNonEmptyString(entry.documentId)) {
+      consumed[entry.documentId] = typeof documents[entry.documentId] === "string" ? documents[entry.documentId] : null;
+    }
+  }
+  return consumed;
+}
+
+function sha256OfCanonical(value) {
+  return `sha256:${createHash("sha256").update(canonicalJsonStringify(value), "utf8").digest("hex")}`;
+}
+
+function closureSourceFactsDigest(facts, context) {
+  return sha256OfCanonical({
+    phase: "closure",
+    contract: facts.contract,
+    catalog: context.catalog,
+    registry: { ...facts.registry, documents: canonicalEntryStrings(facts.registry.documents) },
+    documents: consumedDocuments(facts),
+    registrations: canonicalEntryStrings(context.registrations),
+  });
+}
+
+function scopeSourceFactsDigest(facts, context) {
+  const scopeBom = isPlainObject(facts.scopeBom)
+    ? { ...facts.scopeBom, members: canonicalEntryStrings(facts.scopeBom.members) }
+    : null;
+  return sha256OfCanonical({
+    phase: "scope",
+    contract: facts.contract,
+    catalog: context.catalog,
+    registry: { ...facts.registry, documents: canonicalEntryStrings(facts.registry.documents) },
+    documents: consumedDocuments(facts),
+    registrations: canonicalEntryStrings(context.registrations),
+    architectureBaseline: isPlainObject(facts.architectureBaseline) ? facts.architectureBaseline : null,
+    scopeBom,
+  });
+}
+
+function sourceIdentity(facts, context) {
+  return {
+    contractId: facts.contract.contractId,
+    contractRevision: facts.contract.contractRevision,
+    catalogId: context.catalog.catalogId,
+    catalogRevision: context.catalog.catalogRevision,
+    registryId: facts.registry.registryId,
+    registryRevision: facts.registry.registryRevision,
+    registrationsCollectionId: facts.registrations.collectionId,
+    registrationsCollectionRevision: facts.registrations.collectionRevision,
+  };
+}
+
+function registrationDocumentRef(registration) {
+  if (
+    !isPlainObject(registration) ||
+    !keysExactly(registration.documentRef, DOCUMENT_REF_FIELDS) ||
+    !isNonEmptyString(registration.documentRef.documentId) ||
+    !isPositiveInteger(registration.documentRef.documentRevision)
+  ) {
+    return null;
+  }
+  return {
+    documentId: registration.documentRef.documentId,
+    documentRevision: registration.documentRef.documentRevision,
+  };
+}
+
+function buildClosureProjection(facts, context, outcome, issues) {
   const members = context.candidates.map((candidate) => {
     const registrationsForComponent = context.registrationsByComponent.get(candidate.componentId) ?? [];
     const registration =
@@ -748,6 +849,7 @@ function buildClosureProjection(context, outcome, issues) {
             ? "missing"
             : "duplicate",
       designRevision: registrationsForComponent.length === 1 ? registration.designRevision : 0,
+      documentRef: registrationDocumentRef(registration),
       localTopics: counts.localTopics,
       inheritedTopics: counts.inheritedTopics,
       notApplicableTopics: counts.notApplicableTopics,
@@ -759,8 +861,8 @@ function buildClosureProjection(context, outcome, issues) {
   return {
     schema: CLOSURE_PROJECTION_SCHEMA,
     phase: "closure",
-    catalogId: context.catalog.catalogId,
-    catalogRevision: context.catalog.catalogRevision,
+    ...sourceIdentity(facts, context),
+    sourceFactsDigest: closureSourceFactsDigest(facts, context),
     outcome,
     readyForAcceptance: outcome === "valid",
     memberCount: members.length,
@@ -775,31 +877,28 @@ function buildScopeProjection(facts, context, outcome, issues) {
   const members = membersSource
     .filter((member) => isPlainObject(member) && isNonEmptyString(member.componentId) && isPlainObject(member.designRef))
     .map((member) => {
-      const resolved = context.registrations.some(
+      const binding = resolveDesignRef(context.registrations, member.componentId, member.designRef);
+      const retained = (context.registrationsByComponent.get(member.componentId) ?? []).filter(
         (registration) =>
           isPlainObject(registration) &&
-          registration.designId === member.designRef.designId &&
-          registration.designRevision === member.designRef.designRevision,
+          (registration.status === "proposed" || registration.status === "accepted"),
       );
-      const registration = context.registrations.find(
-        (entry) =>
-          isPlainObject(entry) &&
-          entry.designId === member.designRef.designId &&
-          entry.designRevision === member.designRef.designRevision,
-      );
+      const registration = retained.length === 1 ? retained[0] : null;
       return {
         componentId: member.componentId,
         designId: typeof member.designRef.designId === "string" ? member.designRef.designId : null,
         designRevision: isPositiveInteger(member.designRef.designRevision) ? member.designRef.designRevision : 0,
-        registrationStatus: isPlainObject(registration) ? registration.status : "unresolved",
-        designRefResolved: resolved,
+        registrationStatus: registration ? registration.status : "unresolved",
+        documentRef: registrationDocumentRef(registration),
+        designRefResolved: binding.resolved && binding.own,
       };
-    });
+    })
+    .sort((left, right) => codePointCompare(left.componentId, right.componentId));
   return {
     schema: SCOPE_PROJECTION_SCHEMA,
     phase: "scope",
-    catalogId: context.catalog.catalogId,
-    catalogRevision: context.catalog.catalogRevision,
+    ...sourceIdentity(facts, context),
+    sourceFactsDigest: scopeSourceFactsDigest(facts, context),
     architectureBaseline: {
       baselineId: baseline && typeof baseline.baselineId === "string" ? baseline.baselineId : null,
       baselineRevision: baseline && isPositiveInteger(baseline.baselineRevision) ? baseline.baselineRevision : null,
@@ -829,15 +928,15 @@ export function checkPreDesign(facts) {
   }
   const catalogIssues = validateDesignScopeCatalog(facts.catalog);
   if (catalogIssues.length > 0) {
-    return result(phase, "invalid", catalogIssues, null);
+    return result(phase, "invalid-input", catalogIssues, null);
   }
   const registryIssues = validateRegistryShape(facts.registry);
   if (registryIssues.length > 0) {
-    return result(phase, "invalid", registryIssues, null);
+    return result(phase, "invalid-input", registryIssues, null);
   }
   const wrapperIssues = validateRegistrationsWrapper(facts.registrations);
   if (wrapperIssues.length > 0) {
-    return result(phase, "invalid", wrapperIssues, null);
+    return result(phase, "invalid-input", wrapperIssues, null);
   }
 
   const contract = facts.contract;
@@ -906,7 +1005,7 @@ export function checkPreDesign(facts) {
   const outcome = issues.length === 0 ? "valid" : "invalid";
   const projection =
     phase === "closure"
-      ? buildClosureProjection(context, outcome, issues)
+      ? buildClosureProjection(facts, context, outcome, issues)
       : phase === "scope"
         ? buildScopeProjection(facts, context, outcome, issues)
         : null;
@@ -974,13 +1073,9 @@ async function main() {
     process.exitCode = 2;
     return;
   }
-  let outcome;
+  let check;
   try {
-    const check = await runRepositoryCheck(root, options);
-    outcome = check.outcome;
-    const bytes = `${canonicalJsonStringify(check)}\n`;
-    process.stdout.write(bytes);
-    if (options.output !== null) await writeFile(options.output, bytes);
+    check = await runRepositoryCheck(root, options);
   } catch (error) {
     const failure = result(
       options.phase,
@@ -992,7 +1087,24 @@ async function main() {
     process.exitCode = 2;
     return;
   }
-  process.exitCode = outcome === "valid" ? 0 : outcome === "invalid" ? 1 : 2;
+  const bytes = `${canonicalJsonStringify(check)}\n`;
+  if (options.output !== null) {
+    try {
+      await writeFile(options.output, bytes);
+    } catch (error) {
+      const failure = result(
+        options.phase,
+        "invalid-input",
+        [issue("sothoth.pre-design/output-unwritable", options.output)],
+        null,
+      );
+      process.stdout.write(`${canonicalJsonStringify(failure)}\n`);
+      process.exitCode = 2;
+      return;
+    }
+  }
+  process.stdout.write(bytes);
+  process.exitCode = check.outcome === "valid" ? 0 : check.outcome === "invalid" ? 1 : 2;
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) await main();
