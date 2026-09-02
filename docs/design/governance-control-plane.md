@@ -1,14 +1,23 @@
 # Sothoth Governance Control Plane
 
-Status: accepted design baseline  
-Version: `SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN-1`  
+Status: accepted design baseline
+
+Version: `SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN-2`
+
 Decision date: 2026-09-02
+
+Implementation is gated by Dossier closure: no `@sothoth/*` package implementation is authorized until the retained
+Design Scope Catalog candidates hold accepted Dossiers and an accepted Architecture Baseline.
+
+<!-- sothoth:section id="decision" -->
 
 ## Decision
 
 Sothoth is an independently maintained, stateless governance control plane. It reads exact, consumer-owned governance
 and planning facts, validates closed constraints, and emits deterministic, digest-bearing projections. It is a compiler,
 not an execution engine, final authority, database, daemon, forge, or free-text planner.
+
+<!-- sothoth:section id="authority-boundary" -->
 
 ## Authority boundary
 
@@ -17,6 +26,8 @@ not an execution engine, final authority, database, daemon, forge, or free-text 
 - Git snapshots bind input bytes; the Git adapter never checks out, stages, commits, tags, or pushes.
 - Rules can reject input but cannot grant business authority or choose top-level process outcomes.
 - Consumer profiles assemble generic contracts without changing Core authority.
+
+<!-- sothoth:section id="package-architecture" -->
 
 ## Package architecture
 
@@ -34,6 +45,8 @@ facade, not a second Core.
 
 Core and Graph import no filesystem, Git, process, network, consumer path, FRACTA term, or executable API.
 
+<!-- sothoth:section id="documents-and-selectors" -->
+
 ## Documents and selectors
 
 The Document Index records exact artifact identity, normalized path, content digest, lifecycle metadata, parsed headings,
@@ -46,6 +59,8 @@ change without changing a stable section identity. Contracts do not use prose su
 Selectors use a closed canonical AST: boolean composition, exact identity, normalized path globs, kind/status/owner/tag,
 explicit relation, diagnostic identity, and cardinality. They emit explain traces and never execute code or infer scope
 from free text.
+
+<!-- sothoth:section id="graphs-change-order-and-scheduling" -->
 
 ## Graphs, change order, and scheduling
 
@@ -61,6 +76,19 @@ Scheduling has one non-authoritative Schedule Solution across dependency, time, 
 and release-train dimensions. Version 0.1 implements dependency and gate validation plus deterministic Waves. Other axes
 remain explicit unsupported dimensions rather than silently ignored parallel truths.
 
+<!-- sothoth:section id="pre-design-boundary" -->
+
+## Pre-design boundary
+
+The `0.1.0` candidate inventory is a revisable Design Scope Catalog, not a Scope BOM. It records provisional design
+candidates and their design coverage only; it carries no release membership, completion gates, candidate digests, tarball
+identities, or provenance claims. Before any formal Scope BOM may exist, every retained candidate requires one full
+Dossier, one exact registration, a closed cross-artifact edge review, and an Architecture Baseline accepted by an
+accountable human. A candidate inventory misnamed as a Scope BOM is downgraded to the catalog; implementation status can
+never retroactively authorize it as release membership.
+
+<!-- sothoth:section id="extensions-and-evidence" -->
+
 ## Extensions and evidence
 
 Gate Macros are declarative templates that expand to acyclic exact Check References. Trusted Rule Modules are explicitly
@@ -68,14 +96,20 @@ installed, allowlisted, integrity-locked code running with Sothoth's process pri
 Evidence Checks run outside Sothoth. Sothoth validates the report's snapshot, check-definition, and result bindings.
 Required unresolved evidence fails closed.
 
+<!-- sothoth:section id="diagnostics-and-process-outcomes" -->
+
 ## Diagnostics and process outcomes
 
 Diagnostic codes use `<owner>.<domain>/<condition>`. Structured diagnostics hold the origin, category, phase, verdict,
 severity, rule, location, subjects, parameters, causes, help, and deterministic digest. CLI exits are `0 valid`, `1
 invalid`, `2 invalid-input`, `3 extension-error`, and `4 internal-error`.
 
+<!-- sothoth:section id="release-boundary" -->
+
 ## Release boundary
 
-Sothoth 0.1.0 is Apache-2.0 and publishes eleven `@sothoth/*` packages from `Phenol1145/sothoth`. The Scope BOM is the
-release membership authority. Candidate BOM, SBOM, provenance, and Release Lock bind the clean tagged commit and tarball
-bytes. `@fracta/sothoth-profile` remains a companion FRACTA release, not a Sothoth package.
+Sothoth 0.1.0 targets Apache-2.0 publication of eleven `@sothoth/*` packages from `Phenol1145/sothoth`. Until the
+Pre-design boundary closes, those packages remain provisional Design Scope Catalog candidates and no formal Scope BOM
+exists. Once Dossiers close and an Architecture Baseline is accepted, the formal Scope BOM becomes the release membership
+authority. Candidate BOM, SBOM, provenance, and Release Lock bind the clean tagged commit and tarball bytes.
+`@fracta/sothoth-profile` remains a companion FRACTA release, not a Sothoth package.

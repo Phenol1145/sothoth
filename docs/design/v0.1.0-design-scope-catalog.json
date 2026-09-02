@@ -1,0 +1,121 @@
+{
+  "schema": "sothoth.design-scope-catalog/v1",
+  "catalogId": "SOTHOTH-DESIGN-SCOPE-0.1",
+  "catalogRevision": 1,
+  "targetReleaseIntent": "0.1.0",
+  "status": "working",
+  "candidates": [
+    {
+      "componentId": "@sothoth/cli",
+      "designId": "SOTHOTH-CLI-DOSSIER",
+      "artifactType": "npm-package",
+      "designRequirement": "full",
+      "coverage": "missing",
+      "owner": "sothoth"
+    },
+    {
+      "componentId": "@sothoth/contracts",
+      "designId": "SOTHOTH-CONTRACTS-DOSSIER",
+      "artifactType": "npm-package",
+      "designRequirement": "full",
+      "coverage": "missing",
+      "owner": "sothoth"
+    },
+    {
+      "componentId": "@sothoth/core",
+      "designId": "SOTHOTH-CORE-DOSSIER",
+      "artifactType": "npm-package",
+      "designRequirement": "full",
+      "coverage": "missing",
+      "owner": "sothoth"
+    },
+    {
+      "componentId": "@sothoth/document-index",
+      "designId": "SOTHOTH-DOCUMENT-INDEX-DOSSIER",
+      "artifactType": "npm-package",
+      "designRequirement": "full",
+      "coverage": "missing",
+      "owner": "sothoth"
+    },
+    {
+      "componentId": "@sothoth/git",
+      "designId": "SOTHOTH-GIT-DOSSIER",
+      "artifactType": "npm-package",
+      "designRequirement": "full",
+      "coverage": "missing",
+      "owner": "sothoth"
+    },
+    {
+      "componentId": "@sothoth/governance",
+      "designId": "SOTHOTH-GOVERNANCE-DOSSIER",
+      "artifactType": "npm-package",
+      "designRequirement": "full",
+      "coverage": "missing",
+      "owner": "sothoth"
+    },
+    {
+      "componentId": "@sothoth/graph",
+      "designId": "SOTHOTH-GRAPH-DOSSIER",
+      "artifactType": "npm-package",
+      "designRequirement": "full",
+      "coverage": "missing",
+      "owner": "sothoth"
+    },
+    {
+      "componentId": "@sothoth/planning",
+      "designId": "SOTHOTH-PLANNING-DOSSIER",
+      "artifactType": "npm-package",
+      "designRequirement": "full",
+      "coverage": "missing",
+      "owner": "sothoth"
+    },
+    {
+      "componentId": "@sothoth/profile-sdk",
+      "designId": "SOTHOTH-PROFILE-SDK-DOSSIER",
+      "artifactType": "npm-package",
+      "designRequirement": "full",
+      "coverage": "missing",
+      "owner": "sothoth"
+    },
+    {
+      "componentId": "@sothoth/sdk",
+      "designId": "SOTHOTH-SDK-DOSSIER",
+      "artifactType": "npm-package",
+      "designRequirement": "full",
+      "coverage": "missing",
+      "owner": "sothoth"
+    },
+    {
+      "componentId": "@sothoth/selectors",
+      "designId": "SOTHOTH-SELECTORS-DOSSIER",
+      "artifactType": "npm-package",
+      "designRequirement": "full",
+      "coverage": "missing",
+      "owner": "sothoth"
+    }
+  ],
+  "externalRelations": [
+    {
+      "componentId": "@fracta/sothoth-profile",
+      "relation": "companion",
+      "owner": "fracta"
+    }
+  ],
+  "deferredCapabilities": [
+    "assignment-solver",
+    "auto-fix",
+    "calendar-solver",
+    "daemon",
+    "database",
+    "evidence-runner",
+    "forge-write-adapter",
+    "http-api",
+    "placement-solver",
+    "release-train-solver",
+    "resource-solver",
+    "sandboxed-extension-host",
+    "semantic-search",
+    "task-dispatch",
+    "web-ui"
+  ]
+}

@@ -14,8 +14,8 @@
     "build": "tsc -b",
     "typecheck": "tsc -b --pretty false",
     "test": "vitest run",
-    "check:scope-bom": "node scripts/check-scope-bom.mjs",
-    "check": "npm run typecheck && npm test && npm run check:scope-bom"
+    "check:design-scope": "node scripts/check-design-scope-catalog.mjs",
+    "check": "npm run typecheck && npm test && npm run check:design-scope"
   },
   "devDependencies": {
     "@types/node": "22.20.1",
