@@ -15,10 +15,14 @@
     "typecheck": "tsc -b --pretty false",
     "test": "vitest run",
     "check:design-scope": "node scripts/check-design-scope-catalog.mjs",
+    "check:pre-design:dossiers": "node scripts/check-pre-design.mjs --phase dossiers",
+    "check:pre-design:closure": "node scripts/check-pre-design.mjs --phase closure",
+    "check:pre-design:scope": "node scripts/check-pre-design.mjs --phase scope",
     "check": "npm run typecheck && npm test && npm run check:design-scope"
   },
   "devDependencies": {
     "@types/node": "22.20.1",
+    "mdast-util-from-markdown": "2.0.2",
     "typescript": "5.9.3",
     "vitest": "3.2.7"
   }

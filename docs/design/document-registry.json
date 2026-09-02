@@ -1,0 +1,24 @@
+{
+  "schema": "sothoth.design-document-registry/v1",
+  "registryId": "SOTHOTH-DESIGN-DOCUMENT-REGISTRY",
+  "registryRevision": 1,
+  "documents": [
+    {
+      "documentId": "DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN",
+      "documentRevision": 2,
+      "path": "docs/design/governance-control-plane.md",
+      "status": "accepted",
+      "sectionIds": [
+        "decision",
+        "authority-boundary",
+        "package-architecture",
+        "documents-and-selectors",
+        "graphs-change-order-and-scheduling",
+        "pre-design-boundary",
+        "extensions-and-evidence",
+        "diagnostics-and-process-outcomes",
+        "release-boundary"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "schema": "sothoth.document-contract/v1",
+  "contractId": "sothoth.design-dossier/full/v1",
+  "contractRevision": 1,
+  "description": "Consumer-neutral full Artifact Design Dossier contract for Sothoth pre-design closure. Constrains a Dossier through parsed CommonMark structure and exact references only; it never inspects prose for keywords and never rewrites a document.",
+  "documentKind": "artifact-design-dossier",
+  "sections": {
+    "ordering": "exact",
+    "requiredSectionIds": [
+      "decision-summary",
+      "artifact-identity-and-classification",
+      "purpose-and-non-goals",
+      "responsibility-and-truth-ownership",
+      "public-surface-and-consumers",
+      "core-sdk-protocol-boundary",
+      "dependency-and-topology",
+      "state-lifecycle-and-data-flow",
+      "authority-security-and-effects",
+      "failure-recovery-and-consistency",
+      "observation-and-audit",
+      "deployment-configuration-and-operations",
+      "compatibility-and-migration",
+      "developer-and-operator-experience",
+      "verification-and-acceptance-criteria",
+      "future-capability-compatibility",
+      "traceability-and-exact-references",
+      "topic-coverage-declaration"
+    ]
+  },
+  "topics": {
+    "closedSet": [
+      "identity",
+      "intent-and-non-goals",
+      "responsibility",
+      "truth-ownership",
+      "public-surface",
+      "core-sdk-boundary",
+      "dependency-boundary",
+      "protocol-and-data-flow",
+      "state-and-lifecycle",
+      "authority-and-security",
+      "failure-and-recovery",
+      "concurrency-and-consistency",
+      "observation-and-audit",
+      "deployment-and-configuration",
+      "compatibility-and-migration",
+      "developer-and-operator-experience",
+      "verification",
+      "future-compatibility"
+    ],
+    "resolutions": ["local", "inherited", "not-applicable"],
+    "inheritanceApplicability": ["adopts", "narrows", "specializes"]
+  },
+  "references": {
+    "exactFields": ["documentId", "documentRevision", "sectionId", "applicability"]
+  },
+  "criteria": {
+    "minimumPerRegistration": 1,
+    "fields": ["criterionId", "sectionId"]
+  }
+}
