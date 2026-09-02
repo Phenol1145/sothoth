@@ -1,0 +1,25 @@
+{
+  "name": "sothoth-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "npm@11.15.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=22.14.0"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -b --pretty false",
+    "test": "vitest run",
+    "check:scope-bom": "node scripts/check-scope-bom.mjs",
+    "check": "npm run typecheck && npm test && npm run check:scope-bom"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.1",
+    "typescript": "5.9.3",
+    "vitest": "3.2.7"
+  }
+}

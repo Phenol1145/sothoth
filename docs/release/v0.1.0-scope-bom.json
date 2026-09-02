@@ -1,0 +1,121 @@
+{
+  "schema": "sothoth.release-bom/v1",
+  "release": "0.1.0",
+  "license": "Apache-2.0",
+  "members": [
+    {
+      "id": "@sothoth/cli",
+      "version": "0.1.0",
+      "type": "npm-package",
+      "layer": "required",
+      "owner": "sothoth",
+      "gates": ["build", "types", "tests", "pack", "provenance"]
+    },
+    {
+      "id": "@sothoth/contracts",
+      "version": "0.1.0",
+      "type": "npm-package",
+      "layer": "required",
+      "owner": "sothoth",
+      "gates": ["build", "types", "tests", "pack", "provenance"]
+    },
+    {
+      "id": "@sothoth/core",
+      "version": "0.1.0",
+      "type": "npm-package",
+      "layer": "required",
+      "owner": "sothoth",
+      "gates": ["build", "types", "tests", "boundary", "pack", "provenance"]
+    },
+    {
+      "id": "@sothoth/document-index",
+      "version": "0.1.0",
+      "type": "npm-package",
+      "layer": "required",
+      "owner": "sothoth",
+      "gates": ["build", "types", "tests", "pack", "provenance"]
+    },
+    {
+      "id": "@sothoth/git",
+      "version": "0.1.0",
+      "type": "npm-package",
+      "layer": "required",
+      "owner": "sothoth",
+      "gates": ["build", "types", "tests", "no-mutation", "pack", "provenance"]
+    },
+    {
+      "id": "@sothoth/governance",
+      "version": "0.1.0",
+      "type": "npm-package",
+      "layer": "required",
+      "owner": "sothoth",
+      "gates": ["build", "types", "tests", "pack", "provenance"]
+    },
+    {
+      "id": "@sothoth/graph",
+      "version": "0.1.0",
+      "type": "npm-package",
+      "layer": "required",
+      "owner": "sothoth",
+      "gates": ["build", "types", "tests", "boundary", "pack", "provenance"]
+    },
+    {
+      "id": "@sothoth/planning",
+      "version": "0.1.0",
+      "type": "npm-package",
+      "layer": "required",
+      "owner": "sothoth",
+      "gates": ["build", "types", "tests", "pack", "provenance"]
+    },
+    {
+      "id": "@sothoth/profile-sdk",
+      "version": "0.1.0",
+      "type": "npm-package",
+      "layer": "required",
+      "owner": "sothoth",
+      "gates": ["build", "types", "tests", "conformance", "pack", "provenance"]
+    },
+    {
+      "id": "@sothoth/sdk",
+      "version": "0.1.0",
+      "type": "npm-package",
+      "layer": "required",
+      "owner": "sothoth",
+      "gates": ["build", "types", "tests", "public-api", "pack", "provenance"]
+    },
+    {
+      "id": "@sothoth/selectors",
+      "version": "0.1.0",
+      "type": "npm-package",
+      "layer": "required",
+      "owner": "sothoth",
+      "gates": ["build", "types", "tests", "hostile-input", "pack", "provenance"]
+    }
+  ],
+  "companions": [
+    {
+      "id": "@fracta/sothoth-profile",
+      "version": null,
+      "layer": "companion",
+      "owner": "fracta",
+      "releaseTrain": "fracta"
+    }
+  ],
+  "deferred": [
+    "calendar-solver",
+    "resource-solver",
+    "assignment-solver",
+    "placement-solver",
+    "release-train-solver",
+    "evidence-runner",
+    "sandboxed-extension-host",
+    "forge-write-adapter",
+    "daemon",
+    "database",
+    "web-ui",
+    "http-api",
+    "semantic-search",
+    "auto-fix",
+    "task-dispatch"
+  ]
+}
