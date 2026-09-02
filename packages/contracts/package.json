@@ -1,0 +1,19 @@
+{
+  "name": "@sothoth/contracts",
+  "version": "0.1.0",
+  "description": "Closed public contracts for the Sothoth governance control plane.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "README.md", "LICENSE"],
+  "publishConfig": { "access": "public", "provenance": true },
+  "repository": { "type": "git", "url": "git+https://github.com/Phenol1145/sothoth.git", "directory": "packages/contracts" },
+  "engines": { "node": ">=22.14.0" }
+}
