@@ -179,6 +179,72 @@
       "supersedes": null
     },
     {
+      "designId": "SOTHOTH-GIT-DOSSIER",
+      "componentId": "@sothoth/git",
+      "designRevision": 1,
+      "designRequirement": "full",
+      "status": "proposed",
+      "documentRef": {
+        "documentId": "DOC-SOTHOTH-GIT-DOSSIER",
+        "documentRevision": 1
+      },
+      "topicCoverage": {
+        "identity": { "resolution": "local", "sectionId": "artifact-identity-and-classification", "refs": [], "reason": null },
+        "intent-and-non-goals": { "resolution": "local", "sectionId": "purpose-and-non-goals", "refs": [], "reason": null },
+        "responsibility": { "resolution": "local", "sectionId": "responsibility-and-truth-ownership", "refs": [], "reason": null },
+        "truth-ownership": { "resolution": "local", "sectionId": "responsibility-and-truth-ownership", "refs": [], "reason": null },
+        "public-surface": { "resolution": "local", "sectionId": "public-surface-and-consumers", "refs": [], "reason": null },
+        "core-sdk-boundary": { "resolution": "local", "sectionId": "core-sdk-protocol-boundary", "refs": [], "reason": null },
+        "dependency-boundary": { "resolution": "local", "sectionId": "dependency-and-topology", "refs": [], "reason": null },
+        "protocol-and-data-flow": { "resolution": "local", "sectionId": "core-sdk-protocol-boundary", "refs": [], "reason": null },
+        "state-and-lifecycle": { "resolution": "local", "sectionId": "state-lifecycle-and-data-flow", "refs": [], "reason": null },
+        "authority-and-security": {
+          "resolution": "inherited",
+          "sectionId": null,
+          "refs": [
+            {
+              "documentId": "DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN",
+              "documentRevision": 2,
+              "sectionId": "authority-boundary",
+              "applicability": "adopts"
+            }
+          ],
+          "reason": null
+        },
+        "failure-and-recovery": { "resolution": "local", "sectionId": "failure-recovery-and-consistency", "refs": [], "reason": null },
+        "concurrency-and-consistency": { "resolution": "local", "sectionId": "failure-recovery-and-consistency", "refs": [], "reason": null },
+        "observation-and-audit": { "resolution": "local", "sectionId": "observation-and-audit", "refs": [], "reason": null },
+        "deployment-and-configuration": { "resolution": "local", "sectionId": "deployment-configuration-and-operations", "refs": [], "reason": null },
+        "compatibility-and-migration": { "resolution": "local", "sectionId": "compatibility-and-migration", "refs": [], "reason": null },
+        "developer-and-operator-experience": { "resolution": "local", "sectionId": "developer-and-operator-experience", "refs": [], "reason": null },
+        "verification": { "resolution": "local", "sectionId": "verification-and-acceptance-criteria", "refs": [], "reason": null },
+        "future-compatibility": { "resolution": "local", "sectionId": "future-capability-compatibility", "refs": [], "reason": null }
+      },
+      "providedContractRefs": ["CONTRACT/SOTHOTH/GIT-SOURCE-SNAPSHOT@1"],
+      "requiredContractRefs": [
+        "CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1",
+        "CONTRACT/SOTHOTH/SCHEMAS@1"
+      ],
+      "producedStateRefs": [
+        "sothoth.git/commit-snapshot@1",
+        "sothoth.git/compare-snapshot@1",
+        "sothoth.git/workspace-snapshot@1"
+      ],
+      "emittedObservationRefs": ["sothoth.git/git-adapter-diagnostic@1"],
+      "consumedStateRefs": [],
+      "issuedAuthorityRefs": [],
+      "requiredAuthorityRefs": [],
+      "deploymentDependencyRefs": [],
+      "acceptanceCriteria": [
+        { "criterionId": "git-command-allowlist-closure", "sectionId": "verification-and-acceptance-criteria" },
+        { "criterionId": "git-no-mutation-boundary", "sectionId": "verification-and-acceptance-criteria" },
+        { "criterionId": "git-path-and-ref-fail-closed", "sectionId": "verification-and-acceptance-criteria" },
+        { "criterionId": "git-provenance-separation", "sectionId": "verification-and-acceptance-criteria" },
+        { "criterionId": "git-snapshot-budget-fail-closed", "sectionId": "verification-and-acceptance-criteria" }
+      ],
+      "supersedes": null
+    },
+    {
       "designId": "SOTHOTH-GOVERNANCE-DOSSIER",
       "componentId": "@sothoth/governance",
       "designRevision": 1,
@@ -314,6 +380,130 @@
         { "criterionId": "graph-generic-algorithm-surface", "sectionId": "verification-and-acceptance-criteria" },
         { "criterionId": "graph-zero-domain-semantics", "sectionId": "verification-and-acceptance-criteria" },
         { "criterionId": "graph-deterministic-waves", "sectionId": "verification-and-acceptance-criteria" }
+      ],
+      "supersedes": null
+    },
+    {
+      "designId": "SOTHOTH-PLANNING-DOSSIER",
+      "componentId": "@sothoth/planning",
+      "designRevision": 1,
+      "designRequirement": "full",
+      "status": "proposed",
+      "documentRef": {
+        "documentId": "DOC-SOTHOTH-PLANNING-DOSSIER",
+        "documentRevision": 1
+      },
+      "topicCoverage": {
+        "identity": { "resolution": "local", "sectionId": "artifact-identity-and-classification", "refs": [], "reason": null },
+        "intent-and-non-goals": { "resolution": "local", "sectionId": "purpose-and-non-goals", "refs": [], "reason": null },
+        "responsibility": { "resolution": "local", "sectionId": "responsibility-and-truth-ownership", "refs": [], "reason": null },
+        "truth-ownership": { "resolution": "local", "sectionId": "responsibility-and-truth-ownership", "refs": [], "reason": null },
+        "public-surface": { "resolution": "local", "sectionId": "public-surface-and-consumers", "refs": [], "reason": null },
+        "core-sdk-boundary": { "resolution": "local", "sectionId": "core-sdk-protocol-boundary", "refs": [], "reason": null },
+        "dependency-boundary": { "resolution": "local", "sectionId": "dependency-and-topology", "refs": [], "reason": null },
+        "protocol-and-data-flow": { "resolution": "local", "sectionId": "core-sdk-protocol-boundary", "refs": [], "reason": null },
+        "state-and-lifecycle": { "resolution": "local", "sectionId": "state-lifecycle-and-data-flow", "refs": [], "reason": null },
+        "authority-and-security": {
+          "resolution": "inherited",
+          "sectionId": null,
+          "refs": [
+            {
+              "documentId": "DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN",
+              "documentRevision": 2,
+              "sectionId": "authority-boundary",
+              "applicability": "narrows"
+            }
+          ],
+          "reason": null
+        },
+        "failure-and-recovery": { "resolution": "local", "sectionId": "failure-recovery-and-consistency", "refs": [], "reason": null },
+        "concurrency-and-consistency": { "resolution": "local", "sectionId": "failure-recovery-and-consistency", "refs": [], "reason": null },
+        "observation-and-audit": { "resolution": "local", "sectionId": "observation-and-audit", "refs": [], "reason": null },
+        "deployment-and-configuration": { "resolution": "local", "sectionId": "deployment-configuration-and-operations", "refs": [], "reason": null },
+        "compatibility-and-migration": { "resolution": "local", "sectionId": "compatibility-and-migration", "refs": [], "reason": null },
+        "developer-and-operator-experience": { "resolution": "local", "sectionId": "developer-and-operator-experience", "refs": [], "reason": null },
+        "verification": { "resolution": "local", "sectionId": "verification-and-acceptance-criteria", "refs": [], "reason": null },
+        "future-compatibility": { "resolution": "local", "sectionId": "future-capability-compatibility", "refs": [], "reason": null }
+      },
+      "providedContractRefs": ["CONTRACT/SOTHOTH/PLANNING@1"],
+      "requiredContractRefs": [
+        "CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1",
+        "CONTRACT/SOTHOTH/GENERIC-GRAPH@1",
+        "CONTRACT/SOTHOTH/SCHEMAS@1",
+        "CONTRACT/SOTHOTH/SELECTOR@1"
+      ],
+      "producedStateRefs": ["sothoth.planning/schedule-solution@1"],
+      "emittedObservationRefs": ["sothoth.planning/schedule-diagnostic@1"],
+      "consumedStateRefs": [],
+      "issuedAuthorityRefs": [],
+      "requiredAuthorityRefs": [],
+      "deploymentDependencyRefs": [],
+      "acceptanceCriteria": [
+        { "criterionId": "planning-dependency-wave-only", "sectionId": "verification-and-acceptance-criteria" },
+        { "criterionId": "planning-deterministic-projection", "sectionId": "verification-and-acceptance-criteria" },
+        { "criterionId": "planning-single-schedule-solution", "sectionId": "verification-and-acceptance-criteria" },
+        { "criterionId": "planning-source-fact-read-only", "sectionId": "verification-and-acceptance-criteria" }
+      ],
+      "supersedes": null
+    },
+    {
+      "designId": "SOTHOTH-PROFILE-SDK-DOSSIER",
+      "componentId": "@sothoth/profile-sdk",
+      "designRevision": 1,
+      "designRequirement": "full",
+      "status": "proposed",
+      "documentRef": {
+        "documentId": "DOC-SOTHOTH-PROFILE-SDK-DOSSIER",
+        "documentRevision": 1
+      },
+      "topicCoverage": {
+        "identity": { "resolution": "local", "sectionId": "artifact-identity-and-classification", "refs": [], "reason": null },
+        "intent-and-non-goals": { "resolution": "local", "sectionId": "purpose-and-non-goals", "refs": [], "reason": null },
+        "responsibility": { "resolution": "local", "sectionId": "responsibility-and-truth-ownership", "refs": [], "reason": null },
+        "truth-ownership": { "resolution": "local", "sectionId": "responsibility-and-truth-ownership", "refs": [], "reason": null },
+        "public-surface": { "resolution": "local", "sectionId": "public-surface-and-consumers", "refs": [], "reason": null },
+        "core-sdk-boundary": { "resolution": "local", "sectionId": "core-sdk-protocol-boundary", "refs": [], "reason": null },
+        "dependency-boundary": { "resolution": "local", "sectionId": "dependency-and-topology", "refs": [], "reason": null },
+        "protocol-and-data-flow": { "resolution": "local", "sectionId": "core-sdk-protocol-boundary", "refs": [], "reason": null },
+        "state-and-lifecycle": { "resolution": "local", "sectionId": "state-lifecycle-and-data-flow", "refs": [], "reason": null },
+        "authority-and-security": {
+          "resolution": "inherited",
+          "sectionId": null,
+          "refs": [
+            {
+              "documentId": "DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN",
+              "documentRevision": 2,
+              "sectionId": "authority-boundary",
+              "applicability": "specializes"
+            }
+          ],
+          "reason": null
+        },
+        "failure-and-recovery": { "resolution": "local", "sectionId": "failure-recovery-and-consistency", "refs": [], "reason": null },
+        "concurrency-and-consistency": { "resolution": "local", "sectionId": "failure-recovery-and-consistency", "refs": [], "reason": null },
+        "observation-and-audit": { "resolution": "local", "sectionId": "observation-and-audit", "refs": [], "reason": null },
+        "deployment-and-configuration": { "resolution": "local", "sectionId": "deployment-configuration-and-operations", "refs": [], "reason": null },
+        "compatibility-and-migration": { "resolution": "local", "sectionId": "compatibility-and-migration", "refs": [], "reason": null },
+        "developer-and-operator-experience": { "resolution": "local", "sectionId": "developer-and-operator-experience", "refs": [], "reason": null },
+        "verification": { "resolution": "local", "sectionId": "verification-and-acceptance-criteria", "refs": [], "reason": null },
+        "future-compatibility": { "resolution": "local", "sectionId": "future-capability-compatibility", "refs": [], "reason": null }
+      },
+      "providedContractRefs": ["CONTRACT/SOTHOTH/CONSUMER-PROFILE@1"],
+      "requiredContractRefs": [
+        "CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1",
+        "CONTRACT/SOTHOTH/SCHEMAS@1"
+      ],
+      "producedStateRefs": ["sothoth.profile-sdk/conformance-result@1"],
+      "emittedObservationRefs": ["sothoth.profile-sdk/profile-diagnostic@1"],
+      "consumedStateRefs": [],
+      "issuedAuthorityRefs": [],
+      "requiredAuthorityRefs": [],
+      "deploymentDependencyRefs": [],
+      "acceptanceCriteria": [
+        { "criterionId": "profile-consumer-neutral-boundary", "sectionId": "verification-and-acceptance-criteria" },
+        { "criterionId": "profile-fail-closed-conformance", "sectionId": "verification-and-acceptance-criteria" },
+        { "criterionId": "profile-impact-no-ordering", "sectionId": "verification-and-acceptance-criteria" },
+        { "criterionId": "profile-skills-curated-exact-only", "sectionId": "verification-and-acceptance-criteria" }
       ],
       "supersedes": null
     },

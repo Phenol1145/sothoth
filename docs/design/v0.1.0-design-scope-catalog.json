@@ -42,7 +42,7 @@
       "designId": "SOTHOTH-GIT-DOSSIER",
       "artifactType": "npm-package",
       "designRequirement": "full",
-      "coverage": "missing",
+      "coverage": "complete",
       "owner": "sothoth"
     },
     {
@@ -66,7 +66,7 @@
       "designId": "SOTHOTH-PLANNING-DOSSIER",
       "artifactType": "npm-package",
       "designRequirement": "full",
-      "coverage": "missing",
+      "coverage": "complete",
       "owner": "sothoth"
     },
     {
@@ -74,7 +74,7 @@
       "designId": "SOTHOTH-PROFILE-SDK-DOSSIER",
       "artifactType": "npm-package",
       "designRequirement": "full",
-      "coverage": "missing",
+      "coverage": "complete",
       "owner": "sothoth"
     },
     {
