@@ -34,7 +34,7 @@
       "designId": "SOTHOTH-DOCUMENT-INDEX-DOSSIER",
       "artifactType": "npm-package",
       "designRequirement": "full",
-      "coverage": "missing",
+      "coverage": "complete",
       "owner": "sothoth"
     },
     {
@@ -50,7 +50,7 @@
       "designId": "SOTHOTH-GOVERNANCE-DOSSIER",
       "artifactType": "npm-package",
       "designRequirement": "full",
-      "coverage": "missing",
+      "coverage": "complete",
       "owner": "sothoth"
     },
     {
@@ -90,7 +90,7 @@
       "designId": "SOTHOTH-SELECTORS-DOSSIER",
       "artifactType": "npm-package",
       "designRequirement": "full",
-      "coverage": "missing",
+      "coverage": "complete",
       "owner": "sothoth"
     }
   ],
