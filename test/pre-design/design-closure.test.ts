@@ -197,13 +197,20 @@ async function dossierSectionIds(): Promise<Map<string, string[]>> {
 }
 
 const HISTORICAL_FACTS_PATH = `${root}/test/fixtures/pre-design-bootstrap/design-closure.pre-acceptance-r1.json`;
+const HISTORICAL_REVISION_2_FACTS_PATH = `${root}/test/fixtures/pre-design-bootstrap/design-closure.pre-acceptance-r2.json`;
+
+// The two exact digests the frozen revision-2 fixture must replay to: the closure digest of the
+// accepted revision-2 system and the scope digest of the same accepted revision-2 system with only
+// `phase` changed to "scope". They are committed constants of this test, never recomputed targets.
+const HISTORICAL_REVISION_2_CLOSURE_DIGEST = "sha256:bc390f1123eacbbd8376e04f75b85e95e9cf9135edc5b71234a0198bc9d99a2c";
+const HISTORICAL_REVISION_2_SCOPE_DIGEST = "sha256:f4d538f55ba0349859c32a43984edc3dd83f60566dd791a2a245b7e90bb8156c";
 
 let historicalFactsCache: any = null;
 
 // The frozen revision-1 pre-acceptance closure-fact snapshot: the full fact set the Task 7 review
 // record was compiled against, with all eleven registration statuses at their historical
 // `proposed` stage. It was captured before any live revision-2 edit and is immutable; live
-// revision-2 facts are never cloned or rolled back to reconstruct this historical view.
+// revision-3 facts are never cloned or rolled back to reconstruct this historical view.
 async function loadHistoricalRevision1Facts(): Promise<any> {
   if (!historicalFactsCache) {
     historicalFactsCache = JSON.parse(await readFile(HISTORICAL_FACTS_PATH, "utf8"));
@@ -211,10 +218,23 @@ async function loadHistoricalRevision1Facts(): Promise<any> {
   return structuredClone(historicalFactsCache);
 }
 
+let historicalRevision2FactsCache: any = null;
+
+// The frozen revision-2 accepted-state snapshot: the complete fact object captured immediately
+// before the revision-3 materialization, with all eleven registration statuses at their historical
+// `accepted` stage. It preserves revision-2 history; it is not a reconstruction of the earlier
+// revision-1 pre-acceptance state, and no status is ever rolled back to produce it.
+async function loadHistoricalRevision2Facts(): Promise<any> {
+  if (!historicalRevision2FactsCache) {
+    historicalRevision2FactsCache = JSON.parse(await readFile(HISTORICAL_REVISION_2_FACTS_PATH, "utf8"));
+  }
+  return structuredClone(historicalRevision2FactsCache);
+}
+
 let historicalSectionsCache: Map<string, string[]> | null = null;
 
 // The frozen historical section map: stable section IDs parsed from the revision-1 Dossier bytes
-// carried by the frozen fixture, never from live revision-2 documents.
+// carried by the frozen fixture, never from live revision-3 documents.
 async function historicalDossierSectionIds(): Promise<Map<string, string[]>> {
   if (!historicalSectionsCache) {
     const facts = await loadHistoricalRevision1Facts();
@@ -614,7 +634,7 @@ describe("closure projection over real Source Facts", () => {
       ],
     );
     // Historically, the eleven revision-1 registrations were accepted by the external human owner
-    // on 2026-09-03 (Task 8). The live revision-2 facts keep all eleven registrations accepted
+    // on 2026-09-03 (Task 8). The live revision-3 facts keep all eleven registrations accepted
     // under their own recorded acceptance acts; the exact status assertion replaces the former
     // broad pre-acceptance substring check.
     expect(projection.members.every((member: any) => member.registrationStatus === "accepted")).toBe(true);
@@ -623,7 +643,7 @@ describe("closure projection over real Source Facts", () => {
     );
   });
 
-  test("live revision-2 facts stay scope-admissible with Architecture Baseline revision 2 and Scope BOM revision 2", async () => {
+  test("live revision-3 facts stay scope-admissible with Architecture Baseline revision 3 and Scope BOM revision 3", async () => {
     const facts = await loadFacts();
     facts.phase = "scope";
     facts.architectureBaseline = await readJson(`${root}/docs/design/v0.1.0-architecture-baseline.json`);
@@ -632,8 +652,8 @@ describe("closure projection over real Source Facts", () => {
     expect(result.issues).toEqual([]);
     expect(result.outcome).toBe("valid");
     expect(result.projection.admissible).toBe(true);
-    expect(result.projection.architectureBaseline.baselineRevision).toBe(2);
-    expect(result.projection.scopeBom.bomRevision).toBe(2);
+    expect(result.projection.architectureBaseline.baselineRevision).toBe(3);
+    expect(result.projection.scopeBom.bomRevision).toBe(3);
   });
 });
 
@@ -666,16 +686,26 @@ describe("review record authority boundary", () => {
     const historicalProjection = checkPreDesign(historicalFacts).projection;
     expect(historicalProjection.readyForAcceptance).toBe(true);
     expect(record.sourceFactsDigest).toBe(historicalProjection.sourceFactsDigest);
-    // The live revision-2 projection is checked separately and differs from the record digest.
+    // The live revision-3 projection is checked separately and differs from the record digest and
+    // from the frozen revision-2 closure digest.
     const liveFacts = await loadFacts();
     const liveCheck = checkPreDesign(liveFacts);
     expect(liveCheck.outcome).toBe("valid");
     expect(liveCheck.projection.readyForAcceptance).toBe(true);
-    expect(liveCheck.projection.registryRevision).toBe(2);
-    expect(liveCheck.projection.registrationsCollectionRevision).toBe(2);
+    expect(liveCheck.projection.registryRevision).toBe(3);
+    expect(liveCheck.projection.registrationsCollectionRevision).toBe(3);
     const graphMember = liveCheck.projection.members.find((member: any) => member.componentId === "@sothoth/graph");
     expect(graphMember.designRevision).toBe(2);
+    const documentIndexMember = liveCheck.projection.members.find(
+      (member: any) => member.componentId === "@sothoth/document-index",
+    );
+    expect(documentIndexMember.designRevision).toBe(2);
+    expect(documentIndexMember.documentRef).toEqual({
+      documentId: "DOC-SOTHOTH-DOCUMENT-INDEX-DOSSIER",
+      documentRevision: 2,
+    });
     expect(liveCheck.projection.sourceFactsDigest).not.toBe(record.sourceFactsDigest);
+    expect(liveCheck.projection.sourceFactsDigest).not.toBe(HISTORICAL_REVISION_2_CLOSURE_DIGEST);
   });
 
   test("the frozen historical fixture pins revision-1 identities and cannot be silently re-pointed", async () => {
@@ -689,6 +719,65 @@ describe("review record authority boundary", () => {
       expect(registration.designRevision).toBe(1);
     }
     expect(facts.documents["DOC-SOTHOTH-GRAPH-DOSSIER"]).toBeDefined();
+  });
+
+  test("the frozen revision-2 fixture replays the accepted pre-revision-3 closure and scope identities exactly", async () => {
+    const facts = await loadHistoricalRevision2Facts();
+    expect(Object.keys(facts).sort(codePointCompare)).toEqual([
+      "architectureBaseline",
+      "catalog",
+      "contract",
+      "documents",
+      "phase",
+      "registrations",
+      "registry",
+      "scopeBom",
+    ]);
+    expect(facts.phase).toBe("closure");
+    expect(facts.registry.registryRevision).toBe(2);
+    expect(facts.registrations.collectionRevision).toBe(2);
+    expect(facts.registrations.registrations.length).toBe(11);
+    // The snapshot means "the accepted revision-2 system immediately before revision-3
+    // materialization": every registration keeps its accepted status, Graph stays at design
+    // revision 2, and Document Index is still at design revision 1. No status is rolled back.
+    for (const registration of facts.registrations.registrations) {
+      expect(registration.status).toBe("accepted");
+    }
+    const graphRegistration = facts.registrations.registrations.find(
+      (registration: any) => registration.componentId === "@sothoth/graph",
+    );
+    const documentIndexRegistration = facts.registrations.registrations.find(
+      (registration: any) => registration.componentId === "@sothoth/document-index",
+    );
+    expect(graphRegistration.designRevision).toBe(2);
+    expect(graphRegistration.supersedes).toBe("SOTHOTH-GRAPH-DOSSIER@1");
+    expect(documentIndexRegistration.designRevision).toBe(1);
+    expect(documentIndexRegistration.supersedes).toBe(null);
+    expect(facts.architectureBaseline.baselineRevision).toBe(2);
+    expect(facts.scopeBom.bomRevision).toBe(2);
+
+    // Closure replay over the frozen bytes only.
+    const closure = checkPreDesign(facts);
+    expect(closure.issues).toEqual([]);
+    expect(closure.outcome).toBe("valid");
+    expect(closure.projection.readyForAcceptance).toBe(true);
+    expect(closure.projection.registryRevision).toBe(2);
+    expect(closure.projection.registrationsCollectionRevision).toBe(2);
+    expect(
+      closure.projection.members.every((member: any) => member.registrationStatus === "accepted"),
+    ).toBe(true);
+    expect(closure.projection.sourceFactsDigest).toBe(HISTORICAL_REVISION_2_CLOSURE_DIGEST);
+
+    // Scope replay: only `phase` changes on an in-memory clone of the frozen fixture.
+    const scopeFacts = structuredClone(facts);
+    scopeFacts.phase = "scope";
+    const scope = checkPreDesign(scopeFacts);
+    expect(scope.issues).toEqual([]);
+    expect(scope.outcome).toBe("valid");
+    expect(scope.projection.admissible).toBe(true);
+    expect(scope.projection.architectureBaseline.baselineRevision).toBe(2);
+    expect(scope.projection.scopeBom.bomRevision).toBe(2);
+    expect(scope.projection.sourceFactsDigest).toBe(HISTORICAL_REVISION_2_SCOPE_DIGEST);
   });
 
   test("the review record stays outside the document registry and registrations", async () => {
@@ -1060,7 +1149,7 @@ describe("deterministic disposable closure projection through the real CLI", () 
       expect(firstParsed.projection.readyForAcceptance).toBe(true);
       expect(firstParsed.projection.sourceFactsDigest).toBe(secondParsed.projection.sourceFactsDigest);
       // Live closure CLI assertions expect the eleven accepted registration statuses of the live
-      // revision-2 facts; the exact status assertion replaces the former broad pre-acceptance
+      // revision-3 facts; the exact status assertion replaces the former broad pre-acceptance
       // substring check and implies nothing about the historical revision-1 acceptance date.
       expect(
         firstParsed.projection.members.every((member: any) => member.registrationStatus === "accepted"),
@@ -1073,11 +1162,11 @@ describe("deterministic disposable closure projection through the real CLI", () 
     }
   });
 
-  test("the review record digest equals the frozen revision-1 view, and the live CLI projects the accepted revision-2 view", async () => {
+  test("the review record digest equals the frozen revision-1 view, and the live CLI projects the accepted revision-3 view", async () => {
     const { record } = await loadReview();
     // The Task 7 review record binds the revision-1 facts frozen in the historical fixture. The
     // digest equality is replayed with the unchanged checker over those frozen facts; converting
-    // live revision-2 facts into revision-1 facts is not a status-only operation and is never
+    // live revision-3 facts into revision-1 facts is not a status-only operation and is never
     // attempted here.
     const historicalFacts = await loadHistoricalRevision1Facts();
     expect(record.sourceFactsDigest).toBe(checkPreDesign(historicalFacts).projection.sourceFactsDigest);

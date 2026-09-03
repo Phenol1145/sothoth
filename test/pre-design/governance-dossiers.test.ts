@@ -115,6 +115,9 @@ interface GovernanceSpec {
   designId: string;
   documentId: string;
   path: string;
+  expectedDesignRevision: number;
+  expectedDocumentRevision: number;
+  expectedSupersedes: string | null;
   importAllowlist: string[];
   providedContracts: string[];
   requiredContracts: string[];
@@ -143,7 +146,15 @@ const DOCUMENT_GOVERNANCE: GovernanceSpec[] = [
     designId: "SOTHOTH-DOCUMENT-INDEX-DOSSIER",
     documentId: "DOC-SOTHOTH-DOCUMENT-INDEX-DOSSIER",
     path: "docs/design/dossiers/document-index.md",
-    importAllowlist: ["@sothoth/contracts", "@sothoth/core", "@sothoth/graph"],
+    expectedDesignRevision: 2,
+    expectedDocumentRevision: 2,
+    expectedSupersedes: "SOTHOTH-DOCUMENT-INDEX-DOSSIER@1",
+    importAllowlist: [
+      "@sothoth/contracts",
+      "@sothoth/core",
+      "@sothoth/graph",
+      "mdast-util-from-markdown",
+    ],
     providedContracts: ["CONTRACT/SOTHOTH/DOCUMENT-INDEX@1"],
     requiredContracts: [
       "CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1",
@@ -208,6 +219,9 @@ const DOCUMENT_GOVERNANCE: GovernanceSpec[] = [
     designId: "SOTHOTH-SELECTORS-DOSSIER",
     documentId: "DOC-SOTHOTH-SELECTORS-DOSSIER",
     path: "docs/design/dossiers/selectors.md",
+    expectedDesignRevision: 1,
+    expectedDocumentRevision: 1,
+    expectedSupersedes: null,
     importAllowlist: ["@sothoth/contracts", "@sothoth/core", "@sothoth/document-index"],
     providedContracts: ["CONTRACT/SOTHOTH/SELECTOR@1"],
     requiredContracts: [
@@ -277,6 +291,9 @@ const DOCUMENT_GOVERNANCE: GovernanceSpec[] = [
     designId: "SOTHOTH-GOVERNANCE-DOSSIER",
     documentId: "DOC-SOTHOTH-GOVERNANCE-DOSSIER",
     path: "docs/design/dossiers/governance.md",
+    expectedDesignRevision: 1,
+    expectedDocumentRevision: 1,
+    expectedSupersedes: null,
     importAllowlist: [
       "@sothoth/contracts",
       "@sothoth/core",
@@ -748,7 +765,10 @@ function validateDocumentGovernanceDesign(facts: {
     if (!registryEntry) {
       push("registry-entry-missing", spec.documentId);
     } else {
-      if (registryEntry.documentRevision !== 1 || registryEntry.status !== "proposed") {
+      if (
+        registryEntry.documentRevision !== spec.expectedDocumentRevision ||
+        registryEntry.status !== "proposed"
+      ) {
         push("registry-entry-invalid", spec.documentId);
       }
       if (registryEntry.path !== spec.path) {
@@ -766,9 +786,9 @@ function validateDocumentGovernanceDesign(facts: {
     }
     if (
       registration.designId !== spec.designId ||
-      registration.designRevision !== 1 ||
+      registration.designRevision !== spec.expectedDesignRevision ||
       registration.designRequirement !== "full" ||
-      registration.supersedes !== null
+      registration.supersedes !== spec.expectedSupersedes
     ) {
       push("registration-identity-invalid", spec.packageId);
     }
@@ -777,7 +797,7 @@ function validateDocumentGovernanceDesign(facts: {
     }
     if (
       registration.documentRef?.documentId !== spec.documentId ||
-      registration.documentRef?.documentRevision !== 1
+      registration.documentRef?.documentRevision !== spec.expectedDocumentRevision
     ) {
       push("registration-document-ref-unresolved", spec.packageId);
     }

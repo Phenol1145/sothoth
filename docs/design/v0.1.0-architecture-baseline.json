@@ -1,14 +1,14 @@
 {
   "schema": "sothoth.architecture-baseline/v1",
   "baselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
-  "baselineRevision": 2,
+  "baselineRevision": 3,
   "targetRelease": "0.1.0",
   "status": "accepted",
   "acceptedBy": {
     "principalType": "human",
     "principalId": "anzhize"
   },
-  "acceptedAt": "2026-09-03",
+  "acceptedAt": "2026-09-04",
   "members": [
     {
       "componentId": "@sothoth/cli",
@@ -43,12 +43,12 @@
     {
       "componentId": "@sothoth/document-index",
       "designId": "SOTHOTH-DOCUMENT-INDEX-DOSSIER",
-      "designRevision": 1,
+      "designRevision": 2,
       "documentRef": {
         "documentId": "DOC-SOTHOTH-DOCUMENT-INDEX-DOSSIER",
-        "documentRevision": 1
+        "documentRevision": 2
       },
-      "dossierDigest": "sha256:f6183bbd2daee9e340255ec9492d4a2147b2b068f0384cdbc870b1768684c0af"
+      "dossierDigest": "sha256:d0f8e717b282b61d7c4f9624593e5ec673a191bde99dd33311a740e3b9cbdf8b"
     },
     {
       "componentId": "@sothoth/git",

@@ -27,14 +27,15 @@ const PROJECTION_SCHEMA = "sothoth.scope-bom-admissibility-projection/v1";
 const SCOPE_PREFIX = "@sothoth/";
 
 // The committed-fact constants below are populated verbatim with the exact `acceptedBy` JSON value
-// and `acceptedAt` string the human supplied for Architecture Baseline revision 2; they are not
-// read back from the file under test. The identical-looking revision-1 principal/date recorded on
-// 2026-09-03 are historical revision-1 facts only and never govern the live revision-2 expectation
-// by inference. The checker itself only requires a human principal and a valid calendar date, so
-// the generic in-memory fixture uses a different principal and date to prove neither the Agent nor
-// a passing projection is treated as the accepting authority.
+// and `acceptedAt` string the human supplied for Architecture Baseline revision 3 (the 2026-09-04
+// acceptance act that accepted the Document Index Dossier revision-2 closure proposal); they are
+// not read back from the file under test. The identical-looking revision-2 principal/date recorded
+// on 2026-09-03 — and the revision-1 record before it — are historical facts only and never govern
+// the live revision-3 expectation by inference. The checker itself only requires a human principal
+// and a valid calendar date, so the generic in-memory fixture uses a different principal and date
+// to prove neither the Agent nor a passing projection is treated as the accepting authority.
 const COMMITTED_PRINCIPAL = { principalType: "human", principalId: "anzhize" };
-const COMMITTED_ACCEPTED_AT = "2026-09-03";
+const COMMITTED_ACCEPTED_AT = "2026-09-04";
 const FIXTURE_PRINCIPAL = { principalType: "human", principalId: "fixture-owner" };
 const FIXTURE_ACCEPTED_AT = "2026-09-01";
 
@@ -670,7 +671,9 @@ describe("committed scope Source Facts", () => {
     for (const registration of registrations.registrations) {
       expect(registration.status).toBe("accepted");
       const expectedSupersedes =
-        registration.componentId === "@sothoth/graph" ? "SOTHOTH-GRAPH-DOSSIER@1" : null;
+        registration.componentId === "@sothoth/graph" ? "SOTHOTH-GRAPH-DOSSIER@1"
+        : registration.componentId === "@sothoth/document-index" ? "SOTHOTH-DOCUMENT-INDEX-DOSSIER@1"
+        : null;
       expect(registration.supersedes).toBe(expectedSupersedes);
     }
   });
@@ -680,7 +683,7 @@ describe("committed scope Source Facts", () => {
     expect(Object.keys(baseline).sort(codePointCompare)).toEqual(sortedCodePoint(BASELINE_FIELDS));
     expect(baseline.schema).toBe(BASELINE_SCHEMA);
     expect(baseline.baselineId).toBe(BASELINE_ID);
-    expect(baseline.baselineRevision).toBe(2);
+    expect(baseline.baselineRevision).toBe(3);
     expect(baseline.targetRelease).toBe(TARGET_RELEASE);
     expect(baseline.status).toBe("accepted");
     expect(baseline.acceptedBy).toEqual(COMMITTED_PRINCIPAL);
@@ -719,7 +722,7 @@ describe("committed scope Source Facts", () => {
     expect(Object.keys(bom).sort(codePointCompare)).toEqual(sortedCodePoint(BOM_FIELDS));
     expect(bom.schema).toBe(BOM_SCHEMA);
     expect(bom.bomId).toBe(BOM_ID);
-    expect(bom.bomRevision).toBe(2);
+    expect(bom.bomRevision).toBe(3);
     expect(bom.targetRelease).toBe(TARGET_RELEASE);
     expect(bom.members.map((member: any) => member.id)).toEqual(
       sortedCodePoint(bom.members.map((member: any) => member.id)),
@@ -732,7 +735,7 @@ describe("committed scope Source Facts", () => {
       expect(member.layer).toBe("required");
       expect(member.owner).toBe("sothoth");
       expect(member.designRef.architectureBaselineId).toBe(BASELINE_ID);
-      expect(member.designRef.architectureBaselineRevision).toBe(2);
+      expect(member.designRef.architectureBaselineRevision).toBe(3);
       const registration = byComponent.get(member.id);
       expect(member.designRef.designId).toBe(registration.designId);
       expect(member.designRef.designRevision).toBe(registration.designRevision);
@@ -762,10 +765,10 @@ describe("scope CLI defaults and explicit overrides", () => {
     expect(parsed.projection.memberCount).toBe(11);
     expect(parsed.projection.architectureBaseline).toEqual({
       baselineId: BASELINE_ID,
-      baselineRevision: 2,
+      baselineRevision: 3,
       status: "accepted",
     });
-    expect(parsed.projection.scopeBom).toEqual({ bomId: BOM_ID, bomRevision: 2, targetRelease: TARGET_RELEASE });
+    expect(parsed.projection.scopeBom).toEqual({ bomId: BOM_ID, bomRevision: 3, targetRelease: TARGET_RELEASE });
     expect(`${canonicalJsonStringify(parsed)}\n`).toBe(run.stdout);
   });
 

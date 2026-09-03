@@ -1,7 +1,7 @@
 {
   "schema": "sothoth.artifact-design-registrations/v1",
   "collectionId": "SOTHOTH-ARTIFACT-DESIGN-REGISTRATIONS",
-  "collectionRevision": 2,
+  "collectionRevision": 3,
   "registrations": [
     {
       "designId": "SOTHOTH-CLI-DOSSIER",
@@ -179,12 +179,12 @@
     {
       "designId": "SOTHOTH-DOCUMENT-INDEX-DOSSIER",
       "componentId": "@sothoth/document-index",
-      "designRevision": 1,
+      "designRevision": 2,
       "designRequirement": "full",
       "status": "accepted",
       "documentRef": {
         "documentId": "DOC-SOTHOTH-DOCUMENT-INDEX-DOSSIER",
-        "documentRevision": 1
+        "documentRevision": 2
       },
       "topicCoverage": {
         "identity": { "resolution": "local", "sectionId": "artifact-identity-and-classification", "refs": [], "reason": null },
@@ -235,7 +235,7 @@
         { "criterionId": "document-index-deterministic-index-projection", "sectionId": "verification-and-acceptance-criteria" },
         { "criterionId": "document-index-cache-byte-neutrality", "sectionId": "verification-and-acceptance-criteria" }
       ],
-      "supersedes": null
+      "supersedes": "SOTHOTH-DOCUMENT-INDEX-DOSSIER@1"
     },
     {
       "designId": "SOTHOTH-GIT-DOSSIER",

@@ -877,9 +877,10 @@ describe("foundation dossier structured design facts", () => {
     for (const spec of FOUNDATION) {
       const member = result.projection.members.find((entry: any) => entry.componentId === spec.packageId);
       // Historically, the revision-1 registrations were accepted by the external human owner on
-      // 2026-09-03 (Task 8). Revision 2 keeps every live registration accepted — Graph at design
-      // revision 2 superseding `SOTHOTH-GRAPH-DOSSIER@1` — while only the synthetic fixture
-      // registrations stay in the proposed stage.
+      // 2026-09-03 (Task 8), and revision 2 kept them accepted with Graph at design revision 2.
+      // The live revision-3 facts keep every live registration accepted — Graph at design revision
+      // 2 and Document Index at design revision 2, the other nine at revision 1 — while only the
+      // synthetic fixture registrations stay in the proposed stage.
       expect(member.registrationStatus).toBe("accepted");
       expect(member.localTopics + member.inheritedTopics + member.notApplicableTopics).toBe(18);
       expect(member.criteria).toBe(spec.criteria.length);
