@@ -739,6 +739,293 @@ document's identity; a verified value is rebound to the current source by constr
 `headingId = ${artifactId}#h${ordinal}` and substituting the matching heading id into section
 records. Cache bytes, keys, and hit metadata never enter the projection or the provenance.
 
+### Exact input validation and suppression
+
+Every public function treats its runtime argument as hostile `unknown` and reads only own data
+properties through descriptors. A getter on a known field never executes and is `invalid-field`.
+A container must be a plain object whose prototype is `Object.prototype` or `null`; otherwise it
+is `invalid-input` at that container path. An extra own string key is `unknown-field` at
+`<path>.<key>` and an own symbol key is `unknown-field` at
+`<path>[symbol:<description>]`. Missing required own fields are `missing-field`. `sources`,
+`tags`, `references`, `nodes`, issue arrays, and cache arrays are dense and undecorated: own
+enumerable index names are exactly `"0"` through `"<length-1>"`, every index is a data
+property, and symbols or extra properties are forbidden. An invalid parent or field suppresses
+every dependent check while independent fields continue to validate.
+
+The field grammars are closed. `artifactId`, `version`, `kind`, `status`, `owner`, `path`, and
+each `tags[i]` are non-empty strings. The normalized-path grammar is exact: the path is non-empty,
+contains no NUL (`U+0000`) and no `\`, has no leading or trailing `/`, has no empty, `.`, or
+`..` segment, and has no Windows drive prefix matching `^[A-Za-z]:`. `content` is any string and
+may be empty. `contentDigest` matches `sha256:[0-9a-f]{64}` and equals
+`sha256Digest(content)` over the exact UTF-8 string; mismatch is
+`content-digest-mismatch` at `sources[i].contentDigest`. `blobSha` is `null` or matches
+`^[0-9a-f]{40}$|^[0-9a-f]{64}$`. `tags` entries are unique; a duplicate is
+`invalid-field` at `sources[i].tags`. Every budget field, `compilerRevision`, and a non-null
+`target.revision` is a positive safe integer, and `maxDocuments >= 1`. A relation's `kind` is
+exactly `reference`, `supersession`, or `traceability`; `reference` requires a non-empty `role`,
+the other two kinds forbid `role`, the target has the closed `RelationTargetV1` shape, and
+`external` is exactly a boolean.
+
+Stage 1 runs per source in this exact order: container, closed keys, presence, and shape;
+`content.length <= maxContentCodeUnits`, else `budget-exhausted` at
+`sources[i].content`; digest recomputation; CommonMark parse; complete AST-node count against
+`maxAstNodes`; heading-text length against `maxHeadingTextCodeUnits`; then
+`references.length` against `maxRelationsPerDocument`. An over-length content suppresses digest,
+parse, and later content-derived checks. Whole-index validation order is: input container and
+closed keys; budgets; `sources.length <= maxDocuments` at `input.sources`; every source's
+independent shape checks with issues accumulated; cross-source duplicates; compiler identity;
+cache shapes and keys; cache digest integrity; per-source fresh derivation; per-source cache
+comparison for fresh-success sources; sections and anchors; relation resolution; assembly.
+`buildBlobCacheEntryV1` runs the same Stage-1 source order before deriving directly.
+
+For cross-source duplicates, each valid source after the first with an equal `artifactId` emits
+`duplicate-artifact-id` with the bare identity as subject; each valid source after the first with
+an equal path emits `duplicate-path` with the bare path as subject. Those sources are excluded
+from the relation-resolution universe, but their independent field validation is not suppressed.
+
+### Shared hostile stage-envelope validation
+
+`bindStableSectionsV1` and `deriveHeadingAnchorsV1` validate one
+`ParseDocumentResultV1` rooted at subject `parsed`. `resolveDocumentRelationsV1` first requires a
+dense, undecorated array rooted at `parsed`, then validates element `k` at `parsed[k]`. Shared
+stage-envelope validation runs in this exact order:
+
+1. The envelope is a plain own-data object with no symbol keys. A non-plain value is
+   `invalid-input` at the envelope root and suppresses descendants. Extra own string or symbol
+   keys are `unknown-field`; an accessor on a closed key is `invalid-field` and never executes.
+2. Required `ok` is checked next. Missing is `missing-field`; a non-boolean is `invalid-field`;
+   either suppresses variant and descendant checks.
+3. With `ok === true`, `source` and `parsed` are required and `issues` is forbidden. With
+   `ok === false`, `issues` is required and `source` and `parsed` are forbidden. A forbidden field
+   is `unknown-field`, even when it is an accessor.
+4. A success revalidates `source` under `<root>.source` with exactly `artifactId`, `path`,
+   `version`, `contentDigest`, `blobSha`, `kind`, `status`, `owner`, `tags`, and `relations`;
+   the strings, digest, blob id, dense unique tags, and relation union obey the exact grammars
+   above at `<root>.source.*`. It revalidates `<root>.parsed` with exactly
+   `{artifactId,nodes}`. Every node is a closed member:
+   `heading` has `depth` 1 through 6, string `text`, and `span`; `html` has string `value` and
+   `span`; `block` has one of `paragraph`, `code`, `list`, `blockquote`, `thematic-break`, or
+   `definition` plus `span`. Each span field is a safe integer; offsets are at least zero;
+   lines/columns are at least one; start line and offset do not exceed their ends; when the lines
+   match, start column does not exceed end column. Finally, `parsed.artifactId` must equal
+   `source.artifactId`.
+5. A failure's `issues` is a dense, undecorated, non-empty array. A container violation is
+   `invalid-field` at `<root>.issues` and suppresses issue entries.
+6. Each issue is a plain own-data object with exactly `code`, `subject`, and `location`; normal
+   unknown-, missing-, accessor-, and suppression rules apply independently per entry.
+7. `code` is exactly one of the closed fifteen literals and `subject` is a non-empty string. A
+   grammar-compatible sixteenth code is still `invalid-field`.
+8. `marker-not-followed-by-heading` and `duplicate-section-id` require a plain closed
+   `{artifactId,span}` location with a non-empty artifact id and valid span. Every other code
+   requires `location: null` exactly.
+9. Exact duplicate issues coalesce by `canonicalJson({code,subject,location})`, then sort by
+   `(code, subject, canonicalJson(location))` in Unicode code-point order, using the empty string
+   for a null location. Failure forwarding promises equal canonical value and canonical UTF-8
+   bytes, never JavaScript reference identity.
+
+A downstream stage derives only from a structurally valid supplied success and does not claim
+that a crafted success corresponds to real content. Only `parseDocumentV1`,
+`buildBlobCacheEntryV1`, and `buildDocumentIndexV1` receive a source and verify its content digest;
+only those functions claim correspondence to exact source content. No crafted envelope may crash
+a stage, execute a getter, bypass a shape invariant, or masquerade as another artifact.
+
+### Parse and UTF-16 span projection
+
+The internal Markdown boundary calls `fromMarkdown(content)` with no extensions and no options,
+using the pinned `mdast-util-from-markdown@2.0.2` and its pinned `micromark@4.0.2`. It walks the
+third-party root iteratively with an explicit stack and projects root children exactly once.
+Root `heading` nodes become heading blocks with depth, extracted text, and span; root `html` nodes
+become html blocks with raw value and span; every other default-CommonMark root block maps
+exhaustively to `paragraph`, `code`, `list`, `blockquote`, `thematic-break`, or `definition`.
+Nothing is dropped, misclassified, or rejected, inline prose below headings stays opaque, and the
+third-party AST never crosses a public signature. `[id]: https://example.com\n` projects exactly
+one `definition` block with span `{1,1,0}-{1,26,25}`. Parser exceptions, including a depth-induced
+native `RangeError`, are caught and normalized to `invalid-field` at `sources[i].content`; none
+escapes. `maxAstNodes` counts every node in the complete tree, root included, iteratively.
+
+`SourceSpanV1` copies the parser position's start/end line, column, and offset verbatim. Lines and
+columns are 1-based; offsets are 0-based indices into the exact JavaScript content string in
+UTF-16 code units, so an astral character counts as two; end positions are exclusive. `\n`,
+`\r\n`, and `\r` line endings belong to no node span. Each node owns its own span. Marker and
+bound heading spans remain separate. A Setext heading `Title\n=====` spans
+`{1,1,0}-{2,6,11}`. Relation declarations carry no location because they are caller metadata.
+
+### Root marker recognition and binding
+
+A marker candidate is only a root-level `html` node whose parser-produced raw value exactly
+matches the contracts-owned `SECTION_MARKER_PATTERN`,
+`^<!-- sothoth:section id="([a-z][a-z0-9-]*)" -->$`. A three-space-indented comment retains
+leading spaces in its html value and therefore does not match; four-space indentation is code.
+CRLF and CR content still produce clean candidate values.
+
+The candidate's next root sibling must be a heading. Blank source lines produce no AST node, so
+any number of blank lines is permitted. A paragraph, list, code block, thematic break,
+`definition`, any other node, or EOF emits `marker-not-followed-by-heading` with the extracted
+section id and `{artifactId, span}` at the exact candidate span; it binds no record. A successful
+pair produces `{sectionId, markerSpan, headingId, headingSpan}`. Duplicate detection counts only
+successfully bound markers: every bound occurrence after the first with the same section id emits
+`duplicate-section-id` located at that later marker span, and the later binding still fails even
+when adjacency itself was valid. Distinct documents or positions do not coalesce because location
+participates in issue identity. A heading binds at most one marker: in a stacked pair, the first
+candidate sees an html sibling and fails, while only the last may bind. Marker-shaped html nested
+inside a block quote or list is ignored; non-exact comments and marker text inside fenced or
+indented code are ignored. Binding never scans prose or source substrings.
+
+### Heading text, anchor, and identity
+
+Heading text `E` is the document-order concatenation of descendant `text` and `inlineCode` values.
+Emphasis, strong, and links contribute through their children; inline html and image alt contribute
+nothing. The parser has already stripped ATX markers, surrounding whitespace, and a closing `#`
+sequence; Setext text retains its interior line structure.
+
+The anchor algorithm is exactly seven steps: (1) trim ASCII whitespace (`\t\n\v\f\r `) from both
+ends of `E`; (2) fold ASCII `A-Z` to `a-z` only, with no Unicode normalization or non-ASCII case
+fold; (3) replace every maximal ASCII-whitespace run with one `-`; (4) delete every remaining
+ASCII code point outside `[a-z0-9_-]`; (5) retain every non-ASCII code point at or above `U+0080`
+verbatim; (6) use literal `heading` when the result is empty; (7) disambiguate in document order:
+the first occurrence of base `b` proposes `b`, later occurrence `k` proposes `b-<k>`, and while a
+candidate has already been assigned by any base the suffix increments until unused. There is no
+post-normalization hyphen trim and no consecutive-hyphen collapse.
+
+The accepted literals are: `Hello World` -> `hello-world`; `Purpose` -> `purpose`;
+`Café Ünicode 🎉 heading` -> `café-Ünicode-🎉-heading`; `What? Yes & No! (v2)` ->
+`what-yes--no-v2`; `Some emphasis and code and link text` ->
+`some-emphasis-and-code-and-link-text`; Setext `Line one\nLine two` ->
+`line-one-line-two`; `!!!` -> `heading`; and repeated `Details` headings -> `details`,
+`details-2`, then `details-3`. `headingId` is `${artifactId}#h${ordinal}`, where ordinal is the
+positive 1-based position among all headings in document order, bound or not. Anchors are scoped
+per document. Renaming a heading changes its anchor but never the stable `sectionId` bound to it.
+
+### Declared relations and relation identity
+
+Relations originate only in caller metadata at `DocumentSourceV1.references`; revision 2 invents
+no in-Markdown relation grammar. `RelationTargetV1.revision` is an opaque positive-integer-or-null
+caller assertion: it is recorded verbatim and participates in identity, but is never compared with
+the target source's arbitrary non-empty `version`, selected as current, or interpreted as currency.
+The resolution universe is the artifact-id set of all validly identified, non-duplicate sources.
+
+Resolution order is: relation shape validation; per-source duplicates; then target resolution.
+Two declarations in one source with equal canonical `{kind, role, target}` emit
+`duplicate-relation` at `sources[i].references[j]`, using the first occurrence's index. For a non-external
+target absent from the universe, emit `unresolved-relation-target`; for an external target present
+in the universe, emit `external-target-contradiction`; both subjects are the exact
+`sources[i].references[j].target.artifactId` path. Self-relations, including self-supersession,
+are legal. Parallel relations from distinct sources and cycles of every kind are recorded and
+never rejected; Governance alone interprets versioned roles and ordering-cycle meaning. An empty
+universe with zero relations succeeds.
+
+`relationId` is exactly `canonicalJson({ from, kind, role, to, revision })`, where `from` and `to`
+are artifact ids, `role` is the reference role or `null`, and `revision` is the target revision or
+`null`. Per-source duplicate rejection and the included `from` make the identity globally unique.
+
+### Exact Graph projection
+
+`src/references.ts` consumes Graph through exactly one runtime function:
+`createCanonicalGraphV1` from `@sothoth/graph/digraph`, plus type-only imports for the declaration
+types. Nodes are one `{node:{id:artifactId}, sortKey:artifactId}` per universe artifact with no
+facets, plus one per distinct declared-external target id with the same sort key and
+`facets:{"external":true}`; the contradiction rule makes those sets disjoint. Each relation maps
+to one edge whose `id` and `sortKey` are `relationId`, whose endpoints are the source and target
+artifact ids, and whose role is the relation kind for supersession/traceability or
+`"reference:" + role` for a reference; no weight exists. Unique nodes, resolvable endpoints, and
+non-empty sort keys are established before assembly, so Graph creation succeeds by construction.
+Graph's canonical edge order `(sortKey, edge id)` is the projection's relation-record order and
+`RelationGraphSnapshotV1.relationOrder` is exactly that canonical edge-id sequence. Document Index
+contains no second relation-order implementation and invokes no traversal, SCC, condensation,
+waves, or longest-path function.
+
+### Projection order, digest, and provenance
+
+Whole-index `documents` sort ascending by `artifactId` in Unicode code-point order; duplicates
+have already failed. Inside an entry, tags sort by Unicode code point, headings and sections retain
+document order, and relations retain Graph's canonical edge order. Records with identities sort by
+canonical identity; if content-born identities tie, `(startOffset,endOffset)` breaks the tie. All
+such ties are structurally impossible in revision 2, but this is the complete tie-break rule.
+
+Provenance records the caller-supplied compiler and current budgets verbatim plus each
+`{artifactId,path,version,contentDigest}` in artifact-id order. It records no cache state, witness
+bytes, environment, clock, or synthesized version. The exact digest formulas are stated under the
+failure-and-consistency section; all use only Core `canonicalJson` and `sha256Digest`, include the
+schema literal, and exclude the digest field itself.
+
+### Cache validation, comparison, and rebinding
+
+A cache entry is an untrusted, caller-held, content-neutral witness keyed exactly by
+`{contentDigest,compiler}`. The value contains the verified content digest, root nodes, headings
+keyed by positive 1-based ordinal, and sections linked by `headingOrdinal`; it contains no
+artifact id, path, version, metadata, relation, public artifact-bound stage record, or
+artifact-derived heading id. Cached headings cover all headings exactly once in document order,
+and each cached section resolves to one cached heading whose heading span matches. Rebinding builds
+`${artifactId}#h${ordinal}` for the current source and substitutes that id into its section records.
+
+`buildBlobCacheEntryV1(source,budgets,compiler)` validates the three hostile arguments, verifies
+the exact content digest, derives from that content under those budgets, strips artifact identity
+into the content-neutral forms, computes the self-excluded `derivationDigest`, descriptor-safely
+copies and freezes the result, and returns it. It accepts no independent stage result, so a
+cross-stage mixture is unrepresentable.
+
+Cache handling has exactly five semantic phases:
+
+1. Validate every input, source, budget, compiler, cache container, key, and value shape through
+   descriptors before any cache digest computation. Malformed or duplicate keys are
+   `invalid-cache-key` at `cache[k].key`. A malformed value, accessor, sparse/decorated array,
+   non-JSON value, or cache-path Core exception including `RangeError` is
+   `cache-entry-corrupt` at `cache[k]`; no native exception escapes.
+2. Recompute every structurally valid value's self-excluded `derivationDigest`. Equality proves
+   transport integrity only, never authenticity. Well-formed unmatched entries are otherwise
+   ignored after this validation.
+3. Independently derive every current source from its exact current content under the current
+   invocation budgets, including complete AST-node and heading-text enforcement. A tight budget
+   therefore produces the same `budget-exhausted` result with or without a matching witness.
+4. Only a fresh success is comparison-eligible. A fresh failure skips only that source's semantic
+   candidate comparison and forwards the canonical failure; it does not suppress independent
+   phase-1/2 cache errors, other-source failures, or comparison results for other fresh-success
+   sources. For an eligible source, no matching key is a miss. A matching key compares the complete
+   freshly produced content-neutral value and canonical UTF-8 bytes with the candidate. Any
+   mismatch, including a forged but self-consistent candidate with a recomputed digest, is
+   `cache-entry-corrupt` at `cache[k]`; complete equality is a verified hit. Assembly still uses
+   only the freshly derived, current-artifact-rebound values.
+5. Therefore the projection is a pure function of `(sources,budgets,compiler)`: verified hit,
+   miss, and total cache deletion produce identical canonical bytes. Reordering a successful,
+   structurally valid cache cannot change a success projection because at most one key matches
+   each source and no cache value is substituted. Rejected cache arrays retain positional
+   `cache[k]` subjects, so permutation invariance is not promised for rejected declarations;
+   identical rejected input remains deterministic.
+
+A compiler mismatch is a miss. Entries for absent content digests are fully shape- and
+integrity-validated then ignored. v0.1 promises no CPU fast path, and a trusted acceleration path
+requires a separately accepted trust or proof mechanism.
+
+### Deterministic budgets and stack safety
+
+The five and only five budgets are `maxContentCodeUnits`, `maxDocuments`, `maxAstNodes`,
+`maxRelationsPerDocument`, and `maxHeadingTextCodeUnits`. Enforcement points and precedence are
+the validation orders above. There is no time dimension: no clock, `Date.now`, `performance`,
+interrupt, worker, partial output, or environment-dependent cutoff. Exhaustion is always the
+deterministic `budget-exhausted` issue. `/sections`, `/anchors`, and `/references` impose no
+additional size budget after the producing parse stage; their hostile-envelope validation remains
+exhaustive and the closed vocabulary gains no hidden stage-side size diagnostic.
+
+Document Index's own validation, descriptor-safe copy, recursive-freeze, AST projection, and node
+counting walks are iterative with explicit work stacks; no public function recurses at a depth
+proportional to a document or index. Core `canonicalJson` is recursive, but every valid canonical
+payload produced here has structurally bounded nesting no deeper than six levels regardless of
+array length. Hostile deeply nested cache values are shape-validated before a digest call and any
+Core grammar exception is normalized to the typed cache failure. A valid document with 100,000
+top-level blocks completes parse and downstream stages without `RangeError`. Validation is
+O(total content length + total declarations); parsing has the pinned parser's complexity; assembly
+is O(N log N) over documents and relations for canonical sorting. Every deterministic failure is
+returned without partial output.
+
+Every success and failure is a new descriptor-safe deep copy with no shared mutable reference to
+caller input. Every nested object and array is recursively `Object.freeze`d before exposure, with
+the freeze walk itself implemented iteratively. Own `"__proto__"` data keys are preserved by a
+prototype-safe definition operation rather than assignment through the inherited setter. Null-
+prototype input may normalize to an ordinary plain object because prototype and reference identity
+are outside the contract; the semantic JSON own-data value and its canonical bytes are preserved.
+Mutating caller-owned sources, stage envelopes, relations, cache entries, or nested containers
+after a call cannot change a returned value, and no call freezes or mutates those caller values.
+
 <!-- sothoth:section id="authority-security-and-effects" -->
 
 ## Authority, security, and effects
@@ -798,6 +1085,29 @@ of the complete issue value, and the global order is `(code, subject, canonicalJ
 Unicode code-point order with the empty string for `null` locations — total and deterministic, so
 two byte-identical issues never remain and equal canonical forwarding values are observationally
 indistinguishable from package-produced failures.
+
+### Exact digest formulas
+
+Canonical bytes and digests come only from `canonicalJson` of
+`@sothoth/core/canonical-json` and `sha256Digest` of `@sothoth/core/digest`. Each digest input
+includes its schema literal and excludes its own digest field by construction:
+
+- `entryDigest = sha256Digest(canonicalJson(<DocumentEntryV1 minus entryDigest>))`; the complete
+  entry including `schema: "sothoth.document-index/document-index@1"` participates.
+- `derivationDigest = sha256Digest(canonicalJson(<CachedDocumentDerivationV1 minus derivationDigest>))`;
+  the complete content-neutral derivation including its schema and `contentDigest` participates,
+  and the digest establishes integrity only.
+- `indexDigest = sha256Digest(canonicalJson({ schema: "sothoth.document-index/document-index@1", documents, provenance }))`;
+  this is the projection minus only `indexDigest`, and no second index formula exists.
+
+The verified content-digest literals are: `"# Hello World\n"` ->
+`sha256:3193a37e30746364372ddb1604d91052647d835206efaaeb2f77ab5e2100bcba`;
+`"## Purpose"` ->
+`sha256:b8abb0502b2e5eabf3d1897be030442198f634793c1d63b5ce6b1cc1b4005f34`;
+and `"<!-- sothoth:section id=\"purpose\" -->\n\n## Purpose"` ->
+`sha256:6ead8d509b44bd5472ec243e21ae462f63f0330b76cd70e6406115a86d2ddff8`.
+The empty index uses the same index formula with `documents: []`; schema inclusion and
+self-exclusion do not change for the empty case.
 
 Consistency is the product, under the closed determinism contract:
 

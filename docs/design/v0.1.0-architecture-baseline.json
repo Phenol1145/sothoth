@@ -48,7 +48,7 @@
         "documentId": "DOC-SOTHOTH-DOCUMENT-INDEX-DOSSIER",
         "documentRevision": 2
       },
-      "dossierDigest": "sha256:d0f8e717b282b61d7c4f9624593e5ec673a191bde99dd33311a740e3b9cbdf8b"
+      "dossierDigest": "sha256:1189af5beb2a4e8edc500381a64e6faee8b9a713a47a9ec0f6dd13adda23361b"
     },
     {
       "componentId": "@sothoth/git",

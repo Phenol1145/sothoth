@@ -105,6 +105,29 @@ const EXACT_REF = /^(.+)@([1-9][0-9]*)$/;
 const MARKER = /^<!-- sothoth:section id="([a-z][a-z0-9-]*)" -->$/;
 const VAGUE_REASONS = new Set(["n/a", "na", "none", "not needed", "not applicable", "later", "tbd"]);
 
+const DOCUMENT_INDEX_REVISION_2_NORMATIVE_LANDMARKS = {
+  "state-lifecycle-and-data-flow": [
+    "### Exact input validation and suppression",
+    "### Shared hostile stage-envelope validation",
+    "### Parse and UTF-16 span projection",
+    "### Root marker recognition and binding",
+    "### Heading text, anchor, and identity",
+    "### Declared relations and relation identity",
+    "### Exact Graph projection",
+    "### Projection order, digest, and provenance",
+    "### Cache validation, comparison, and rebinding",
+    "### Deterministic budgets and stack safety",
+    "`what-yes--no-v2`",
+    "`relationId` is exactly `canonicalJson({ from, kind, role, to, revision })`",
+    "Only a fresh success is comparison-eligible.",
+  ],
+  "failure-recovery-and-consistency": [
+    "`entryDigest = sha256Digest(canonicalJson(<DocumentEntryV1 minus entryDigest>))`",
+    "`derivationDigest = sha256Digest(canonicalJson(<CachedDocumentDerivationV1 minus derivationDigest>))`",
+    "`indexDigest = sha256Digest(canonicalJson({ schema: \"sothoth.document-index/document-index@1\", documents, provenance }))`",
+  ],
+} as const;
+
 interface CriterionSpec {
   criterionId: string;
   sectionId: string;
@@ -1146,6 +1169,20 @@ describe("document governance dossier structured design facts", () => {
     },
   );
 
+  test("Document Index revision 2 owns the complete accepted algorithms in its stable sections", async () => {
+    const markdown = await readText(`${root}/docs/design/dossiers/document-index.md`);
+    for (const [sectionId, landmarks] of Object.entries(DOCUMENT_INDEX_REVISION_2_NORMATIVE_LANDMARKS)) {
+      const marker = `<!-- sothoth:section id="${sectionId}" -->`;
+      const sectionStart = markdown.indexOf(marker);
+      expect(sectionStart, `${sectionId} marker`).toBeGreaterThanOrEqual(0);
+      const nextSectionStart = markdown.indexOf("\n<!-- sothoth:section id=", sectionStart + marker.length);
+      const section = markdown.slice(sectionStart, nextSectionStart < 0 ? markdown.length : nextSectionStart);
+      for (const landmark of landmarks) {
+        expect(section, `${sectionId} must own ${landmark}`).toContain(landmark);
+      }
+    }
+  });
+
   test("the document/governance registrations close under the bootstrap checker once the catalog is synthetically completed", async () => {
     const result = checkPreDesign(await syntheticClosureFacts());
     expect(result.issues).toEqual([]);
@@ -1153,7 +1190,8 @@ describe("document governance dossier structured design facts", () => {
     expect(result.projection.readyForAcceptance).toBe(true);
     for (const spec of DOCUMENT_GOVERNANCE) {
       const member = result.projection.members.find((entry: any) => entry.componentId === spec.packageId);
-      // Live reviewed registrations were accepted by the external human owner on 2026-09-03.
+      // Selectors and Governance retain the 2026-09-03 acceptance; Document Index revision 2
+      // carries the later external human acceptance act dated 2026-09-04.
       expect(member.registrationStatus).toBe("accepted");
       expect(member.documentRef.documentId).toBe(spec.documentId);
       expect(member.localTopics + member.inheritedTopics + member.notApplicableTopics).toBe(18);
