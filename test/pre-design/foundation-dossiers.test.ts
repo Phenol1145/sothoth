@@ -96,6 +96,9 @@ interface FoundationSpec {
   designId: string;
   documentId: string;
   path: string;
+  expectedDesignRevision: number;
+  expectedDocumentRevision: number;
+  expectedSupersedes: string | null;
   importAllowlist: string[];
   providedContracts: string[];
   requiredContracts: string[];
@@ -116,6 +119,9 @@ const FOUNDATION: FoundationSpec[] = [
     designId: "SOTHOTH-CONTRACTS-DOSSIER",
     documentId: "DOC-SOTHOTH-CONTRACTS-DOSSIER",
     path: "docs/design/dossiers/contracts.md",
+    expectedDesignRevision: 1,
+    expectedDocumentRevision: 1,
+    expectedSupersedes: null,
     importAllowlist: [],
     providedContracts: ["CONTRACT/SOTHOTH/SCHEMAS@1"],
     requiredContracts: [],
@@ -157,6 +163,9 @@ const FOUNDATION: FoundationSpec[] = [
     designId: "SOTHOTH-CORE-DOSSIER",
     documentId: "DOC-SOTHOTH-CORE-DOSSIER",
     path: "docs/design/dossiers/core.md",
+    expectedDesignRevision: 1,
+    expectedDocumentRevision: 1,
+    expectedSupersedes: null,
     importAllowlist: ["@sothoth/contracts"],
     providedContracts: ["CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1"],
     requiredContracts: ["CONTRACT/SOTHOTH/SCHEMAS@1"],
@@ -198,6 +207,9 @@ const FOUNDATION: FoundationSpec[] = [
     designId: "SOTHOTH-GRAPH-DOSSIER",
     documentId: "DOC-SOTHOTH-GRAPH-DOSSIER",
     path: "docs/design/dossiers/graph.md",
+    expectedDesignRevision: 2,
+    expectedDocumentRevision: 2,
+    expectedSupersedes: "SOTHOTH-GRAPH-DOSSIER@1",
     importAllowlist: ["@sothoth/contracts", "@sothoth/core"],
     providedContracts: ["CONTRACT/SOTHOTH/GENERIC-GRAPH@1"],
     requiredContracts: ["CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1", "CONTRACT/SOTHOTH/SCHEMAS@1"],
@@ -541,7 +553,10 @@ function validateFoundationDesign(facts: {
     if (!registryEntry) {
       push("registry-entry-missing", spec.documentId);
     } else {
-      if (registryEntry.documentRevision !== 1 || registryEntry.status !== "proposed") {
+      if (
+        registryEntry.documentRevision !== spec.expectedDocumentRevision ||
+        registryEntry.status !== "proposed"
+      ) {
         push("registry-entry-invalid", spec.documentId);
       }
       if (registryEntry.path !== spec.path) {
@@ -559,16 +574,16 @@ function validateFoundationDesign(facts: {
     }
     if (
       registration.designId !== spec.designId ||
-      registration.designRevision !== 1 ||
+      registration.designRevision !== spec.expectedDesignRevision ||
       registration.designRequirement !== "full" ||
       registration.status !== "accepted" ||
-      registration.supersedes !== null
+      registration.supersedes !== spec.expectedSupersedes
     ) {
       push("registration-identity-invalid", spec.packageId);
     }
     if (
       registration.documentRef?.documentId !== spec.documentId ||
-      registration.documentRef?.documentRevision !== 1
+      registration.documentRef?.documentRevision !== spec.expectedDocumentRevision
     ) {
       push("registration-document-ref-unresolved", spec.packageId);
     }
@@ -774,7 +789,7 @@ async function syntheticClosureFacts(): Promise<any> {
       capsule,
       ...FOUNDATION.map((spec) => ({
         documentId: spec.documentId,
-        documentRevision: 1,
+        documentRevision: spec.expectedDocumentRevision,
         path: spec.path,
         status: "proposed",
         sectionIds: [...REQUIRED_SECTIONS],
@@ -861,8 +876,10 @@ describe("foundation dossier structured design facts", () => {
     expect(result.projection.readyForAcceptance).toBe(true);
     for (const spec of FOUNDATION) {
       const member = result.projection.members.find((entry: any) => entry.componentId === spec.packageId);
-      // The live reviewed registrations were accepted by the external human owner on 2026-09-03;
-      // only the synthetic fixture registrations stay in the proposed stage.
+      // Historically, the revision-1 registrations were accepted by the external human owner on
+      // 2026-09-03 (Task 8). Revision 2 keeps every live registration accepted — Graph at design
+      // revision 2 superseding `SOTHOTH-GRAPH-DOSSIER@1` — while only the synthetic fixture
+      // registrations stay in the proposed stage.
       expect(member.registrationStatus).toBe("accepted");
       expect(member.localTopics + member.inheritedTopics + member.notApplicableTopics).toBe(18);
       expect(member.criteria).toBe(spec.criteria.length);

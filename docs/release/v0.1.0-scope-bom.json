@@ -1,7 +1,7 @@
 {
   "schema": "sothoth.release-bom/v1",
   "bomId": "SOTHOTH-RELEASE-SCOPE-BOM-0.1",
-  "bomRevision": 1,
+  "bomRevision": 2,
   "targetRelease": "0.1.0",
   "members": [
     {
@@ -12,7 +12,7 @@
       "owner": "sothoth",
       "designRef": {
         "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
-        "architectureBaselineRevision": 1,
+        "architectureBaselineRevision": 2,
         "designId": "SOTHOTH-CLI-DOSSIER",
         "designRevision": 1
       },
@@ -37,7 +37,7 @@
       "owner": "sothoth",
       "designRef": {
         "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
-        "architectureBaselineRevision": 1,
+        "architectureBaselineRevision": 2,
         "designId": "SOTHOTH-CONTRACTS-DOSSIER",
         "designRevision": 1
       },
@@ -60,7 +60,7 @@
       "owner": "sothoth",
       "designRef": {
         "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
-        "architectureBaselineRevision": 1,
+        "architectureBaselineRevision": 2,
         "designId": "SOTHOTH-CORE-DOSSIER",
         "designRevision": 1
       },
@@ -83,7 +83,7 @@
       "owner": "sothoth",
       "designRef": {
         "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
-        "architectureBaselineRevision": 1,
+        "architectureBaselineRevision": 2,
         "designId": "SOTHOTH-DOCUMENT-INDEX-DOSSIER",
         "designRevision": 1
       },
@@ -106,7 +106,7 @@
       "owner": "sothoth",
       "designRef": {
         "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
-        "architectureBaselineRevision": 1,
+        "architectureBaselineRevision": 2,
         "designId": "SOTHOTH-GIT-DOSSIER",
         "designRevision": 1
       },
@@ -131,7 +131,7 @@
       "owner": "sothoth",
       "designRef": {
         "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
-        "architectureBaselineRevision": 1,
+        "architectureBaselineRevision": 2,
         "designId": "SOTHOTH-GOVERNANCE-DOSSIER",
         "designRevision": 1
       },
@@ -155,9 +155,9 @@
       "owner": "sothoth",
       "designRef": {
         "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
-        "architectureBaselineRevision": 1,
+        "architectureBaselineRevision": 2,
         "designId": "SOTHOTH-GRAPH-DOSSIER",
-        "designRevision": 1
+        "designRevision": 2
       },
       "completionGates": [
         {
@@ -178,7 +178,7 @@
       "owner": "sothoth",
       "designRef": {
         "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
-        "architectureBaselineRevision": 1,
+        "architectureBaselineRevision": 2,
         "designId": "SOTHOTH-PLANNING-DOSSIER",
         "designRevision": 1
       },
@@ -202,7 +202,7 @@
       "owner": "sothoth",
       "designRef": {
         "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
-        "architectureBaselineRevision": 1,
+        "architectureBaselineRevision": 2,
         "designId": "SOTHOTH-PROFILE-SDK-DOSSIER",
         "designRevision": 1
       },
@@ -226,7 +226,7 @@
       "owner": "sothoth",
       "designRef": {
         "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
-        "architectureBaselineRevision": 1,
+        "architectureBaselineRevision": 2,
         "designId": "SOTHOTH-SDK-DOSSIER",
         "designRevision": 1
       },
@@ -251,7 +251,7 @@
       "owner": "sothoth",
       "designRef": {
         "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
-        "architectureBaselineRevision": 1,
+        "architectureBaselineRevision": 2,
         "designId": "SOTHOTH-SELECTORS-DOSSIER",
         "designRevision": 1
       },

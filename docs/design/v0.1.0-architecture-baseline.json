@@ -1,7 +1,7 @@
 {
   "schema": "sothoth.architecture-baseline/v1",
   "baselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
-  "baselineRevision": 1,
+  "baselineRevision": 2,
   "targetRelease": "0.1.0",
   "status": "accepted",
   "acceptedBy": {
@@ -73,12 +73,12 @@
     {
       "componentId": "@sothoth/graph",
       "designId": "SOTHOTH-GRAPH-DOSSIER",
-      "designRevision": 1,
+      "designRevision": 2,
       "documentRef": {
         "documentId": "DOC-SOTHOTH-GRAPH-DOSSIER",
-        "documentRevision": 1
+        "documentRevision": 2
       },
-      "dossierDigest": "sha256:34af71ae3950a8ca88e304b21b5ac36a77381e770a07f7c87e87dd265f2cc665"
+      "dossierDigest": "sha256:cbe1dd253148c746197140248cdf93b2fd11d00a4c802565b50a63b793066c18"
     },
     {
       "componentId": "@sothoth/planning",

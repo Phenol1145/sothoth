@@ -307,7 +307,7 @@ describe("bootstrap dossier contract artifacts", () => {
     const registrations = await readJson(REGISTRATIONS_PATH);
     expect(registrations.schema).toBe("sothoth.artifact-design-registrations/v1");
     expect(registrations.collectionId).toBe("SOTHOTH-ARTIFACT-DESIGN-REGISTRATIONS");
-    expect(registrations.collectionRevision).toBe(1);
+    expect(registrations.collectionRevision).toBe(2);
     expect(Array.isArray(registrations.registrations)).toBe(true);
     const registrationFields = [
       "acceptanceCriteria",

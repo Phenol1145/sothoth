@@ -1,7 +1,7 @@
 {
   "schema": "sothoth.design-document-registry/v1",
   "registryId": "SOTHOTH-DESIGN-DOCUMENT-REGISTRY",
-  "registryRevision": 1,
+  "registryRevision": 2,
   "documents": [
     {
       "documentId": "DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN",
@@ -178,7 +178,7 @@
     },
     {
       "documentId": "DOC-SOTHOTH-GRAPH-DOSSIER",
-      "documentRevision": 1,
+      "documentRevision": 2,
       "path": "docs/design/dossiers/graph.md",
       "status": "proposed",
       "sectionIds": [

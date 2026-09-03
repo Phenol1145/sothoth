@@ -61,10 +61,12 @@ entry in the subject. Semver- and digest-shaped references remain future contrac
 
 The Architecture Baseline is an externally authored, accepted Source Fact with the closed top-level
 shape `schema | baselineId | baselineRevision | targetRelease | status | acceptedBy | acceptedAt |
-members`. The committed Baseline is `SOTHOTH-ARCHITECTURE-BASELINE-0.1` revision `1`, targets release
-`0.1.0`, and is `accepted`. Its `acceptedBy` records the exact human principal
-`{"principalType":"human","principalId":"anzhize"}` and `acceptedAt` is `2026-09-03`: the owner act
-recorded in the registrations section above. `principalType` is structurally fixed to `human`, and
+members`. The committed Baseline is `SOTHOTH-ARCHITECTURE-BASELINE-0.1` revision `2`, targets release
+`0.1.0`, and is `accepted`. Revision 1 was accepted in the historical `2026-09-03` owner act
+recorded in the registrations section above; revision 2 — the Graph Dossier revision-2 acceptance —
+records its own externally authored acceptance metadata, with `acceptedBy`
+`{"principalType":"human","principalId":"anzhize"}` and `acceptedAt` `2026-09-03` supplied verbatim
+by that later human acceptance act. `principalType` is structurally fixed to `human`, and
 `acceptedAt` must be a valid `YYYY-MM-DD` calendar date; an in-memory fixture may carry another
 non-empty `principalId` and valid date, but the checker never synthesizes acceptance metadata from a
 passing projection and no agent, checker, or test is an accepting principal.
@@ -83,7 +85,7 @@ registration status remain owned by their own Source Facts.
 
 The formal Scope BOM is the closed `sothoth.release-bom/v1` shape
 `schema | bomId | bomRevision | targetRelease | members`. The committed BOM is
-`SOTHOTH-RELEASE-SCOPE-BOM-0.1` revision `1` targeting `0.1.0` with exactly the eleven catalog
+`SOTHOTH-RELEASE-SCOPE-BOM-0.1` revision `2` targeting `0.1.0` with exactly the eleven catalog
 candidates in Unicode code-point `id` order and no external relations: `@fracta/sothoth-profile`
 is a FRACTA-owned external companion and can never appear as a member. Each member carries
 `id`, `version: "0.1.0"`, `type: "npm-package"`, `layer: "required"`, `owner: "sothoth"`, exactly one

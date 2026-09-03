@@ -1,7 +1,7 @@
 {
   "schema": "sothoth.artifact-design-registrations/v1",
   "collectionId": "SOTHOTH-ARTIFACT-DESIGN-REGISTRATIONS",
-  "collectionRevision": 1,
+  "collectionRevision": 2,
   "registrations": [
     {
       "designId": "SOTHOTH-CLI-DOSSIER",
@@ -383,12 +383,12 @@
     {
       "designId": "SOTHOTH-GRAPH-DOSSIER",
       "componentId": "@sothoth/graph",
-      "designRevision": 1,
+      "designRevision": 2,
       "designRequirement": "full",
       "status": "accepted",
       "documentRef": {
         "documentId": "DOC-SOTHOTH-GRAPH-DOSSIER",
-        "documentRevision": 1
+        "documentRevision": 2
       },
       "topicCoverage": {
         "identity": { "resolution": "local", "sectionId": "artifact-identity-and-classification", "refs": [], "reason": null },
@@ -440,7 +440,7 @@
         { "criterionId": "graph-zero-domain-semantics", "sectionId": "verification-and-acceptance-criteria" },
         { "criterionId": "graph-deterministic-waves", "sectionId": "verification-and-acceptance-criteria" }
       ],
-      "supersedes": null
+      "supersedes": "SOTHOTH-GRAPH-DOSSIER@1"
     },
     {
       "designId": "SOTHOTH-PLANNING-DOSSIER",

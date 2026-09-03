@@ -2,9 +2,9 @@
 
 Status: proposed design fact, pending external acceptance
 
-Document identity: `DOC-SOTHOTH-GRAPH-DOSSIER` revision `1`
+Document identity: `DOC-SOTHOTH-GRAPH-DOSSIER` revision `2`
 
-Design identity: `SOTHOTH-GRAPH-DOSSIER` revision `1`
+Design identity: `SOTHOTH-GRAPH-DOSSIER` revision `2`
 
 Component: `@sothoth/graph`, candidate of `SOTHOTH-DESIGN-SCOPE-0.1` with `designRequirement: full`
 
@@ -30,14 +30,24 @@ history, navigation, impact — is decided by the consuming domain package and i
 This is the exact boundary that keeps document governance from absorbing scheduler semantics and
 planning from absorbing Registry authority.
 
+Document revision 2 closes what revision 1 left open: the exact declaration wrappers, the canonical
+graph value, the seven public function signatures with their result envelopes, the closed ten-code
+diagnostic vocabulary with its suppression, coalescing, and ordering rules, the deterministic
+cycle-witness and overflow-taint rules, and the runtime deep-copy/deep-freeze semantics. It
+supersedes `SOTHOTH-GRAPH-DOSSIER@1` and by itself authorizes no implementation.
+
 <!-- sothoth:section id="artifact-identity-and-classification" -->
 
 ## Artifact identity and classification
 
 The artifact is the npm package `@sothoth/graph`, classified as a generic algorithm library: pure
 functions over caller-constructed graphs, with conformance-tested determinism. Its design identity
-is `SOTHOTH-GRAPH-DOSSIER@1`, its document identity is `DOC-SOTHOTH-GRAPH-DOSSIER@1`, and it is
-the top declared layer of the pinned foundation direction `graph -> core -> contracts`.
+is `SOTHOTH-GRAPH-DOSSIER@2`, its document identity is `DOC-SOTHOTH-GRAPH-DOSSIER@2`, and it is
+the top declared layer of the pinned foundation direction `graph -> core -> contracts`. Revision 2
+supersedes `SOTHOTH-GRAPH-DOSSIER@1`, which closed the module surface, boundary declarations, and
+determinism posture; revision 2 adds the closed public contract — the declaration wrappers, the
+canonical value, the seven callables, the diagnostics, and the runtime immutability rules — without
+changing any contract ref, package dependency, public module, criterion, or section identity.
 
 It ships compiled ESM plus declarations with an explicit exports map. It is a public package in
 its own right: the accepted design places generic graph algorithms in the public surface rather
@@ -141,9 +151,216 @@ returns structures; the meaning of the structures is assembled by whoever called
 or unresolved identities; `traversal` walks reachable sets deterministically; `scc` computes
 strongly connected components; `condensation` collapses them into a component DAG;
 `waves` assigns deterministic topological waves with canonical intra-wave order; `longest-paths`
-solves longest paths over the acyclic condensation with caller weights. Primary consumers are
-`@sothoth/governance`, `@sothoth/planning`, `@sothoth/document-index`, and `@sothoth/selectors`;
-the SDK exposes none of this directly, and the CLI reaches it only through domain compilation.
+solves longest paths with caller weights over the condensation of its input — which for an acyclic
+graph is the graph itself — rejecting cyclic input itself with the deterministic cycle witness,
+while component-level critical paths over cyclic graphs re-enter through the condensation's DAG.
+Primary consumers are `@sothoth/governance`, `@sothoth/planning`, `@sothoth/document-index`, and
+`@sothoth/selectors`; the SDK exposes none of this directly, and the CLI reaches it only through
+domain compilation.
+
+Revision 2 closes the exact export matrix. Each public module exports exactly this surface and
+nothing else:
+
+| Public module | Required exports (complete list) |
+| --- | --- |
+| `@sothoth/graph/digraph` | `createCanonicalGraphV1`; types `GraphNodeDeclarationV1`, `GraphEdgeDeclarationV1`, `DirectedMultigraphDeclarationV1`, `CanonicalGraphV1`, `GraphIssueV1`, `CreateCanonicalGraphSuccessV1`, `GraphFailureV1`, `CreateCanonicalGraphResultV1` |
+| `@sothoth/graph/traversal` | `adjacencyV1`, `reachableFromV1`; types `AdjacencyEntryV1`, `AdjacencySuccessV1`, `AdjacencyResultV1`, `ReachableFromSuccessV1`, `ReachableFromResultV1` |
+| `@sothoth/graph/scc` | `stronglyConnectedComponentsV1`; types `StronglyConnectedComponentsSuccessV1`, `StronglyConnectedComponentsResultV1` |
+| `@sothoth/graph/condensation` | `condenseGraphV1`; types `CondensationComponentV1`, `CondensationV1`, `CondenseGraphSuccessV1`, `CondenseGraphResultV1` |
+| `@sothoth/graph/waves` | `topologicalWavesV1`; types `TopologicalWavesSuccessV1`, `TopologicalWavesResultV1` |
+| `@sothoth/graph/longest-paths` | `longestPathDagV1`; types `LongestPathNodeV1`, `LongestPathDagSuccessV1`, `LongestPathDagResultV1` |
+
+The shared result types (`GraphIssueV1`, `GraphFailureV1`, `CanonicalGraphV1`,
+`CreateCanonicalGraphResultV1`) are exported from `digraph` and imported type-only by the other
+five modules; this adds no seventh public module.
+
+The input vocabulary is wrapper-owned because the contracts-owned `GraphNodeV1` and `GraphEdgeV1`
+deliberately carry no sort keys and no edge identity: a caller declares
+`GraphNodeDeclarationV1 { node, sortKey }` and `GraphEdgeDeclarationV1 { id, edge, sortKey }`,
+and the whole input is a `DirectedMultigraphDeclarationV1 { nodes, edges }` that may arrive in any
+array order and may be invalid. Node identity is the inner `node.id`; edge identity lives in the
+wrapper `id`, so parallel edges with equal endpoints, role, and weight are legal whenever their
+identities differ, and duplicates of either identity fail closed. Sort keys are required,
+non-empty, and never inferred from identity, insertion order, locale, hashes, or environment
+state. `createCanonicalGraphV1` validates a declaration fail-closed and returns the canonically
+ordered, deeply frozen `CanonicalGraphV1` — structurally a declaration, semantically the accepted
+form. Canonical node order is ascending by `(sortKey, node identity)` and canonical edge order by
+`(edge sortKey, edge identity)`, both compared in Unicode code-point order; the deterministic
+topological order repeatedly takes the zero-indegree node with the smallest canonical node rank.
+
+The package root is deliberately absent: importing the bare specifier `@sothoth/graph` fails with
+`ERR_PACKAGE_PATH_NOT_EXPORTED`. Every declared consumer is a package that can import exact
+subpaths, the SDK wraps none of this surface (criterion `sdk-no-generic-graph-wrap`), and a root
+entry would be a seventh import surface the accepted six-module declaration above does not name.
+
+The exact public declarations are closed as follows; nothing in them is left to the implementer.
+Every value returned by any function below is runtime-frozen and descriptor-safely deep-copied;
+`readonly` is compile-time documentation only and is not the runtime guarantee.
+
+```ts
+// @sothoth/graph/digraph
+import type { DiagnosticCodeV1, GraphEdgeV1, GraphNodeV1 } from "@sothoth/contracts";
+
+/** A caller-declared node: the contracts-owned node plus its explicit sort key. */
+export interface GraphNodeDeclarationV1 {
+  readonly node: GraphNodeV1;
+  readonly sortKey: string;
+}
+
+/** A caller-declared edge: edge identity, the contracts-owned edge, and its explicit sort key. */
+export interface GraphEdgeDeclarationV1 {
+  readonly id: string;
+  readonly edge: GraphEdgeV1;
+  readonly sortKey: string;
+}
+
+/** The whole caller input: any order, possibly invalid, never mutated. */
+export interface DirectedMultigraphDeclarationV1 {
+  readonly nodes: readonly GraphNodeDeclarationV1[];
+  readonly edges: readonly GraphEdgeDeclarationV1[];
+}
+
+/** The validated, canonically ordered, deeply frozen graph value. */
+export interface CanonicalGraphV1 {
+  readonly nodes: readonly GraphNodeDeclarationV1[];
+  readonly edges: readonly GraphEdgeDeclarationV1[];
+}
+
+/** One typed graph rejection. `witnessNodeIds` is present iff `code` is `sothoth.graph/not-a-dag`. */
+export interface GraphIssueV1 {
+  readonly code: DiagnosticCodeV1;
+  readonly subject: string;
+  readonly witnessNodeIds?: readonly string[] | undefined;
+}
+
+/** The single failure envelope shared by all seven functions. */
+export interface GraphFailureV1 {
+  readonly ok: false;
+  readonly issues: readonly GraphIssueV1[];
+}
+
+export interface CreateCanonicalGraphSuccessV1 {
+  readonly ok: true;
+  readonly graph: CanonicalGraphV1;
+}
+
+export type CreateCanonicalGraphResultV1 =
+  | CreateCanonicalGraphSuccessV1
+  | GraphFailureV1;
+
+/** Validates a declaration fail-closed and returns it in canonical order, or every issue. */
+export function createCanonicalGraphV1(
+  declaration: DirectedMultigraphDeclarationV1,
+): CreateCanonicalGraphResultV1;
+
+// @sothoth/graph/traversal
+/** One node's incident edges. Self-loop edge ids appear in both lists. */
+export interface AdjacencyEntryV1 {
+  readonly nodeId: string;
+  readonly outgoingEdgeIds: readonly string[];
+  readonly incomingEdgeIds: readonly string[];
+}
+
+export interface AdjacencySuccessV1 {
+  readonly ok: true;
+  readonly entries: readonly AdjacencyEntryV1[];
+}
+
+export type AdjacencyResultV1 = AdjacencySuccessV1 | GraphFailureV1;
+
+/** Adjacency for every declared node, in canonical node order; edge lists in canonical edge order. */
+export function adjacencyV1(graph: CreateCanonicalGraphResultV1): AdjacencyResultV1;
+
+export interface ReachableFromSuccessV1 {
+  readonly ok: true;
+  readonly nodeIds: readonly string[];
+}
+
+export type ReachableFromResultV1 = ReachableFromSuccessV1 | GraphFailureV1;
+
+/** Reflexive forward closure of `startNodeId`, reported once per node in canonical node order. */
+export function reachableFromV1(
+  graph: CreateCanonicalGraphResultV1,
+  startNodeId: string,
+): ReachableFromResultV1;
+
+// @sothoth/graph/scc
+export interface StronglyConnectedComponentsSuccessV1 {
+  readonly ok: true;
+  /** components[i] lists component i's node ids in canonical node order; components ordered canonically. */
+  readonly components: readonly (readonly string[])[];
+}
+
+export type StronglyConnectedComponentsResultV1 =
+  | StronglyConnectedComponentsSuccessV1
+  | GraphFailureV1;
+
+export function stronglyConnectedComponentsV1(
+  graph: CreateCanonicalGraphResultV1,
+): StronglyConnectedComponentsResultV1;
+
+// @sothoth/graph/condensation
+/** One component: its representative-derived identity and its members in canonical node order. */
+export interface CondensationComponentV1 {
+  readonly componentId: string;
+  readonly nodeIds: readonly string[];
+}
+
+export interface CondensationV1 {
+  readonly components: readonly CondensationComponentV1[];
+  /** Maps every declared node id to its component id. Ordinary-object record, own-data keys defined prototype-safely. */
+  readonly componentOfNode: Readonly<Record<string, string>>;
+  /** The component DAG; a valid canonical graph, so it re-enters createCanonicalGraphV1. */
+  readonly dag: CanonicalGraphV1;
+}
+
+export interface CondenseGraphSuccessV1 {
+  readonly ok: true;
+  readonly condensation: CondensationV1;
+}
+
+export type CondenseGraphResultV1 = CondenseGraphSuccessV1 | GraphFailureV1;
+
+export function condenseGraphV1(
+  graph: CreateCanonicalGraphResultV1,
+): CondenseGraphResultV1;
+
+// @sothoth/graph/waves
+export interface TopologicalWavesSuccessV1 {
+  readonly ok: true;
+  /** waves[i] lists wave i's node ids in canonical node order; wave indices are consecutive from 0. */
+  readonly waves: readonly (readonly string[])[];
+}
+
+export type TopologicalWavesResultV1 = TopologicalWavesSuccessV1 | GraphFailureV1;
+
+export function topologicalWavesV1(
+  graph: CreateCanonicalGraphResultV1,
+): TopologicalWavesResultV1;
+
+// @sothoth/graph/longest-paths
+/** Per-node longest-path value and the deterministic incoming edge that achieves it. */
+export interface LongestPathNodeV1 {
+  readonly nodeId: string;
+  readonly longestPathWeight: number;
+  /** Null iff the node is a source (no incoming edges). */
+  readonly criticalEdgeId: string | null;
+}
+
+export interface LongestPathDagSuccessV1 {
+  readonly ok: true;
+  readonly nodes: readonly LongestPathNodeV1[];
+  /** The deterministic maximum path, listed source-first. Empty iff the graph is empty. */
+  readonly criticalPathNodeIds: readonly string[];
+  readonly criticalPathWeight: number;
+}
+
+export type LongestPathDagResultV1 = LongestPathDagSuccessV1 | GraphFailureV1;
+
+export function longestPathDagV1(
+  graph: CreateCanonicalGraphResultV1,
+): LongestPathDagResultV1;
+```
 
 <!-- sothoth:section id="core-sdk-protocol-boundary" -->
 
@@ -206,6 +423,29 @@ from the environment, or reordered by insertion accident. Cycle findings, wave a
 path lengths are returned with the identities needed to explain them, and the caller decides what
 the explanation means.
 
+Revision 2 closes the runtime shape of that immutability. No function mutates an input: every
+accepted graph value, success result, failure result, nested array/object, and facet is a
+descriptor-safe deep copy with no shared mutable reference to caller input, and every returned
+container — the canonical graph, every result envelope and issue object, adjacency entries,
+component arrays, the `componentOfNode` record, the condensation DAG, wave arrays, longest-path
+node objects, and all nested facet containers — is recursively `Object.freeze`d before exposure.
+The copy/freeze walk is iterative (an explicit work stack, so it adds no call-stack depth
+proportional to graph size), operates only on values that already passed the closed JSON grammar
+validation, preserves every own string key — including `"__proto__"`, through
+`Object.defineProperty` or an equivalent prototype-safe operation, never plain assignment that
+could hit the inherited setter — and keeps the canonical JSON own-data value and bytes identical
+to the validated input. Null-prototype input objects may normalize to ordinary objects; reference,
+object, and prototype identity are never part of the contract, and "facets preserved verbatim"
+means the semantic JSON own-data value and its canonical bytes, nothing more. An algorithm may
+return an incoming object only when it is already exactly canonical — validated, coalesced,
+sorted, and deeply frozen.
+
+The data flow runs exclusively through the closed public declarations reproduced in the
+public-surface section: `createCanonicalGraphV1(declaration)` produces the
+`CreateCanonicalGraphResultV1` union, and the six algorithm functions each take that full union
+(plus the validated `startNodeId` for `reachableFromV1`) and return their own success envelope or
+the shared `GraphFailureV1`. There is no other entry point, no mutation API, and no stored state.
+
 <!-- sothoth:section id="authority-security-and-effects" -->
 
 ## Authority, security, and effects
@@ -250,6 +490,72 @@ order; ties break by canonical node identity and then by code-point order — ne
 order, hash traversal, locale collation, or iteration timing. Concurrency needs no coordination:
 immutable inputs and pure functions make parallel compilations independent.
 
+Revision 2 closes the rejection vocabulary as exactly ten codes under `sothoth.graph/`:
+`invalid-declaration`, `unknown-field`, `missing-field`, `invalid-field`, `duplicate-node-id`,
+`duplicate-edge-id`, `unresolved-endpoint`, `unknown-start-node`, `not-a-dag`, and
+`weight-overflow`. A rejection is a list of `GraphIssueV1 { code, subject, witnessNodeIds? }`
+entries; `witnessNodeIds` is present on exactly `not-a-dag` and is itself validated.
+Declaration-structural codes anchor the exact input path (`nodes[3].node.id`);
+algorithm-envelope codes anchor under `graph` (`graph.ok`, `graph.issues[0].code`);
+identity-level codes anchor identities (so they are independent of array positions); and
+`unknown-start-node` anchors the requested start string itself. No graph result or issue ever
+carries an exit code: the outcome-to-exit mapping is owned by `@sothoth/contracts` and rendered by
+the CLI only.
+
+Validation is descriptor-only and hostile. Parameters are typed narrowly, but every function
+treats its runtime argument as hostile `unknown`: it reads own data properties through descriptors
+only — an accessor on a known field fails closed with `invalid-field` and the getter never
+executes — and it never coerces, never mutates, and never invokes a value method. A missing
+required own field is `missing-field`; a present field with a wrong value, type, or descriptor —
+including a non-plain object, a sparse or decorated array, or an empty string where non-empty is
+required — is `invalid-field`; an extra own string or symbol key outside the closed field set is
+`unknown-field` regardless of whether it is a data or accessor property. Suppression is part of
+the contract, not an optimization: an invalid parent or container shape suppresses all descendant
+validation, and an invalid field suppresses every cross-field or cross-entry check that depends on
+it. Facets are validated by the `canonicalJson` grammar of `@sothoth/core/canonical-json` inside a
+fail-closed try/catch — the single owner of the JSON value grammar, so this package contains no
+second grammar implementation — and any exception that grammar raises, including a depth-induced
+native `RangeError`, becomes `invalid-field` on the facets path; nothing is thrown onward. Every
+failure's `issues` array is first coalesced — no two byte-identical issues remain, compared by
+canonical issue value — and then sorted by `(code, subject, canonical witness value)` in Unicode
+code-point order. A rejected input leaves no half-built graph: if any issue exists, the result is
+exactly `{ ok: false, issues }`.
+
+Weights are closed: an optional finite IEEE-754 double. An omitted weight contributes `1` to path
+arithmetic, so wave indices are exactly unit-weight longest-path levels; any finite double,
+negative values and `-0` included, is legal; `NaN`, `+Infinity`, `-Infinity`, and non-number
+values fail closed at creation with `invalid-field` on the weight path.
+
+Cycle rejection is deterministic. `topologicalWavesV1` and `longestPathDagV1` fail closed on any
+multi-node strongly connected component or any self-loop with exactly one `not-a-dag` issue whose
+witness is selected by the closed rule: among all on-cycle nodes — members of components of size
+at least two plus nodes with a self-loop edge — take the one with the smallest canonical rank; a
+self-loop at that node witnesses `[node]`; otherwise walk from it within its component, at each
+node choosing the outgoing same-component target with the smallest canonical rank (among parallel
+edges to that target, the first in canonical edge order), appending targets until a node already
+in the walk reappears and the witness closes at its first occurrence. Every witness entry lies on
+a real directed cycle, and the rule is a pure function of the canonical graph, so every machine
+and every run — including under multiple disjoint or interlocked cycles — produces the same
+witness.
+
+Overflow is a conservative fail-closed taint. While `longestPathDagV1` processes nodes in the
+deterministic topological order, a node becomes affected iff any incoming candidate `L(u) + w(e)`
+produces a non-finite value (magnitude overflow to either infinity, or the NaN of adding
+opposite-signed infinities) or any predecessor of an incoming edge is already affected; a finite
+alternative candidate never clears affectedness, and affectedness propagates through every
+outgoing edge. If the affected set is non-empty the function fails closed with exactly one
+`weight-overflow` issue per affected node — subject: the literal node id — in canonical issue
+order, and no numeric value and no partial success is returned, so no non-finite number ever
+appears in a success result.
+
+Failure forwarding is closed as equal canonical value and canonical bytes, never JavaScript
+reference identity. When creation failed, each algorithm function returns a failure whose
+canonical issue value and canonical UTF-8 bytes equal the creation failure's — coalesced, sorted,
+frozen. A hand-built failure that passes the shared envelope validation is observationally
+indistinguishable from a package-produced failure: the algorithm's output canonical bytes equal
+the validated crafted failure's canonical bytes. Reference identity is not part of the contract
+anywhere.
+
 <!-- sothoth:section id="observation-and-audit" -->
 
 ## Observation and audit
@@ -292,6 +598,30 @@ Migration is therefore re-reference: a domain compiler moves from `CONTRACT/SOTH
 to a successor revision by editing its exact required-contract reference, and its golden outputs
 move with the revision. The package ships no shims, no deprecated aliases, and no
 auto-migration of previously computed results.
+
+Revision 2 supersedes `SOTHOTH-GRAPH-DOSSIER@1` without touching `CONTRACT/SOTHOTH/SCHEMAS@1`:
+the contracts-owned `GraphNodeV1`, `GraphEdgeV1`, and `GraphNodeWaveV1` shapes are consumed
+as-is, and the sort-key and edge-identity vocabulary is Graph-owned wrapper input vocabulary, so
+no closed shape gains a second owner. `GraphNodeWaveV1` remains consumer-side projection
+vocabulary: a domain that needs per-node wave assignments maps the Graph `waves` array into them;
+Graph itself emits the wave-array envelope.
+
+Two readings are closed deliberately. First, the six algorithm functions accept the full
+`CreateCanonicalGraphResultV1` union rather than the bare canonical graph, so
+`topologicalWavesV1(createCanonicalGraphV1(fixture))` composes without destructuring and failure
+forwarding — equal canonical value and canonical bytes — is part of the contract. Second,
+`longestPathDagV1` accepts the general canonical graph result and rejects cyclic input itself
+with the deterministic witness: for an acyclic graph the condensation is the graph itself (every
+strongly connected component is a singleton), and component-level critical paths over cyclic
+graphs re-enter through the closed composition
+`longestPathDagV1(createCanonicalGraphV1(condensation.dag))`, because the condensation DAG is
+itself a valid canonical graph whose endpoints always resolve. Determinism is scoped exactly:
+for any declaration that passes validation, every public result is invariant under any
+permutation of the input arrays; for a rejected declaration the issue list is a deterministic
+function of the exact input sequence. Stack safety is a hard compatibility promise, not a
+preference: no public function may recurse at a depth proportional to graph size, and a valid
+directed path of exactly 100,000 nodes and 99,999 edges must complete every function without
+`RangeError`, within the caller-declared size and time budgets this Dossier already assigns.
 
 <!-- sothoth:section id="developer-and-operator-experience" -->
 
@@ -365,8 +695,9 @@ This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` sections 
 foundation packages beneath it; and to the catalog candidate `@sothoth/graph` in
 `SOTHOTH-DESIGN-SCOPE-0.1@1`.
 
-The registration for this component is `SOTHOTH-GRAPH-DOSSIER@1` bound to
-`DOC-SOTHOTH-GRAPH-DOSSIER@1`, providing `CONTRACT/SOTHOTH/GENERIC-GRAPH@1` and requiring
+The registration for this component is `SOTHOTH-GRAPH-DOSSIER@2`, superseding
+`SOTHOTH-GRAPH-DOSSIER@1` and bound to `DOC-SOTHOTH-GRAPH-DOSSIER@2`, providing
+`CONTRACT/SOTHOTH/GENERIC-GRAPH@1` and requiring
 `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` plus `CONTRACT/SOTHOTH/SCHEMAS@1`. Every reference
 follows the exact grammar `<identity>@<positive integer revision>` with the last `@` separating
 the revision.
