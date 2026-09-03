@@ -10,6 +10,9 @@ export default defineConfig({
       "@sothoth/contracts": fileURLToPath(
         new URL("./packages/contracts/src/index.ts", import.meta.url),
       ),
+      "@sothoth/core/canonical-json": fileURLToPath(
+        new URL("./packages/core/src/canonical-json.ts", import.meta.url),
+      ),
     },
   },
   test: {

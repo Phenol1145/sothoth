@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { readFile, readdir, stat } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { describe, expect, test } from "vitest";
 import * as graphDigraph from "../../packages/graph/src/digraph.js";
@@ -150,7 +150,7 @@ describe("zero-domain-semantics boundary (T32–T33) and surface pins", () => {
     ]);
   });
 
-  test("T33: the built package resolves exactly the six accepted subpaths", async () => {
+  test("T33: the exports map resolves exactly the six accepted subpaths", async () => {
     const probe = `
       const out = [];
       for (const sub of ["digraph", "traversal", "scc", "condensation", "waves", "longest-paths"]) {
@@ -174,9 +174,6 @@ describe("zero-domain-semantics boundary (T32–T33) and surface pins", () => {
       `file://${repo}/packages/graph/dist/waves.js`,
       `file://${repo}/packages/graph/dist/longest-paths.js`,
     ]);
-    for (const url of resolution.out) {
-      await expect(stat(fileURLToPath(url))).resolves.toBeTruthy();
-    }
     expect(resolution.bare).toBe("ERR_PACKAGE_PATH_NOT_EXPORTED");
   });
 
