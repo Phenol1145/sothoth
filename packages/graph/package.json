@@ -1,0 +1,20 @@
+{
+  "name": "@sothoth/graph",
+  "version": "0.1.0",
+  "description": "Deterministic, meaning-free directed multigraph algorithms for Sothoth.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "exports": {
+    "./digraph": { "types": "./dist/digraph.d.ts", "import": "./dist/digraph.js" },
+    "./traversal": { "types": "./dist/traversal.d.ts", "import": "./dist/traversal.js" },
+    "./scc": { "types": "./dist/scc.d.ts", "import": "./dist/scc.js" },
+    "./condensation": { "types": "./dist/condensation.d.ts", "import": "./dist/condensation.js" },
+    "./waves": { "types": "./dist/waves.d.ts", "import": "./dist/waves.js" },
+    "./longest-paths": { "types": "./dist/longest-paths.d.ts", "import": "./dist/longest-paths.js" }
+  },
+  "files": ["dist", "README.md", "LICENSE"],
+  "publishConfig": { "access": "public", "provenance": true },
+  "repository": { "type": "git", "url": "git+https://github.com/Phenol1145/sothoth.git", "directory": "packages/graph" },
+  "engines": { "node": ">=22.14.0" },
+  "dependencies": { "@sothoth/contracts": "0.1.0", "@sothoth/core": "0.1.0" }
+}
