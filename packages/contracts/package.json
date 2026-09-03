@@ -10,6 +10,30 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./identity": {
+      "types": "./dist/identity.d.ts",
+      "import": "./dist/identity.js"
+    },
+    "./schema": {
+      "types": "./dist/schema.d.ts",
+      "import": "./dist/schema.js"
+    },
+    "./diagnostic": {
+      "types": "./dist/diagnostics.d.ts",
+      "import": "./dist/diagnostics.js"
+    },
+    "./projection": {
+      "types": "./dist/projection.d.ts",
+      "import": "./dist/projection.js"
+    },
+    "./pre-design": {
+      "types": "./dist/pre-design.d.ts",
+      "import": "./dist/pre-design.js"
+    },
+    "./extension": {
+      "types": "./dist/extensions.d.ts",
+      "import": "./dist/extensions.js"
     }
   },
   "files": ["dist", "README.md", "LICENSE"],
