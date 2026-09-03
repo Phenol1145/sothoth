@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { fromMarkdown } from "mdast-util-from-markdown";
@@ -105,28 +106,116 @@ const EXACT_REF = /^(.+)@([1-9][0-9]*)$/;
 const MARKER = /^<!-- sothoth:section id="([a-z][a-z0-9-]*)" -->$/;
 const VAGUE_REASONS = new Set(["n/a", "na", "none", "not needed", "not applicable", "later", "tbd"]);
 
-const DOCUMENT_INDEX_REVISION_2_NORMATIVE_LANDMARKS = {
-  "state-lifecycle-and-data-flow": [
-    "### Exact input validation and suppression",
-    "### Shared hostile stage-envelope validation",
-    "### Parse and UTF-16 span projection",
-    "### Root marker recognition and binding",
-    "### Heading text, anchor, and identity",
-    "### Declared relations and relation identity",
-    "### Exact Graph projection",
-    "### Projection order, digest, and provenance",
-    "### Cache validation, comparison, and rebinding",
-    "### Deterministic budgets and stack safety",
-    "`what-yes--no-v2`",
-    "`relationId` is exactly `canonicalJson({ from, kind, role, to, revision })`",
-    "Only a fresh success is comparison-eligible.",
-  ],
-  "failure-recovery-and-consistency": [
-    "`entryDigest = sha256Digest(canonicalJson(<DocumentEntryV1 minus entryDigest>))`",
-    "`derivationDigest = sha256Digest(canonicalJson(<CachedDocumentDerivationV1 minus derivationDigest>))`",
-    "`indexDigest = sha256Digest(canonicalJson({ schema: \"sothoth.document-index/document-index@1\", documents, provenance }))`",
-  ],
+const DOCUMENT_INDEX_NORMATIVE_BOUNDARIES = {
+  stateSection: '<!-- sothoth:section id="state-lifecycle-and-data-flow" -->',
+  stateStart: "### Exact input validation and suppression",
+  stateEnd: '<!-- sothoth:section id="authority-security-and-effects" -->',
+  failureSection: '<!-- sothoth:section id="failure-recovery-and-consistency" -->',
+  digestStart: "### Exact digest formulas",
+  digestEnd: "Consistency is the product, under the closed determinism contract:",
+  failureEnd: '<!-- sothoth:section id="observation-and-audit" -->',
 } as const;
+
+const DOCUMENT_INDEX_REVISION_2_NORMATIVE_BLOCK_HASHES = {
+  "state-lifecycle-and-data-flow": "3a8b0180f801df9de8fb78538569c72bb2035da83e7689547072fe3335842bec",
+  "failure-recovery-and-consistency": "8735881bd90adb2489453a469484d6b15c94e685c1097862f71a0ee02964335e",
+} as const;
+
+const DOCUMENT_INDEX_REVISION_2_NORMATIVE_HEADINGS = [
+  { sectionId: "state-lifecycle-and-data-flow", heading: "### Exact input validation and suppression" },
+  { sectionId: "state-lifecycle-and-data-flow", heading: "### Shared hostile stage-envelope validation" },
+  { sectionId: "state-lifecycle-and-data-flow", heading: "### Parse and UTF-16 span projection" },
+  { sectionId: "state-lifecycle-and-data-flow", heading: "### Root marker recognition and binding" },
+  { sectionId: "state-lifecycle-and-data-flow", heading: "### Heading text, anchor, and identity" },
+  { sectionId: "state-lifecycle-and-data-flow", heading: "### Declared relations and relation identity" },
+  { sectionId: "state-lifecycle-and-data-flow", heading: "### Exact Graph projection" },
+  { sectionId: "state-lifecycle-and-data-flow", heading: "### Projection order, digest, and provenance" },
+  { sectionId: "state-lifecycle-and-data-flow", heading: "### Cache validation, comparison, and rebinding" },
+  { sectionId: "state-lifecycle-and-data-flow", heading: "### Deterministic budgets and stack safety" },
+  { sectionId: "failure-recovery-and-consistency", heading: "### Exact digest formulas" },
+] as const;
+
+const DOCUMENT_INDEX_REVISION_2_FORMER_LANDMARKS = [
+  "`what-yes--no-v2`",
+  "`relationId` is exactly `canonicalJson({ from, kind, role, to, revision })`",
+  "Only a fresh success is comparison-eligible.",
+  "`entryDigest = sha256Digest(canonicalJson(<DocumentEntryV1 minus entryDigest>))`",
+  "`derivationDigest = sha256Digest(canonicalJson(<CachedDocumentDerivationV1 minus derivationDigest>))`",
+  "`indexDigest = sha256Digest(canonicalJson({ schema: \"sothoth.document-index/document-index@1\", documents, provenance }))`",
+] as const;
+
+type DocumentIndexNormativeSectionId = keyof typeof DOCUMENT_INDEX_REVISION_2_NORMATIVE_BLOCK_HASHES;
+
+function sha256Utf8(value: string): string {
+  return createHash("sha256").update(value, "utf8").digest("hex");
+}
+
+function occurrenceOffsets(value: string, boundary: string): number[] {
+  const offsets: number[] = [];
+  let searchFrom = 0;
+  while (searchFrom <= value.length - boundary.length) {
+    const offset = value.indexOf(boundary, searchFrom);
+    if (offset < 0) break;
+    offsets.push(offset);
+    searchFrom = offset + boundary.length;
+  }
+  return offsets;
+}
+
+function uniqueBoundaryOffset(markdown: string, boundary: string, label: string): number {
+  const offsets = occurrenceOffsets(markdown, boundary);
+  expect(offsets, `${label} must occur exactly once`).toHaveLength(1);
+  return offsets[0]!;
+}
+
+function nextStableSectionMarkerOffset(markdown: string, afterOffset: number): number {
+  const offset = markdown.indexOf("\n<!-- sothoth:section id=", afterOffset);
+  return offset < 0 ? -1 : offset + 1;
+}
+
+function extractDocumentIndexNormativeBlocks(
+  markdown: string,
+): Record<DocumentIndexNormativeSectionId, string> {
+  const boundaryOffsets = {
+    stateSection: uniqueBoundaryOffset(markdown, DOCUMENT_INDEX_NORMATIVE_BOUNDARIES.stateSection, "state section marker"),
+    stateStart: uniqueBoundaryOffset(markdown, DOCUMENT_INDEX_NORMATIVE_BOUNDARIES.stateStart, "state block start"),
+    stateEnd: uniqueBoundaryOffset(markdown, DOCUMENT_INDEX_NORMATIVE_BOUNDARIES.stateEnd, "state block end"),
+    failureSection: uniqueBoundaryOffset(
+      markdown,
+      DOCUMENT_INDEX_NORMATIVE_BOUNDARIES.failureSection,
+      "failure section marker",
+    ),
+    digestStart: uniqueBoundaryOffset(markdown, DOCUMENT_INDEX_NORMATIVE_BOUNDARIES.digestStart, "digest block start"),
+    digestEnd: uniqueBoundaryOffset(markdown, DOCUMENT_INDEX_NORMATIVE_BOUNDARIES.digestEnd, "digest block end"),
+    failureEnd: uniqueBoundaryOffset(markdown, DOCUMENT_INDEX_NORMATIVE_BOUNDARIES.failureEnd, "failure section end"),
+  };
+
+  expect(
+    Object.values(boundaryOffsets),
+    "normative boundaries must remain in state -> authority -> failure -> observation order",
+  ).toEqual([...Object.values(boundaryOffsets)].sort((left, right) => left - right));
+  expect(
+    nextStableSectionMarkerOffset(markdown, boundaryOffsets.stateStart),
+    "the state normative block must end at the next stable-section marker",
+  ).toBe(boundaryOffsets.stateEnd);
+  expect(
+    nextStableSectionMarkerOffset(markdown, boundaryOffsets.failureSection),
+    "the digest normative block must remain inside the failure stable section",
+  ).toBe(boundaryOffsets.failureEnd);
+
+  return {
+    "state-lifecycle-and-data-flow": markdown.slice(boundaryOffsets.stateStart, boundaryOffsets.stateEnd),
+    "failure-recovery-and-consistency": markdown.slice(boundaryOffsets.digestStart, boundaryOffsets.digestEnd),
+  };
+}
+
+function normativeHeadingInventory(
+  blocks: Record<DocumentIndexNormativeSectionId, string>,
+): { sectionId: DocumentIndexNormativeSectionId; heading: string }[] {
+  return (Object.keys(blocks) as DocumentIndexNormativeSectionId[]).flatMap((sectionId) =>
+    [...blocks[sectionId].matchAll(/^### [^\r\n]+$/gm)].map((match) => ({ sectionId, heading: match[0] })),
+  );
+}
 
 interface CriterionSpec {
   criterionId: string;
@@ -1169,18 +1258,36 @@ describe("document governance dossier structured design facts", () => {
     },
   );
 
-  test("Document Index revision 2 owns the complete accepted algorithms in its stable sections", async () => {
+  test("Document Index revision 2 pins every byte of the complete accepted normative blocks", async () => {
     const markdown = await readText(`${root}/docs/design/dossiers/document-index.md`);
-    for (const [sectionId, landmarks] of Object.entries(DOCUMENT_INDEX_REVISION_2_NORMATIVE_LANDMARKS)) {
-      const marker = `<!-- sothoth:section id="${sectionId}" -->`;
-      const sectionStart = markdown.indexOf(marker);
-      expect(sectionStart, `${sectionId} marker`).toBeGreaterThanOrEqual(0);
-      const nextSectionStart = markdown.indexOf("\n<!-- sothoth:section id=", sectionStart + marker.length);
-      const section = markdown.slice(sectionStart, nextSectionStart < 0 ? markdown.length : nextSectionStart);
-      for (const landmark of landmarks) {
-        expect(section, `${sectionId} must own ${landmark}`).toContain(landmark);
-      }
+    const blocks = extractDocumentIndexNormativeBlocks(markdown);
+
+    expect(normativeHeadingInventory(blocks)).toEqual(DOCUMENT_INDEX_REVISION_2_NORMATIVE_HEADINGS);
+    for (const sectionId of Object.keys(blocks) as DocumentIndexNormativeSectionId[]) {
+      expect(sha256Utf8(blocks[sectionId]), `${sectionId} complete normative block SHA-256`).toBe(
+        DOCUMENT_INDEX_REVISION_2_NORMATIVE_BLOCK_HASHES[sectionId],
+      );
     }
+  });
+
+  test("the Document Index exact-block guard rejects substantive prose deletion with headings and old landmarks retained", async () => {
+    const markdown = await readText(`${root}/docs/design/dossiers/document-index.md`);
+    const deletedProseStart = markdown.indexOf(DOCUMENT_INDEX_NORMATIVE_BOUNDARIES.stateStart) +
+      DOCUMENT_INDEX_NORMATIVE_BOUNDARIES.stateStart.length;
+    const deletedProseEnd = markdown.indexOf("### Shared hostile stage-envelope validation");
+    const mutatedMarkdown = markdown.slice(0, deletedProseStart) + "\n\n" + markdown.slice(deletedProseEnd);
+    const mutatedBlocks = extractDocumentIndexNormativeBlocks(mutatedMarkdown);
+
+    expect(normativeHeadingInventory(mutatedBlocks)).toEqual(DOCUMENT_INDEX_REVISION_2_NORMATIVE_HEADINGS);
+    for (const landmark of DOCUMENT_INDEX_REVISION_2_FORMER_LANDMARKS) {
+      expect(mutatedMarkdown, `mutation must retain former landmark ${landmark}`).toContain(landmark);
+    }
+    expect(
+      sha256Utf8(mutatedBlocks["state-lifecycle-and-data-flow"]),
+      "substantive deletion must change the complete state normative block hash",
+    ).not.toBe(
+      DOCUMENT_INDEX_REVISION_2_NORMATIVE_BLOCK_HASHES["state-lifecycle-and-data-flow"],
+    );
   });
 
   test("the document/governance registrations close under the bootstrap checker once the catalog is synthetically completed", async () => {
