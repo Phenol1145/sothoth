@@ -1,11 +1,11 @@
 /**
  * Document contract and stable section identity declarations.
  *
- * Internal family consumed through the `@sothoth/contracts` root entry by the
- * document-index and governance packages. A stable section marker is an HTML
- * comment of the exact form `<!-- sothoth:section id="purpose" -->`; section
- * identity is closed over the marker grammar and never derived from heading
- * prose.
+ * Internal implementation file of the accepted `@sothoth/contracts/schema`
+ * family, re-exported by `schema.ts` and never exposed under its own
+ * subpath. A stable section marker is an HTML comment of the exact form
+ * `<!-- sothoth:section id="purpose" -->`; section identity is closed over
+ * the marker grammar and never derived from heading prose.
  */
 
 /** Matches a stable section identity. */

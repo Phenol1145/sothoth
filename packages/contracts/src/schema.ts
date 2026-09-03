@@ -5,11 +5,16 @@
  * an envelope carrying a key outside its declared field set is a schema
  * violation, not a graceful extension point. Field sets are pinned as
  * constants so validators and tests share one declaration per fact shape.
+ * The document and graph contract names are internal implementation files of
+ * this family, so `@sothoth/contracts/schema` is their accepted public home.
  */
 
 import { sortContractIssues } from "./code-point-order.js";
 import type { JsonValue } from "./identity.js";
 import type { TopicCoverageEntryV1 } from "./pre-design.js";
+
+export * from "./documents.js";
+export * from "./graphs.js";
 
 /** A structured validation issue with a diagnostic code and an exact subject path. */
 export interface ContractIssueV1 {

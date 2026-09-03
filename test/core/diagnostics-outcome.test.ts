@@ -1,5 +1,9 @@
 import { describe, expect, test } from "vitest";
-import { aggregateOutcome, finalizeDiagnostics } from "../../packages/core/src/index.js";
+import {
+  aggregateOutcome,
+  finalizeDiagnostics,
+  SothothInputError,
+} from "../../packages/core/src/index.js";
 import type { DiagnosticDraftV1 } from "../../packages/contracts/src/index.js";
 
 function draft(overrides: Partial<DiagnosticDraftV1> = {}): DiagnosticDraftV1 {
@@ -82,6 +86,74 @@ describe("diagnostic finalization", () => {
     ).toThrowError();
     expect(() => finalizeDiagnostics([{ ...draft(), surprise: true } as DiagnosticDraftV1]))
       .toThrowError();
+  });
+
+  test("finalization fails closed on a top-level known-field accessor without executing it", () => {
+    let calls = 0;
+    const candidate = draft() as Record<string, unknown>;
+    Object.defineProperty(candidate, "code", {
+      enumerable: true,
+      get() {
+        calls += 1;
+        return "sothoth.evidence/unresolved";
+      },
+    });
+
+    let thrown: unknown;
+    try {
+      finalizeDiagnostics([candidate as unknown as DiagnosticDraftV1]);
+    } catch (error) {
+      thrown = error;
+    }
+    expect(thrown).toBeInstanceOf(SothothInputError);
+    expect(thrown).toHaveProperty("code", "sothoth.input/invalid-diagnostic-draft");
+    expect(calls).toBe(0);
+  });
+
+  test("finalization fails closed on a nested subjects accessor without executing it", () => {
+    let calls = 0;
+    const subjects = ["evidence:test"];
+    Object.defineProperty(subjects, 0, {
+      enumerable: true,
+      get() {
+        calls += 1;
+        return "evidence:test";
+      },
+    });
+    const candidate = draft({ subjects });
+
+    let thrown: unknown;
+    try {
+      finalizeDiagnostics([candidate]);
+    } catch (error) {
+      thrown = error;
+    }
+    expect(thrown).toBeInstanceOf(SothothInputError);
+    expect(thrown).toHaveProperty("code", "sothoth.input/invalid-diagnostic-draft");
+    expect(calls).toBe(0);
+  });
+
+  test("finalization fails closed on a nested parameters accessor without executing it", () => {
+    let calls = 0;
+    const parameters = { budget: 3 };
+    Object.defineProperty(parameters, "budget", {
+      enumerable: true,
+      get() {
+        calls += 1;
+        return 3;
+      },
+    });
+    const candidate = draft({ parameters });
+
+    let thrown: unknown;
+    try {
+      finalizeDiagnostics([candidate]);
+    } catch (error) {
+      thrown = error;
+    }
+    expect(thrown).toBeInstanceOf(SothothInputError);
+    expect(thrown).toHaveProperty("code", "sothoth.input/invalid-diagnostic-draft");
+    expect(calls).toBe(0);
   });
 });
 

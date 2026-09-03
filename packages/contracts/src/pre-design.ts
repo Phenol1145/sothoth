@@ -8,11 +8,13 @@
  * The registry below was derived from the declaration blocks of the eleven
  * accepted Dossiers at revision 1; it declares only kinds that actually occur
  * there and adds none. Every declaration is validated as a closed object:
- * an unknown key fails closed exactly like a missing or unknown kind, and
- * validation never reads property values, so hostile accessors never run.
+ * an unknown key fails closed exactly like a missing, unknown, or accessor
+ * kind, and known fields are read only through own-property descriptors, so
+ * hostile accessors never run.
  */
 
 import { sortContractIssues } from "./code-point-order.js";
+import { readOwnDataField } from "./own-data.js";
 import { validateExactRecordV1 } from "./schema.js";
 import type { ContractIssueV1 } from "./schema.js";
 
@@ -344,13 +346,17 @@ const DECLARATION_KIND_SET: ReadonlySet<string> = new Set(DOSSIER_DECLARATION_KI
 /**
  * Validates one Dossier declaration as a closed object.
  *
- * The candidate must be a non-array object whose `kind` is a member of
- * `DOSSIER_DECLARATION_KINDS_V1`; every own key must belong to the kind's
- * required or optional field set; every required key must be present. This
- * validator closes the object shape only — value typing of declaration fields
- * stays with the governance compiler that consumes whole Dossiers. Issues are
- * ordered by code and then subject in Unicode code-point order, and no
- * property value is ever read, so hostile accessors never run.
+ * The candidate must be a non-array object whose `kind` is an own data
+ * property holding a member of `DOSSIER_DECLARATION_KINDS_V1`; every own key
+ * must belong to the kind's required or optional field set; every required
+ * key must be present as an own data property; and every present required or
+ * optional known field must itself be an own data property — an own accessor
+ * fails closed as `sothoth.contracts/invalid-field` without its getter ever
+ * executing, and inherited fields never masquerade as present own fields.
+ * This validator closes the object shape only — value typing of declaration
+ * fields stays with the governance compiler that consumes whole Dossiers.
+ * Issues are ordered by code and then subject in Unicode code-point order,
+ * and no property value is ever read through plain property access.
  */
 export function validateDossierDeclarationV1(candidate: unknown): readonly ContractIssueV1[] {
   const subject = "declaration";
@@ -358,12 +364,18 @@ export function validateDossierDeclarationV1(candidate: unknown): readonly Contr
     return [{ code: "sothoth.contracts/invalid-declaration", subject }];
   }
   const record = candidate as Record<string, unknown>;
-  if (!("kind" in record)) {
+  const kindField = readOwnDataField(record, "kind");
+  if (kindField.state === "missing") {
     return sortContractIssues([
       { code: "sothoth.contracts/missing-field", subject: `${subject}.kind` },
     ]);
   }
-  const kind = record.kind;
+  if (kindField.state === "accessor") {
+    return sortContractIssues([
+      { code: "sothoth.contracts/invalid-field", subject: `${subject}.kind` },
+    ]);
+  }
+  const kind = kindField.value;
   if (typeof kind !== "string" || !DECLARATION_KIND_SET.has(kind)) {
     return sortContractIssues([
       { code: "sothoth.contracts/unknown-declaration-kind", subject: `${subject}.kind` },
@@ -375,8 +387,16 @@ export function validateDossierDeclarationV1(candidate: unknown): readonly Contr
     ...validateExactRecordV1(record, [...required, ...optional], subject),
   ];
   for (const field of required) {
-    if (!(field in record)) {
+    const fieldState = readOwnDataField(record, field);
+    if (fieldState.state === "missing") {
       issues.push({ code: "sothoth.contracts/missing-field", subject: `${subject}.${field}` });
+    } else if (fieldState.state === "accessor") {
+      issues.push({ code: "sothoth.contracts/invalid-field", subject: `${subject}.${field}` });
+    }
+  }
+  for (const field of optional) {
+    if (readOwnDataField(record, field).state === "accessor") {
+      issues.push({ code: "sothoth.contracts/invalid-field", subject: `${subject}.${field}` });
     }
   }
   return sortContractIssues(issues);

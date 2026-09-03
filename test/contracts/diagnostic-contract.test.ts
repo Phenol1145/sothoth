@@ -142,6 +142,80 @@ describe("diagnostic draft closure", () => {
     });
   });
 
+  const DRAFT_KNOWN_FIELDS = [
+    "code",
+    "origin",
+    "category",
+    "phase",
+    "verdict",
+    "severity",
+    "ruleId",
+    "location",
+    "subjects",
+    "parameters",
+    "causes",
+    "help",
+  ] as const;
+
+  test.each(DRAFT_KNOWN_FIELDS)("fails closed on a %s accessor without executing it", (field) => {
+    let calls = 0;
+    const validValue = (draft() as Record<string, unknown>)[field];
+    const candidate = draft() as Record<string, unknown>;
+    Object.defineProperty(candidate, field, {
+      enumerable: true,
+      get() {
+        calls += 1;
+        return validValue;
+      },
+    });
+
+    expect(validateDiagnosticDraftV1(candidate)).toEqual([
+      { code: "sothoth.contracts/invalid-field", subject: `diagnostic.${field}` },
+    ]);
+    expect(calls).toBe(0);
+  });
+
+  test("never string-coerces verdict, severity, or category values", () => {
+    let coercionCalls = 0;
+    const coercibleVerdict = {
+      toString() {
+        coercionCalls += 1;
+        return "fail";
+      },
+    };
+
+    expect(
+      validateDiagnosticDraftV1(
+        draft({ verdict: coercibleVerdict as unknown as DiagnosticDraftV1["verdict"] }),
+      ),
+    ).toEqual([{ code: "sothoth.contracts/invalid-field", subject: "diagnostic.verdict" }]);
+    expect(
+      validateDiagnosticDraftV1(
+        draft({ severity: { toString: () => "error" } as unknown as DiagnosticDraftV1["severity"] }),
+      ),
+    ).toEqual([{ code: "sothoth.contracts/invalid-field", subject: "diagnostic.severity" }]);
+    expect(
+      validateDiagnosticDraftV1(
+        draft({ category: { toString: () => "input" } as unknown as DiagnosticDraftV1["category"] }),
+      ),
+    ).toEqual([{ code: "sothoth.contracts/invalid-field", subject: "diagnostic.category" }]);
+    expect(coercionCalls).toBe(0);
+  });
+
+  test("inherited known fields do not count as present own fields", () => {
+    const candidate: Record<string, unknown> = Object.create(draft());
+
+    const issues = validateDiagnosticDraftV1(candidate);
+    expect(issues).toContainEqual({
+      code: "sothoth.contracts/missing-field",
+      subject: "diagnostic.code",
+    });
+    expect(issues).toContainEqual({
+      code: "sothoth.contracts/missing-field",
+      subject: "diagnostic.help",
+    });
+  });
+
   test("rejects non-object candidates", () => {
     expect(validateDiagnosticDraftV1(null)).toContainEqual({
       code: "sothoth.contracts/invalid-diagnostic",

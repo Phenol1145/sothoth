@@ -12,6 +12,7 @@
 
 import { sortContractIssues } from "./code-point-order.js";
 import type { DigestV1, JsonValue } from "./identity.js";
+import { readOwnDataField } from "./own-data.js";
 import { validateExactRecordV1 } from "./schema.js";
 import type { ContractIssueV1 } from "./schema.js";
 
@@ -150,9 +151,13 @@ const DIAGNOSTIC_SEVERITY_SET: ReadonlySet<string> = new Set(DIAGNOSTIC_SEVERITI
 
 /**
  * Validates a Structured Diagnostic draft as a closed object: unknown fields
- * fail closed, missing fields fail closed, and the code grammar plus the
- * verdict, severity, and category enumerations are enforced. Validation never
- * reads property values of unknown fields, so hostile accessors never run.
+ * fail closed, missing own fields fail closed, and own accessor fields fail
+ * closed as `sothoth.contracts/invalid-field` without their getters ever
+ * executing. Inherited fields do not count as present. The code grammar plus
+ * the verdict, severity, and category enumerations are enforced on raw own
+ * descriptor values — never on string coercions of them. Validation never
+ * reads property values of unknown fields, so hostile accessors on unknown
+ * keys never run either.
  */
 export function validateDiagnosticDraftV1(candidate: unknown): readonly ContractIssueV1[] {
   const subject = "diagnostic";
@@ -163,21 +168,36 @@ export function validateDiagnosticDraftV1(candidate: unknown): readonly Contract
   const issues: ContractIssueV1[] = [
     ...validateExactRecordV1(record, DIAGNOSTIC_DRAFT_FIELDS_V1, subject),
   ];
+  const values = new Map<string, unknown>();
   for (const field of DIAGNOSTIC_DRAFT_FIELDS_V1) {
-    if (!(field in record)) {
+    const fieldState = readOwnDataField(record, field);
+    if (fieldState.state === "missing") {
       issues.push({ code: "sothoth.contracts/missing-field", subject: `${subject}.${field}` });
+    } else if (fieldState.state === "accessor") {
+      issues.push({ code: "sothoth.contracts/invalid-field", subject: `${subject}.${field}` });
+    } else {
+      values.set(field, fieldState.value);
     }
   }
-  if ("code" in record && !isDiagnosticCodeV1(record.code)) {
+  if (values.has("code") && !isDiagnosticCodeV1(values.get("code"))) {
     issues.push({ code: "sothoth.contracts/invalid-field", subject: `${subject}.code` });
   }
-  if ("verdict" in record && !DIAGNOSTIC_VERDICT_SET.has(String(record.verdict))) {
+  const verdict = values.get("verdict");
+  if (values.has("verdict") && (typeof verdict !== "string" || !DIAGNOSTIC_VERDICT_SET.has(verdict))) {
     issues.push({ code: "sothoth.contracts/invalid-field", subject: `${subject}.verdict` });
   }
-  if ("severity" in record && !DIAGNOSTIC_SEVERITY_SET.has(String(record.severity))) {
+  const severity = values.get("severity");
+  if (
+    values.has("severity") &&
+    (typeof severity !== "string" || !DIAGNOSTIC_SEVERITY_SET.has(severity))
+  ) {
     issues.push({ code: "sothoth.contracts/invalid-field", subject: `${subject}.severity` });
   }
-  if ("category" in record && !DIAGNOSTIC_CATEGORY_SET.has(String(record.category))) {
+  const category = values.get("category");
+  if (
+    values.has("category") &&
+    (typeof category !== "string" || !DIAGNOSTIC_CATEGORY_SET.has(category))
+  ) {
     issues.push({ code: "sothoth.contracts/invalid-field", subject: `${subject}.category` });
   }
   return sortContractIssues(issues);

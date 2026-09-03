@@ -366,6 +366,71 @@ describe("dossier declaration-kind vocabulary (M-4)", () => {
     });
     expect(calls).toBe(0);
   });
+
+  test("fails closed on a kind accessor without executing it", () => {
+    let calls = 0;
+    const sample = {
+      ...SAMPLES["sothoth-dossier/dependency-declaration@1"],
+    } as Sample;
+    Object.defineProperty(sample, "kind", {
+      enumerable: true,
+      get() {
+        calls += 1;
+        return "sothoth-dossier/dependency-declaration@1";
+      },
+    });
+
+    expect(validateDossierDeclarationV1(sample)).toEqual([
+      { code: "sothoth.contracts/invalid-field", subject: "declaration.kind" },
+    ]);
+    expect(calls).toBe(0);
+  });
+
+  test("fails closed on a known required-field accessor without executing it", () => {
+    let calls = 0;
+    const sample = {
+      ...SAMPLES["sothoth-dossier/dependency-declaration@1"],
+    } as Sample;
+    Object.defineProperty(sample, "packageId", {
+      enumerable: true,
+      get() {
+        calls += 1;
+        return "@sothoth/contracts";
+      },
+    });
+
+    expect(validateDossierDeclarationV1(sample)).toEqual([
+      { code: "sothoth.contracts/invalid-field", subject: "declaration.packageId" },
+    ]);
+    expect(calls).toBe(0);
+  });
+
+  test("fails closed on a known optional-field accessor without executing it", () => {
+    let calls = 0;
+    const sample = {
+      ...SAMPLES["sothoth-dossier/truth-ownership-declaration@1"],
+    } as Sample;
+    Object.defineProperty(sample, "ownsDomainTruth", {
+      enumerable: true,
+      get() {
+        calls += 1;
+        return false;
+      },
+    });
+
+    expect(validateDossierDeclarationV1(sample)).toEqual([
+      { code: "sothoth.contracts/invalid-field", subject: "declaration.ownsDomainTruth" },
+    ]);
+    expect(calls).toBe(0);
+  });
+
+  test("an inherited kind does not satisfy the own-kind requirement", () => {
+    const candidate: Sample = Object.create(SAMPLES["sothoth-dossier/dependency-declaration@1"]);
+
+    expect(validateDossierDeclarationV1(candidate)).toEqual([
+      { code: "sothoth.contracts/missing-field", subject: "declaration.kind" },
+    ]);
+  });
 });
 
 describe("dossier topic vocabulary", () => {

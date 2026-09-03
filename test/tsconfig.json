@@ -1,0 +1,11 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": ".",
+    "outDir": "../node_modules/.cache/test-typecheck",
+    "tsBuildInfoFile": "../node_modules/.cache/test-typecheck.tsbuildinfo"
+  },
+  "include": ["contracts/root-family-type-pins.ts"],
+  "references": [{ "path": "../packages/contracts" }]
+}

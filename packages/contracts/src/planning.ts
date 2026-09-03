@@ -1,11 +1,12 @@
 /**
  * Planning-domain contracts.
  *
- * Internal family consumed through the `@sothoth/contracts` root entry by
- * `@sothoth/planning`. Scheduling has one non-authoritative Schedule Solution
- * identity; at `0.1.0` only dependency validation and deterministic wave
- * assignment are implemented capabilities and every other scheduling axis
- * stays an explicit unsupported dimension.
+ * Internal implementation file of the accepted `@sothoth/contracts/projection`
+ * family, re-exported by `projection.ts` and never exposed under its own
+ * subpath. Scheduling has one non-authoritative Schedule Solution identity;
+ * at `0.1.0` only dependency validation and deterministic wave assignment are
+ * implemented capabilities and every other scheduling axis stays an explicit
+ * unsupported dimension.
  */
 
 import type { GraphNodeWaveV1 } from "./graphs.js";

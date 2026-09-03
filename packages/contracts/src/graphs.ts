@@ -1,10 +1,11 @@
 /**
  * Generic graph shape contracts.
  *
- * Internal family consumed through the `@sothoth/contracts` root entry by
- * `@sothoth/graph` and the domain compilers. Nodes, edges, weights, and sort
- * keys are caller-provided; this contract declares no relation meaning, so no
- * domain semantics can leak into the generic algorithms.
+ * Internal implementation file of the accepted `@sothoth/contracts/schema`
+ * family, re-exported by `schema.ts` and never exposed under its own
+ * subpath. Nodes, edges, weights, and sort keys are caller-provided; this
+ * contract declares no relation meaning, so no domain semantics can leak
+ * into the generic algorithms.
  */
 
 import type { JsonValue } from "./identity.js";
