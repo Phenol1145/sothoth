@@ -4,7 +4,10 @@ import {
   finalizeDiagnostics,
   SothothInputError,
 } from "../../packages/core/src/index.js";
-import type { DiagnosticDraftV1 } from "../../packages/contracts/src/index.js";
+import type {
+  DiagnosticDraftV1,
+  StructuredDiagnosticV1,
+} from "../../packages/contracts/src/index.js";
 
 function draft(overrides: Partial<DiagnosticDraftV1> = {}): DiagnosticDraftV1 {
   return {
@@ -154,6 +157,209 @@ describe("diagnostic finalization", () => {
     expect(thrown).toBeInstanceOf(SothothInputError);
     expect(thrown).toHaveProperty("code", "sothoth.input/invalid-diagnostic-draft");
     expect(calls).toBe(0);
+  });
+});
+
+describe("diagnostic snapshot identity", () => {
+  test("fails a cyclic plain object in parameters as an invalid JSON value, not a native crash", () => {
+    const cyclic: Record<string, unknown> = {};
+    cyclic.self = cyclic;
+
+    let thrown: unknown;
+    try {
+      finalizeDiagnostics([
+        draft({ parameters: cyclic as unknown as DiagnosticDraftV1["parameters"] }),
+      ]);
+    } catch (error) {
+      thrown = error;
+    }
+    expect(thrown).toBeInstanceOf(SothothInputError);
+    expect(thrown).toHaveProperty("code", "sothoth.input/invalid-json-value");
+  });
+
+  test("fails a cyclic array inside a nested value as an invalid JSON value", () => {
+    const cyclic: unknown[] = ["leaf"];
+    cyclic.push(cyclic);
+
+    let thrown: unknown;
+    try {
+      finalizeDiagnostics([
+        draft({
+          parameters: { chain: cyclic } as unknown as DiagnosticDraftV1["parameters"],
+        }),
+      ]);
+    } catch (error) {
+      thrown = error;
+    }
+    expect(thrown).toBeInstanceOf(SothothInputError);
+    expect(thrown).toHaveProperty("code", "sothoth.input/invalid-json-value");
+  });
+
+  test("accepts a shared acyclic reference with the digest of its value expansion", () => {
+    const shared: Record<string, unknown> = { shared: true };
+    const dag: Record<string, unknown> = { first: shared, second: shared };
+    const expanded: Record<string, unknown> = {
+      first: { shared: true },
+      second: { shared: true },
+    };
+
+    const dagFinalized = finalizeDiagnostics([
+      draft({ parameters: dag as unknown as DiagnosticDraftV1["parameters"] }),
+    ]);
+    const expandedFinalized = finalizeDiagnostics([
+      draft({ parameters: expanded as unknown as DiagnosticDraftV1["parameters"] }),
+    ]);
+
+    expect(dagFinalized).toHaveLength(1);
+    expect(dagFinalized[0]?.parameters).toEqual({
+      first: { shared: true },
+      second: { shared: true },
+    });
+    expect(dagFinalized[0]?.digest).toBe(expandedFinalized[0]?.digest);
+  });
+
+  test("preserves an own __proto__ data key parsed from external JSON", () => {
+    const parameters = JSON.parse('{"__proto__":1}');
+
+    const [diagnostic] = finalizeDiagnostics([
+      draft({ parameters: parameters as DiagnosticDraftV1["parameters"] }),
+    ]);
+
+    const descriptor = Object.getOwnPropertyDescriptor(
+      diagnostic?.parameters as object,
+      "__proto__",
+    );
+    expect(descriptor).toMatchObject({ value: 1 });
+    expect(descriptor?.get).toBeUndefined();
+    expect(descriptor?.set).toBeUndefined();
+  });
+
+  test("preserves an own __proto__ key on a null-prototype object", () => {
+    const parameters = Object.create(null);
+    Object.defineProperty(parameters, "__proto__", {
+      value: "kept",
+      writable: true,
+      enumerable: true,
+      configurable: true,
+    });
+
+    const [diagnostic] = finalizeDiagnostics([
+      draft({ parameters: parameters as unknown as DiagnosticDraftV1["parameters"] }),
+    ]);
+
+    expect(
+      Object.getOwnPropertyDescriptor(diagnostic?.parameters as object, "__proto__"),
+    ).toMatchObject({ value: "kept" });
+  });
+
+  test.each([
+    ["a primitive", 1],
+    ["null", null],
+    ["a JSON object", { a: 1 }],
+  ])("preserves an own __proto__ key whose value is %s", (_kind, value) => {
+    const parameters: Record<string, unknown> = {};
+    Object.defineProperty(parameters, "__proto__", {
+      value,
+      writable: true,
+      enumerable: true,
+      configurable: true,
+    });
+
+    let thrown: unknown;
+    let finalized: readonly StructuredDiagnosticV1[] | undefined;
+    try {
+      finalized = finalizeDiagnostics([
+        draft({ parameters: parameters as unknown as DiagnosticDraftV1["parameters"] }),
+      ]);
+    } catch (error) {
+      thrown = error;
+    }
+    expect(thrown).toBeUndefined();
+    expect(
+      Object.getOwnPropertyDescriptor(finalized?.[0]?.parameters as object, "__proto__"),
+    ).toMatchObject({ value });
+  });
+
+  test("gives empty and __proto__-keyed parameters different digests without coalescing them", () => {
+    const protoKeyed = JSON.parse('{"__proto__":1}');
+
+    const [empty] = finalizeDiagnostics([draft({ parameters: {} })]);
+    const [keyed] = finalizeDiagnostics([
+      draft({ parameters: protoKeyed as DiagnosticDraftV1["parameters"] }),
+    ]);
+    expect(keyed?.digest).not.toBe(empty?.digest);
+
+    const combined = finalizeDiagnostics([
+      draft({ parameters: {} }),
+      draft({ parameters: protoKeyed as DiagnosticDraftV1["parameters"] }),
+    ]);
+    expect(combined).toHaveLength(2);
+  });
+
+  test("fails a nested sparse array as an invalid JSON value", () => {
+    const sparse = [1, 2];
+    delete sparse[0];
+
+    let thrown: unknown;
+    try {
+      finalizeDiagnostics([
+        draft({ parameters: { list: sparse } as unknown as DiagnosticDraftV1["parameters"] }),
+      ]);
+    } catch (error) {
+      thrown = error;
+    }
+    expect(thrown).toBeInstanceOf(SothothInputError);
+    expect(thrown).toHaveProperty("code", "sothoth.input/invalid-json-value");
+  });
+
+  test("fails a nested decorated array as an invalid JSON value", () => {
+    const decorated = ["a"];
+    (decorated as Record<string, unknown>).extra = 1;
+
+    let thrown: unknown;
+    try {
+      finalizeDiagnostics([
+        draft({ parameters: { list: decorated } as unknown as DiagnosticDraftV1["parameters"] }),
+      ]);
+    } catch (error) {
+      thrown = error;
+    }
+    expect(thrown).toBeInstanceOf(SothothInputError);
+    expect(thrown).toHaveProperty("code", "sothoth.input/invalid-json-value");
+  });
+
+  test("fails a nested symbol-keyed object as an invalid JSON value", () => {
+    const symbolKeyed: Record<string | symbol, unknown> = { plain: 1 };
+    symbolKeyed[Symbol("hostile")] = 2;
+
+    let thrown: unknown;
+    try {
+      finalizeDiagnostics([
+        draft({
+          parameters: symbolKeyed as unknown as DiagnosticDraftV1["parameters"],
+        }),
+      ]);
+    } catch (error) {
+      thrown = error;
+    }
+    expect(thrown).toBeInstanceOf(SothothInputError);
+    expect(thrown).toHaveProperty("code", "sothoth.input/invalid-json-value");
+  });
+
+  test("fails a nested symbol-keyed array as an invalid JSON value", () => {
+    const symbolArray: unknown[] = ["a"];
+    (symbolArray as Record<string | symbol, unknown>)[Symbol("hostile")] = 2;
+
+    let thrown: unknown;
+    try {
+      finalizeDiagnostics([
+        draft({ parameters: { list: symbolArray } as unknown as DiagnosticDraftV1["parameters"] }),
+      ]);
+    } catch (error) {
+      thrown = error;
+    }
+    expect(thrown).toBeInstanceOf(SothothInputError);
+    expect(thrown).toHaveProperty("code", "sothoth.input/invalid-json-value");
   });
 });
 
