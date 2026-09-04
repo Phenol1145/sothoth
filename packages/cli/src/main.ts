@@ -13,8 +13,8 @@
  * frozen mapping alone.
  */
 
-import { writeSync } from "node:fs";
-import { pathToFileURL } from "node:url";
+import { realpathSync, writeSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import {
   CLI_HELP_TEXT_V1,
   parseCliArgumentsV1,
@@ -267,9 +267,50 @@ export function runCliV1(argv: readonly string[]): number {
   });
 }
 
-const invokedAsMain =
-  process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href;
+/**
+ * True when this module is the process's real entry module. Both sides are
+ * resolved to real paths before comparison: Node loads the ESM entry through
+ * its real path, so `import.meta.url` is the resolved file URL while
+ * `process.argv[1]` keeps the caller's path — through an npm `bin` symlink or
+ * a symlinked directory prefix a plain file-URL comparison never matches and
+ * the executable would silently do nothing. Importing the module as a library
+ * still never auto-runs: a consumer's entry is a different real file.
+ */
+function isMainModuleV1(): boolean {
+  const entry = process.argv[1];
+  if (entry === undefined) {
+    return false;
+  }
+  try {
+    return realpathSync(entry) === realpathSync(fileURLToPath(import.meta.url));
+  } catch {
+    // The entry path cannot be resolved to a real file: never auto-run.
+    return false;
+  }
+}
 
-if (invokedAsMain) {
-  process.exit(runCliV1(process.argv.slice(2)));
+/**
+ * Runs one executable invocation with deterministic containment: an
+ * unexpected internal failure — a broken output pipe, an unreadable stream
+ * descriptor, any throw that escapes the invocation flow — lands exactly on
+ * the frozen map's `internal-error` exit with one fixed stderr line, never
+ * as an uncaught exception (exit 1 plus a nondeterministic stack trace).
+ * The containment write is best-effort because the original failure may
+ * itself be a broken stream; the exit code reports the failure regardless.
+ */
+function runMainGuardedV1(): number {
+  try {
+    return runCliV1(process.argv.slice(2));
+  } catch {
+    try {
+      writeSync(2, "sothoth: internal-error (exit 4)\n");
+    } catch {
+      // stderr is unavailable too; the exit code still reports the failure.
+    }
+    return exitCodeOfOutcomeV1("internal-error");
+  }
+}
+
+if (isMainModuleV1()) {
+  process.exit(runMainGuardedV1());
 }

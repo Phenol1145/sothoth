@@ -6,7 +6,7 @@
 // owner can yet produce from caller data — is driven exhaustively through the
 // frozen table in-process. Criteria owned here: cli-exit-mapping-frozen.
 
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -183,5 +183,78 @@ describe("cli-exit-mapping-frozen: reachable outcomes end-to-end", () => {
     const second = runCli(["check", "--format", "json"], "{");
     expect(first.exitCode).toBe(second.exitCode);
     expect(first.stdout).toBe(second.stdout);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Unexpected internal failures land inside the frozen map — fix round 1,
+// finding F-2. A broken stdout pipe (shell composition, e.g. `| head`) must
+// exit internal-error (4) — never the invalid code 1 — and must never leak a
+// nondeterministic stack trace onto stderr.
+// ---------------------------------------------------------------------------
+
+describe("cli-exit-mapping-frozen: unexpected internal failures (F-2)", () => {
+  test("a broken stdout pipe fails deterministically: exit 4, one fixed stderr line, no stack", async () => {
+    // One large valid request (600 documents) so the rendered machine
+    // document far exceeds the pipe buffer: the consumer closes after the
+    // first bytes while the CLI is still writing.
+    const markdown = `<!-- sothoth:section id="alpha" -->\n# Alpha\nprose\n`;
+    const digest = sha256Digest(markdown);
+    const request = {
+      sources: Array.from({ length: 600 }, (_, index) => ({
+        artifactId: `DOC-${index}`,
+        path: `docs/doc-${index}.md`,
+        version: "1",
+        content: markdown,
+        contentDigest: digest,
+        blobSha: null,
+        kind: "dossier",
+        status: "accepted",
+        owner: "sothoth",
+        tags: [],
+        references: [],
+      })),
+      budgets: {
+        maxContentCodeUnits: 2_000_000,
+        maxDocuments: 1_000,
+        maxAstNodes: 2_000_000,
+        maxRelationsPerDocument: 100,
+        maxHeadingTextCodeUnits: 2_000,
+      },
+      compiler: { compilerId: "sothoth-f2-test", compilerRevision: 1 },
+    };
+
+    const child = spawn(process.execPath, [CLI_ENTRY, "index", "--format", "json"], {
+      stdio: ["pipe", "pipe", "pipe"],
+    });
+    child.stdin.end(JSON.stringify(request));
+    let seen = 0;
+    child.stdout.on("data", (chunk: Buffer) => {
+      seen += chunk.length;
+      if (seen >= 50 && !child.stdout.destroyed) {
+        child.stdout.destroy();
+      }
+    });
+    // Swallow the reader-side close error in the test process itself.
+    child.stdout.on("error", () => {});
+    const stderrChunks: Buffer[] = [];
+    child.stderr.on("data", (chunk: Buffer) => {
+      stderrChunks.push(chunk);
+    });
+    const closed = await new Promise<{ code: number | null; signal: NodeJS.Signals | null }>(
+      (resolve) => {
+        child.on("close", (code, signal) => resolve({ code, signal }));
+      },
+    );
+
+    expect(closed.signal).toBeNull();
+    // The frozen map's internal-error exit — never the invalid code 1.
+    expect(closed.code).toBe(4);
+    const stderr = Buffer.concat(stderrChunks).toString("utf8");
+    // Deterministic containment: exactly one fixed line, no stack bytes.
+    expect(stderr).toBe("sothoth: internal-error (exit 4)\n");
+    expect(stderr).not.toContain("EPIPE");
+    expect(stderr).not.toContain("at ");
+    expect(seen).toBeGreaterThan(0);
   });
 });

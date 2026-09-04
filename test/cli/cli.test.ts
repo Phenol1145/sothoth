@@ -8,9 +8,9 @@
 // directory; the Sothoth and FRACTA repositories are never mutated.
 
 import { spawnSync } from "node:child_process";
-import { chmodSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { chmodSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterAll, describe, expect, test } from "vitest";
 
@@ -524,5 +524,61 @@ describe("input module (parseCliArgumentsV1)", () => {
   test("--help short-circuits before command validation", () => {
     const result = parseCliArgumentsV1(["--help"]);
     expect(result).toMatchObject({ ok: true, help: true });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Symlinked executable entry (npm bin layout) — fix round 1, finding F-1
+// ---------------------------------------------------------------------------
+
+describe("symlinked executable entry (npm bin layout; F-1)", () => {
+  // A full npm-style layout under the OS temp dir: the bin link points at the
+  // compiled entry through a symlink exactly like `node_modules/.bin/sothoth`.
+  const layout = tempDir("binlayout");
+  const binDir = join(layout, "node_modules", ".bin");
+  mkdirSync(binDir, { recursive: true });
+  const binLink = join(binDir, "sothoth");
+  symlinkSync(CLI_ENTRY, binLink);
+
+  /** Runs the CLI with an explicit entry path (symlinked variants). */
+  function runEntry(entry: string, args: string[], stdin: string): CliRun {
+    const spawned = spawnSync(process.execPath, [entry, ...args], {
+      input: stdin,
+      encoding: "utf8",
+    });
+    return {
+      stdout: spawned.stdout ?? "",
+      stderr: spawned.stderr ?? "",
+      exitCode: spawned.status ?? -1,
+    };
+  }
+
+  test("--help through the bin link prints the eight commands", () => {
+    const result = runEntry(binLink, ["--help"], "");
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("commands (exactly eight):");
+    for (const command of CLI_COMMANDS_V1) {
+      expect(result.stdout).toContain(command);
+    }
+    expect(result.stderr).toBe("");
+  });
+
+  test("a real command through the bin link produces exactly one document", () => {
+    const result = runEntry(binLink, ["index", "--format", "json"], JSON.stringify(INDEX_REQUEST));
+    expect(result.exitCode).toBe(0);
+    const document = JSON.parse(result.stdout);
+    expect(document.schema).toBe("sothoth.cli/cli-invocation-result@1");
+    expect(document.outcome).toBe("valid");
+    expect(document.result.result.projection.indexDigest).toMatch(DIGEST_PATTERN);
+    expect(result.stderr).toBe("");
+  });
+
+  test("a symlinked package-directory prefix also executes", () => {
+    const linkDir = join(layout, "cli-link");
+    symlinkSync(dirname(CLI_ENTRY), linkDir);
+    const result = runEntry(join(linkDir, "main.js"), ["--help"], "");
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("commands (exactly eight):");
+    expect(result.stderr).toBe("");
   });
 });
