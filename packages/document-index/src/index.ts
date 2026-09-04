@@ -157,14 +157,31 @@ export function buildDocumentIndexV1(input: DocumentIndexInputV1): DocumentIndex
   }
 
   // Phase 3: fresh derivation from the current content under the current
-  // invocation budgets, including full AST-node and heading-text
-  // enforcement. A too-tight budget fails identically with or without a
-  // matching cache candidate.
+  // invocation budgets, including full AST-node, heading-text, and
+  // declared-relations enforcement. A too-tight budget fails identically
+  // with or without a matching cache candidate.
   const freshNodes: (readonly ParsedBlockNodeV1[] | null)[] = shapes.map((shape, index) => {
     if (shape === null || budgets === null) {
       return null;
     }
-    return deriveParsedNodes(shape, budgets, `sources[${index}]`, drafts);
+    const nodes = deriveParsedNodes(shape, budgets, `sources[${index}]`, drafts);
+    if (nodes === null) {
+      return null;
+    }
+    // §8.1 stage-1 tail: `references.length ≤ maxRelationsPerDocument` —
+    // the raw length of the shape-validated declarations, every relation
+    // form counted, no dedup (equal values are the separate
+    // `duplicate-relation` diagnostic, not a length reduction). This is the
+    // last stage-1 check, so a shape-valid source whose earlier checks all
+    // passed reaches exactly here. The failure is a closed fresh-derivation
+    // failure: the issue forwards unchanged, and the source becomes
+    // comparison-ineligible in phase 4 exactly like every other derivation
+    // failure, scoped to this source alone.
+    if (shape.references.length > budgets.maxRelationsPerDocument) {
+      drafts.push(draft("sothoth.document-index/budget-exhausted", `sources[${index}].references`));
+      return null;
+    }
+    return nodes;
   });
 
   // Per-document sections and anchors for fresh successes, then the phase-4
