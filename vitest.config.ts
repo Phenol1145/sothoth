@@ -33,6 +33,30 @@ export default defineConfig({
       "@sothoth/selectors/match": fileURLToPath(
         new URL("./packages/selectors/src/evaluate.ts", import.meta.url),
       ),
+      // @sothoth/sdk imports these public subpaths as values when delegating,
+      // so the test run resolves them to workspace sources like the entries
+      // above.
+      "@sothoth/document-index/index": fileURLToPath(
+        new URL("./packages/document-index/src/index.ts", import.meta.url),
+      ),
+      "@sothoth/governance/pre-design": fileURLToPath(
+        new URL("./packages/governance/src/pre-design.ts", import.meta.url),
+      ),
+      "@sothoth/governance/change-plan": fileURLToPath(
+        new URL("./packages/governance/src/change-plan.ts", import.meta.url),
+      ),
+      "@sothoth/planning/schedule": fileURLToPath(
+        new URL("./packages/planning/src/schedule.ts", import.meta.url),
+      ),
+      "@sothoth/profile-sdk/load": fileURLToPath(
+        new URL("./packages/profile-sdk/src/profile.ts", import.meta.url),
+      ),
+      "@sothoth/profile-sdk/conformance": fileURLToPath(
+        new URL("./packages/profile-sdk/src/conformance.ts", import.meta.url),
+      ),
+      "@sothoth/git/commit": fileURLToPath(
+        new URL("./packages/git/src/index.ts", import.meta.url),
+      ),
     },
   },
   test: {

@@ -10,6 +10,8 @@
     { "path": "packages/planning" },
     { "path": "packages/profile-sdk" },
     { "path": "packages/git" },
+    { "path": "packages/sdk" },
+    { "path": "packages/cli" },
     { "path": "test" }
   ]
 }

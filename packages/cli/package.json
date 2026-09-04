@@ -1,0 +1,24 @@
+{
+  "name": "@sothoth/cli",
+  "version": "0.1.0",
+  "description": "Operator-facing command-line composition and I/O adapter: eight explicit commands over the public SDK facade with frozen exit mapping and atomic explicit output.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": {
+    "sothoth": "./dist/main.js"
+  },
+  "exports": {
+    "./commands": { "types": "./dist/main.d.ts", "import": "./dist/main.js" },
+    "./exit": { "types": "./dist/io.d.ts", "import": "./dist/io.js" },
+    "./input": { "types": "./dist/args.d.ts", "import": "./dist/args.js" },
+    "./render": { "types": "./dist/render-json.d.ts", "import": "./dist/render-json.js" },
+    "./write": { "types": "./dist/io.d.ts", "import": "./dist/io.js" }
+  },
+  "files": ["dist", "README.md", "LICENSE"],
+  "publishConfig": { "access": "public", "provenance": true },
+  "repository": { "type": "git", "url": "git+https://github.com/Phenol1145/sothoth.git", "directory": "packages/cli" },
+  "engines": { "node": ">=22.14.0" },
+  "dependencies": {
+    "@sothoth/sdk": "0.1.0"
+  }
+}

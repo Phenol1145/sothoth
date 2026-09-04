@@ -1,0 +1,31 @@
+{
+  "name": "@sothoth/sdk",
+  "version": "0.1.0",
+  "description": "Sole aggregate public library facade: one typed, versioned surface delegating every semantic operation to its owning Sothoth package.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "exports": {
+    "./change-plan": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./check": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./compile": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./diagnostics": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./documents": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./git": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./profiles": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./verify": { "types": "./dist/index.d.ts", "import": "./dist/index.js" }
+  },
+  "files": ["dist", "README.md", "LICENSE"],
+  "publishConfig": { "access": "public", "provenance": true },
+  "repository": { "type": "git", "url": "git+https://github.com/Phenol1145/sothoth.git", "directory": "packages/sdk" },
+  "engines": { "node": ">=22.14.0" },
+  "dependencies": {
+    "@sothoth/contracts": "0.1.0",
+    "@sothoth/core": "0.1.0",
+    "@sothoth/document-index": "0.1.0",
+    "@sothoth/git": "0.1.0",
+    "@sothoth/governance": "0.1.0",
+    "@sothoth/planning": "0.1.0",
+    "@sothoth/profile-sdk": "0.1.0",
+    "@sothoth/selectors": "0.1.0"
+  }
+}
