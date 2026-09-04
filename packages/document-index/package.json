@@ -1,0 +1,25 @@
+{
+  "name": "@sothoth/document-index",
+  "version": "0.1.0",
+  "description": "Deterministic CommonMark structural document indexing for Sothoth.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "exports": {
+    "./parse": { "types": "./dist/parse.d.ts", "import": "./dist/parse.js" },
+    "./sections": { "types": "./dist/sections.d.ts", "import": "./dist/sections.js" },
+    "./anchors": { "types": "./dist/anchors.d.ts", "import": "./dist/anchors.js" },
+    "./references": { "types": "./dist/references.d.ts", "import": "./dist/references.js" },
+    "./index": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./cache": { "types": "./dist/cache.d.ts", "import": "./dist/cache.js" }
+  },
+  "files": ["dist", "README.md", "LICENSE"],
+  "publishConfig": { "access": "public", "provenance": true },
+  "repository": { "type": "git", "url": "git+https://github.com/Phenol1145/sothoth.git", "directory": "packages/document-index" },
+  "engines": { "node": ">=22.14.0" },
+  "dependencies": {
+    "@sothoth/contracts": "0.1.0",
+    "@sothoth/core": "0.1.0",
+    "@sothoth/graph": "0.1.0",
+    "mdast-util-from-markdown": "2.0.2"
+  }
+}

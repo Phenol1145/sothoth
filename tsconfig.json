@@ -4,6 +4,7 @@
     { "path": "packages/contracts" },
     { "path": "packages/core" },
     { "path": "packages/graph" },
+    { "path": "packages/document-index" },
     { "path": "test" }
   ]
 }

@@ -13,6 +13,12 @@ export default defineConfig({
       "@sothoth/core/canonical-json": fileURLToPath(
         new URL("./packages/core/src/canonical-json.ts", import.meta.url),
       ),
+      "@sothoth/core/digest": fileURLToPath(
+        new URL("./packages/core/src/digests.ts", import.meta.url),
+      ),
+      "@sothoth/graph/digraph": fileURLToPath(
+        new URL("./packages/graph/src/digraph.ts", import.meta.url),
+      ),
     },
   },
   test: {
