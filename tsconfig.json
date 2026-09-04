@@ -5,6 +5,7 @@
     { "path": "packages/core" },
     { "path": "packages/graph" },
     { "path": "packages/document-index" },
+    { "path": "packages/selectors" },
     { "path": "test" }
   ]
 }

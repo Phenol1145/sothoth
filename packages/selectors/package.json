@@ -1,0 +1,23 @@
+{
+  "name": "@sothoth/selectors",
+  "version": "0.1.0",
+  "description": "Closed declarative selector algebra with deterministic matching for Sothoth.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "exports": {
+    "./parse": { "types": "./dist/parser.d.ts", "import": "./dist/parser.js" },
+    "./ast": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./match": { "types": "./dist/evaluate.d.ts", "import": "./dist/evaluate.js" },
+    "./cardinality": { "types": "./dist/evaluate.d.ts", "import": "./dist/evaluate.js" },
+    "./explain": { "types": "./dist/evaluate.d.ts", "import": "./dist/evaluate.js" }
+  },
+  "files": ["dist", "README.md", "LICENSE"],
+  "publishConfig": { "access": "public", "provenance": true },
+  "repository": { "type": "git", "url": "git+https://github.com/Phenol1145/sothoth.git", "directory": "packages/selectors" },
+  "engines": { "node": ">=22.14.0" },
+  "dependencies": {
+    "@sothoth/contracts": "0.1.0",
+    "@sothoth/core": "0.1.0",
+    "@sothoth/document-index": "0.1.0"
+  }
+}
