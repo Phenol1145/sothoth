@@ -309,12 +309,38 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
   return prototype === Object.prototype || prototype === null;
 }
 
+const ARRAY_INDEX_PATTERN = /^(?:0|[1-9][0-9]*)$/;
+
+/**
+ * True for a dense, undecorated array: own enumerable keys are exactly the
+ * canonical index names `"0"`..`"<length-1>"`, every slot is a data property,
+ * and no symbol keys or extra own string names exist. The check is
+ * descriptor-only — no slot value is read, so a hostile accessor never
+ * executes and its return value can never be adopted.
+ */
 function isDenseArray(value: unknown): value is unknown[] {
-  if (!Array.isArray(value)) {
+  if (typeof value !== "object" || value === null || !Array.isArray(value)) {
     return false;
   }
-  const own = Object.getOwnPropertyNames(value);
-  return own.length === value.length + 1 && own.includes("length");
+  if (Object.getOwnPropertySymbols(value).length > 0) {
+    return false;
+  }
+  const length = value.length;
+  let indices = 0;
+  for (const name of Object.getOwnPropertyNames(value)) {
+    if (name === "length") {
+      continue;
+    }
+    if (!ARRAY_INDEX_PATTERN.test(name) || Number(name) >= length) {
+      return false;
+    }
+    const descriptor = Object.getOwnPropertyDescriptor(value, name);
+    if (descriptor === undefined || !("value" in descriptor) || descriptor.enumerable !== true) {
+      return false;
+    }
+    indices += 1;
+  }
+  return indices === length;
 }
 
 function nonEmptyString(value: unknown): value is string {

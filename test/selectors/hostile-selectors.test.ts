@@ -335,6 +335,299 @@ describe("hostile objects never execute accessors and never throw", () => {
   });
 });
 
+function expectExactParseIssues(source: unknown, subject: string): void {
+  const parsed = parseSelectorV1(source);
+  expect(parsed.ok).toBe(false);
+  if (parsed.ok) {
+    throw new Error(`expected parse rejection at ${subject}`);
+  }
+  expect(parsed.issues).toEqual([
+    { code: "sothoth.selectors/invalid-selector", subject },
+  ]);
+}
+
+function expectExactSelectionIssues(
+  projection: unknown,
+  selector: unknown,
+  subject: string,
+): void {
+  const result = selectDocumentsV1(projection, selector);
+  expect(result).toEqual({
+    ok: false,
+    issues: [{ code: "sothoth.selectors/invalid-selector", subject }],
+  });
+}
+
+describe("hostile array slots never execute accessors and never carry extra keys", () => {
+  // Array-slot discipline (I-1): every external array — selector set arrays,
+  // boolean-group children, index documents, entry tags, entry relations —
+  // must pass a descriptor-only dense-array contract before any slot value
+  // is read: dense; every `0..length-1` slot an own enumerable data
+  // property; no own symbol keys; no extra own string keys. Every probe
+  // below uses an accessor whose return value would pass every semantic
+  // check, so only the descriptor shape can explain the rejection.
+
+  test("accessor slots in set-term arrays are rejected without executing the getter, at any position", () => {
+    for (const slot of [0, 1, 2]) {
+      let reads = 0;
+      const values = ["a", "b", "c"];
+      Object.defineProperty(values, slot, {
+        get() {
+          reads += 1;
+          return "z"; // a semantically valid set member
+        },
+        enumerable: true,
+        configurable: true,
+      });
+      expectExactParseIssues({ kind: { any: values } }, "selector.kind.any");
+      expect(reads).toBe(0);
+      // The hostile input is left unmodified: its accessor is intact.
+      expect(Object.getOwnPropertyDescriptor(values, slot)?.get).toBeDefined();
+      expect(values.length).toBe(3);
+      // The rejection is byte-stable across repeated invocations.
+      const first = parseSelectorV1({ kind: { any: values } });
+      const second = parseSelectorV1({ kind: { any: values } });
+      expect(second).toEqual(first);
+    }
+  });
+
+  test("accessor slots in boolean-group children arrays are rejected without executing the getter", () => {
+    let reads = 0;
+    const validChild = { tag: { any: ["release"] } };
+    const children = [validChild];
+    Object.defineProperty(children, 0, {
+      get() {
+        reads += 1;
+        return validChild; // a semantically valid child term
+      },
+      enumerable: true,
+      configurable: true,
+    });
+    expectExactParseIssues({ all: children }, "selector.all");
+    expect(reads).toBe(0);
+  });
+
+  test("a throwing accessor slot fails closed as a typed rejection, never an escaped exception", () => {
+    let reads = 0;
+    const values = ["guide"];
+    Object.defineProperty(values, 0, {
+      get() {
+        reads += 1;
+        throw new Error("HOSTILE-GETTER-RAN");
+      },
+      enumerable: true,
+      configurable: true,
+    });
+    expectExactParseIssues({ kind: { any: values } }, "selector.kind.any");
+    expect(reads).toBe(0);
+  });
+
+  test("own symbol keys — data or accessor — on selector arrays are rejected without executing the accessor", () => {
+    let reads = 0;
+    const withSymbolData: unknown[] = ["guide"];
+    Object.defineProperty(withSymbolData, Symbol("stowaway"), {
+      value: 1,
+      enumerable: false,
+      configurable: true,
+    });
+    expectExactParseIssues({ kind: { any: withSymbolData } }, "selector.kind.any");
+
+    const withSymbolAccessor: unknown[] = ["guide"];
+    Object.defineProperty(withSymbolAccessor, Symbol("boom"), {
+      get() {
+        reads += 1;
+        return "x";
+      },
+      enumerable: true,
+      configurable: true,
+    });
+    expectExactParseIssues({ all: withSymbolAccessor }, "selector.all");
+    expect(reads).toBe(0);
+  });
+
+  test("a non-enumerable data index slot is rejected even though the slot value is valid", () => {
+    const values = ["guide"];
+    Object.defineProperty(values, 0, {
+      value: "guide",
+      enumerable: false,
+      writable: true,
+      configurable: true,
+    });
+    expectExactParseIssues({ kind: { any: values } }, "selector.kind.any");
+  });
+
+  test("an extra own string key on a selector array is rejected", () => {
+    const values = ["guide"];
+    Object.defineProperty(values, "extra", {
+      value: 1,
+      enumerable: true,
+      writable: true,
+      configurable: true,
+    });
+    expectExactParseIssues({ kind: { any: values } }, "selector.kind.any");
+  });
+
+  test("accessor slots in index documents are rejected without executing the getter", () => {
+    let reads = 0;
+    const validEntry = {
+      artifactId: "doc-x",
+      path: "docs/x.md",
+      kind: "guide",
+      status: "active",
+      owner: "team-a",
+      tags: ["release"],
+      relations: [],
+    };
+    const documents = [validEntry];
+    Object.defineProperty(documents, 0, {
+      get() {
+        reads += 1;
+        return validEntry; // a semantically valid entry
+      },
+      enumerable: true,
+      configurable: true,
+    });
+    expectExactSelectionIssues(
+      { documents },
+      { tag: { any: ["release"] } },
+      "index.documents",
+    );
+    expect(reads).toBe(0);
+    const repeat = selectDocumentsV1(
+      { documents },
+      { tag: { any: ["release"] } },
+    );
+    expect(repeat).toEqual({
+      ok: false,
+      issues: [{ code: "sothoth.selectors/invalid-selector", subject: "index.documents" }],
+    });
+  });
+
+  test("accessor slots in entry tags are rejected without executing the getter", () => {
+    let reads = 0;
+    const tags = ["release"];
+    Object.defineProperty(tags, 0, {
+      get() {
+        reads += 1;
+        return "release"; // a semantically valid tag
+      },
+      enumerable: true,
+      configurable: true,
+    });
+    expectExactSelectionIssues(
+      singleEntry({ artifactId: "doc-x", tags }),
+      { tag: { any: ["release"] } },
+      "index.documents[0].tags",
+    );
+    expect(reads).toBe(0);
+  });
+
+  test("accessor slots in entry relations are rejected without executing the getter", () => {
+    let reads = 0;
+    const validRelation = { kind: "reference", role: "governs", target: { artifactId: "doc-b" } };
+    const relations = [validRelation];
+    Object.defineProperty(relations, 0, {
+      get() {
+        reads += 1;
+        return validRelation; // a semantically valid relation
+      },
+      enumerable: true,
+      configurable: true,
+    });
+    expectExactSelectionIssues(
+      {
+        documents: [
+          {
+            artifactId: "doc-a",
+            path: "docs/a.md",
+            kind: "guide",
+            status: "active",
+            owner: "team-a",
+            tags: [],
+            relations,
+          },
+          {
+            artifactId: "doc-b",
+            path: "docs/b.md",
+            kind: "guide",
+            status: "active",
+            owner: "team-a",
+            tags: [],
+            relations: [],
+          },
+        ],
+      },
+      { reference: { target: "doc-b", role: "governs" } },
+      "index.documents[0].relations",
+    );
+    expect(reads).toBe(0);
+  });
+
+  test("hostile documents arrays: symbols, non-enumerable slots, and throwing accessors all fail closed", () => {
+    let reads = 0;
+    const minimalEntry = (artifactId: string) => ({
+      artifactId,
+      path: `docs/${artifactId}.md`,
+      kind: "guide",
+      status: "active",
+      owner: "team-a",
+      tags: ["release"],
+      relations: [],
+    });
+
+    const withSymbol = [minimalEntry("doc-x")];
+    Object.defineProperty(withSymbol, Symbol("stowaway"), {
+      value: 1,
+      enumerable: false,
+      configurable: true,
+    });
+    expectExactSelectionIssues(
+      { documents: withSymbol },
+      { tag: { any: ["release"] } },
+      "index.documents",
+    );
+
+    const nonEnumerable = [minimalEntry("doc-x")];
+    Object.defineProperty(nonEnumerable, 0, {
+      value: nonEnumerable[0],
+      enumerable: false,
+      writable: true,
+      configurable: true,
+    });
+    expectExactSelectionIssues(
+      { documents: nonEnumerable },
+      { tag: { any: ["release"] } },
+      "index.documents",
+    );
+
+    const throwing = [minimalEntry("doc-x")];
+    Object.defineProperty(throwing, 0, {
+      get() {
+        reads += 1;
+        throw new Error("HOSTILE-GETTER-RAN");
+      },
+      enumerable: true,
+      configurable: true,
+    });
+    expectExactSelectionIssues(
+      { documents: throwing },
+      { tag: { any: ["release"] } },
+      "index.documents",
+    );
+    expect(reads).toBe(0);
+  });
+
+  test("normal dense arrays of enumerable data properties still parse and match", () => {
+    const parsed = parseSelectorV1({ kind: { any: ["guide", "draft"] } });
+    expect(parsed.ok).toBe(true);
+    const result = selectDocumentsV1(INDEX, { tag: { any: ["release"] } });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.matches.map((match) => match.artifactId)).toEqual(["doc-x"]);
+    }
+  });
+});
+
 describe("declared budgets bound every pattern construct deterministically", () => {
   test("budget containers are hostile-validated with closed keys and positive integers", () => {
     expectRejected({ artifactId: "x" }, "budgets.maxDepth", {
