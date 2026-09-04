@@ -9,6 +9,7 @@
     { "path": "packages/governance" },
     { "path": "packages/planning" },
     { "path": "packages/profile-sdk" },
+    { "path": "packages/git" },
     { "path": "test" }
   ]
 }

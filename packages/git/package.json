@@ -1,0 +1,23 @@
+{
+  "name": "@sothoth/git",
+  "version": "0.1.0",
+  "description": "Read-only Git source adapter binding exact commit, compare, and workspace snapshots for Sothoth.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "exports": {
+    "./commit": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./compare": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./path": { "types": "./dist/paths.d.ts", "import": "./dist/paths.js" },
+    "./process": { "types": "./dist/runner.d.ts", "import": "./dist/runner.js" },
+    "./snapshot": { "types": "./dist/snapshot.d.ts", "import": "./dist/snapshot.js" },
+    "./workspace": { "types": "./dist/index.d.ts", "import": "./dist/index.js" }
+  },
+  "files": ["dist", "README.md", "LICENSE"],
+  "publishConfig": { "access": "public", "provenance": true },
+  "repository": { "type": "git", "url": "git+https://github.com/Phenol1145/sothoth.git", "directory": "packages/git" },
+  "engines": { "node": ">=22.14.0" },
+  "dependencies": {
+    "@sothoth/contracts": "0.1.0",
+    "@sothoth/core": "0.1.0"
+  }
+}
