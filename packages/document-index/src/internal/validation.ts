@@ -1544,6 +1544,13 @@ export interface RelationEmitter {
   readonly artifactId: string;
   readonly path: string;
   readonly relations: readonly ValidatedRelation[];
+  /**
+   * Original whole-input position. Index assembly resolves the shape-valid
+   * subset of a mixed input, so its emitters carry their original `sources[i]`
+   * positions; the `/references` stage omits the field and keeps dense array
+   * positions (every element is valid by then).
+   */
+  readonly sourceIndex?: number;
 }
 
 /**
@@ -1553,7 +1560,9 @@ export interface RelationEmitter {
  * modules; §8.6: exactly one Graph function is called, a runtime import of
  * `createCanonicalGraphV1`). `anchor` selects the subject root: `parsed[k]`
  * elements chain through `.source.relations[j]`; index assembly chains
- * `sources[i].references[j]`. Cross-source duplicate identities fail closed
+ * `sources[i].references[j]`, with `i` the emitter's original whole-input
+ * position (`sourceIndex`) so a mixed input's shape-valid subset keeps stable
+ * subjects. Cross-source duplicate identities fail closed
  * per §8.1.1 (stage-agnostic §9 triggers); duplicates suppress the later
  * identities' universe participation but not their field validation. Returns
  * null exactly when `drafts` accumulated the failure.
@@ -1586,10 +1595,11 @@ export function resolveRelations(
     const firstIndexes = new Map<string, number>();
     for (let relationIndex = 0; relationIndex < emitter.relations.length; relationIndex += 1) {
       const relation = emitter.relations[relationIndex]!;
+      const emitterIndexForPath = emitter.sourceIndex ?? emitterIndex;
       const path =
         anchor === "parsed"
           ? `parsed[${emitterIndex}].source.relations[${relationIndex}]`
-          : `sources[${emitterIndex}].references[${relationIndex}]`;
+          : `sources[${emitterIndexForPath}].references[${relationIndex}]`;
       const valueKey = canonicalJson({
         kind: relation.kind,
         role: relation.role,
@@ -1600,7 +1610,7 @@ export function resolveRelations(
         const firstPath =
           anchor === "parsed"
             ? `parsed[${emitterIndex}].source.relations[${firstIndex}]`
-            : `sources[${emitterIndex}].references[${firstIndex}]`;
+            : `sources[${emitterIndexForPath}].references[${firstIndex}]`;
         drafts.push(
           draft("sothoth.document-index/duplicate-relation", firstPath),
         );

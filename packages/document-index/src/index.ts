@@ -35,6 +35,7 @@ import {
   type CacheCandidate,
   type CompilerShape,
   type IssueDraft,
+  type RelationEmitter,
   type SourceShape,
 } from "./internal/validation.js";
 import { boundSections, deriveParsedNodes, headingDerivations } from "./internal/markdown.js";
@@ -195,25 +196,37 @@ export function buildDocumentIndexV1(input: DocumentIndexInputV1): DocumentIndex
       headingSpan: section.headingSpan,
     }));
     drafts.push(...bound.drafts);
-    if (compiler !== null) {
+    // §8.8 phase 4: only a fresh success is comparison-eligible. A
+    // marker/section structural failure in `bound.drafts` is a closed fresh
+    // derivation failure, so the comparison is genuinely not run for this
+    // source (not post-filtered) and the failure forwards unchanged.
+    if (compiler !== null && bound.drafts.length === 0) {
       compareCacheCandidate(candidates, shape, nodes, headings, bound.sections, compiler, drafts);
     }
   });
 
-  // Relation resolution over every shape-valid source (§8.5/§8.1.1).
-  const emitters: (SourceShape | null)[] = shapes;
+  // Relation resolution over the shape-valid subset (§8.5/§8.1.1): a
+  // shape-invalid source is not validly identified — it contributes no
+  // duplicates, no universe identity, and no relations — and it never
+  // suppresses diagnostics between valid sources. Emitters carry their
+  // original input positions so §9 subjects stay `sources[i]`.
+  const emitters: RelationEmitter[] = [];
+  shapes.forEach((shape, index) => {
+    if (shape === null) {
+      return;
+    }
+    emitters.push({
+      artifactId: shape.artifactId,
+      path: shape.path,
+      relations: shape.references,
+      sourceIndex: index,
+    });
+  });
   let resolved: ReturnType<typeof resolveRelations> = null;
-  if (emitters.every((shape) => shape !== null)) {
-    resolved = resolveRelations(
-      emitters.map((shape) => ({
-        artifactId: shape!.artifactId,
-        path: shape!.path,
-        relations: shape!.references,
-      })),
-      "sources",
-      drafts,
-    );
-  }
+  // Unconditional: the empty emitter set is the §8.5 empty universe, which
+  // succeeds with zero relations; `resolveRelations` itself fails exactly
+  // when drafts accumulated.
+  resolved = resolveRelations(emitters, "sources", drafts);
   if (drafts.length > 0 || resolved === null) {
     return finalizeFailure(drafts);
   }

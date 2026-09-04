@@ -73,7 +73,17 @@ function entryOf(
   return built.entry;
 }
 
-/** Clones an entry, fabricates its headings, and recomputes its digest with Core. */
+/**
+ * Clones an entry, fabricates its headings, and recomputes its digest with
+ * Core. Fabrication must change the value even when the content has no
+ * headings: a headingless source would leave a mutate-in-place loop a no-op,
+ * making the witness byte-identical to the honest one and the test blind to
+ * an erroneous cache comparison (T49a). A fabricated heading keeps the closed
+ * cached-heading shape (`ordinal`, `depth`, `text`, `anchor`, valid `span`)
+ * and the digest is recomputed over the forged value, so the witness is
+ * shape-valid and integrity-valid and only the fresh comparison can reject
+ * it.
+ */
 function forgedEntry(source: DocumentSourceV1, compiler: CompilerIdentityV1 = COMPILER): BlobCacheEntryV1 {
   const cloned = JSON.parse(canonicalJson(entryOf(source, compiler))) as BlobCacheEntryV1;
   const value = cloned.value as {
@@ -83,6 +93,15 @@ function forgedEntry(source: DocumentSourceV1, compiler: CompilerIdentityV1 = CO
   for (const heading of value.headings) {
     heading.text = `Forged ${heading.ordinal}`;
     heading.anchor = `forged-${heading.ordinal}`;
+  }
+  if (value.headings.length === 0) {
+    value.headings.push({
+      ordinal: 1,
+      depth: 2,
+      text: "Forged 1",
+      anchor: "forged-1",
+      span: { startLine: 9, startColumn: 1, startOffset: 8, endLine: 9, endColumn: 17, endOffset: 16 },
+    });
   }
   const digestInput = { ...value } as Record<string, unknown>;
   delete digestInput.derivationDigest;
@@ -370,6 +389,9 @@ describe("buildDocumentIndexV1 cache semantics (T28, T29, T44–T46, T49)", () =
   test("T49a: a fresh structural failure skips its cache comparison entirely", () => {
     const lost = '<!-- sothoth:section id="lost" -->\n\nplain paragraph text';
     const source = sourceWith(lost);
+    // Discriminating-power pin: the forged witness must differ from the
+    // honest one, otherwise an erroneous comparison could never mismatch.
+    expect(canonicalJson(forgedEntry(source))).not.toBe(canonicalJson(entryOf(source)));
     const result = build([source], [forgedEntry(source)]);
     expect(result).toEqual({
       ok: false,
@@ -412,5 +434,152 @@ describe("buildDocumentIndexV1 cache semantics (T28, T29, T44–T46, T49)", () =
         },
       },
     ]);
+  });
+});
+
+describe("buildDocumentIndexV1 cross-source eligibility over mixed inputs (§8.1/§8.1.1/§8.5)", () => {
+  function shapeInvalid(content: string, overrides: Partial<DocumentSourceV1> = {}): DocumentSourceV1 {
+    const source = sourceWith(content, overrides);
+    delete (source as { owner?: string }).owner;
+    return source;
+  }
+
+  test("a shape-invalid source never suppresses duplicate-artifact-id between valid sources", () => {
+    const result = build([
+      sourceWith("# First\n", { artifactId: "A" }),
+      sourceWith("# Second\n", { artifactId: "A", path: "docs/a2.md" }),
+      shapeInvalid("# Invalid\n", { artifactId: "C", path: "docs/c.md" }),
+    ]);
+    expect(result).toEqual({
+      ok: false,
+      issues: [
+        {
+          code: "sothoth.document-index/duplicate-artifact-id",
+          subject: "A",
+          location: null,
+        },
+        {
+          code: "sothoth.document-index/missing-field",
+          subject: "sources[2].owner",
+          location: null,
+        },
+      ],
+    });
+  });
+
+  test("a shape-invalid source never suppresses duplicate-path between valid sources", () => {
+    const result = build([
+      sourceWith("# First\n", { artifactId: "A", path: "docs/shared.md" }),
+      sourceWith("# Second\n", { artifactId: "B", path: "docs/shared.md" }),
+      shapeInvalid("# Invalid\n", { artifactId: "C", path: "docs/c.md" }),
+    ]);
+    expect(result).toEqual({
+      ok: false,
+      issues: [
+        {
+          code: "sothoth.document-index/duplicate-path",
+          subject: "docs/shared.md",
+          location: null,
+        },
+        {
+          code: "sothoth.document-index/missing-field",
+          subject: "sources[2].owner",
+          location: null,
+        },
+      ],
+    });
+  });
+
+  test("a shape-invalid source is not validly identified: internal targets stay unresolved", () => {
+    const result = build([
+      sourceWith("# Refs\n", {
+        artifactId: "A",
+        references: [
+          {
+            kind: "reference",
+            role: "dep",
+            target: { artifactId: "C", revision: null, external: false },
+          } satisfies DeclaredRelationV1,
+        ],
+      }),
+      shapeInvalid("# Invalid\n", { artifactId: "C", path: "docs/c.md" }),
+    ]);
+    expect(result).toEqual({
+      ok: false,
+      issues: [
+        {
+          code: "sothoth.document-index/missing-field",
+          subject: "sources[1].owner",
+          location: null,
+        },
+        {
+          code: "sothoth.document-index/unresolved-relation-target",
+          subject: "sources[0].references[0].target.artifactId",
+          location: null,
+        },
+      ],
+    });
+  });
+
+  test("mixed-input diagnostics coalesce into the exact §9 total order", () => {
+    const result = build([
+      sourceWith("# Refs\n", {
+        artifactId: "A",
+        references: [
+          {
+            kind: "reference",
+            role: "dep",
+            target: { artifactId: "C", revision: null, external: false },
+          } satisfies DeclaredRelationV1,
+        ],
+      }),
+      sourceWith('<!-- sothoth:section id="void" -->\n\ntext', {
+        artifactId: "A",
+        path: "docs/a2.md",
+      }),
+      shapeInvalid("# Invalid\n", { artifactId: "C", path: "docs/c.md" }),
+    ]);
+    expect(result).toEqual({
+      ok: false,
+      issues: [
+        {
+          code: "sothoth.document-index/duplicate-artifact-id",
+          subject: "A",
+          location: null,
+        },
+        {
+          code: "sothoth.document-index/marker-not-followed-by-heading",
+          subject: "void",
+          location: {
+            artifactId: "A",
+            span: { startLine: 1, startColumn: 1, startOffset: 0, endLine: 1, endColumn: 35, endOffset: 34 },
+          },
+        },
+        {
+          code: "sothoth.document-index/missing-field",
+          subject: "sources[2].owner",
+          location: null,
+        },
+        {
+          code: "sothoth.document-index/unresolved-relation-target",
+          subject: "sources[0].references[0].target.artifactId",
+          location: null,
+        },
+      ],
+    });
+  });
+
+  test("a lone shape-invalid source emits no cross-source diagnostics it is not eligible for", () => {
+    const result = build([shapeInvalid("# Invalid\n", { artifactId: "C", path: "docs/c.md" })]);
+    expect(result).toEqual({
+      ok: false,
+      issues: [
+        {
+          code: "sothoth.document-index/missing-field",
+          subject: "sources[0].owner",
+          location: null,
+        },
+      ],
+    });
   });
 });
