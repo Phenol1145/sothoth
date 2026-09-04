@@ -1,0 +1,27 @@
+{
+  "name": "@sothoth/governance",
+  "version": "0.1.0",
+  "description": "Pure document-governance compilation: registry, ledger, pre-design closure, admissibility, gate macros, and change planning for Sothoth.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "exports": {
+    "./registry": { "types": "./dist/registry.d.ts", "import": "./dist/registry.js" },
+    "./ledger": { "types": "./dist/ledger.d.ts", "import": "./dist/ledger.js" },
+    "./traceability": { "types": "./dist/document-contract.d.ts", "import": "./dist/document-contract.js" },
+    "./manifest": { "types": "./dist/registry.d.ts", "import": "./dist/registry.js" },
+    "./pre-design": { "types": "./dist/pre-design.d.ts", "import": "./dist/pre-design.js" },
+    "./change-plan": { "types": "./dist/change-plan.d.ts", "import": "./dist/change-plan.js" },
+    "./gate-macros": { "types": "./dist/gates.d.ts", "import": "./dist/gates.js" }
+  },
+  "files": ["dist", "README.md", "LICENSE"],
+  "publishConfig": { "access": "public", "provenance": true },
+  "repository": { "type": "git", "url": "git+https://github.com/Phenol1145/sothoth.git", "directory": "packages/governance" },
+  "engines": { "node": ">=22.14.0" },
+  "dependencies": {
+    "@sothoth/contracts": "0.1.0",
+    "@sothoth/core": "0.1.0",
+    "@sothoth/document-index": "0.1.0",
+    "@sothoth/graph": "0.1.0",
+    "@sothoth/selectors": "0.1.0"
+  }
+}

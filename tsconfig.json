@@ -6,6 +6,7 @@
     { "path": "packages/graph" },
     { "path": "packages/document-index" },
     { "path": "packages/selectors" },
+    { "path": "packages/governance" },
     { "path": "test" }
   ]
 }

@@ -19,6 +19,20 @@ export default defineConfig({
       "@sothoth/graph/digraph": fileURLToPath(
         new URL("./packages/graph/src/digraph.ts", import.meta.url),
       ),
+      // @sothoth/governance imports these public subpaths as values, so the
+      // test run resolves them to workspace sources like the entries above.
+      "@sothoth/core/diagnostics": fileURLToPath(
+        new URL("./packages/core/src/diagnostics.ts", import.meta.url),
+      ),
+      "@sothoth/core/outcome": fileURLToPath(
+        new URL("./packages/core/src/outcome.ts", import.meta.url),
+      ),
+      "@sothoth/graph/waves": fileURLToPath(
+        new URL("./packages/graph/src/waves.ts", import.meta.url),
+      ),
+      "@sothoth/selectors/match": fileURLToPath(
+        new URL("./packages/selectors/src/evaluate.ts", import.meta.url),
+      ),
     },
   },
   test: {
