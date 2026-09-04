@@ -1,0 +1,16 @@
+{
+  "schema": "sothoth.profile/recommended-skill-catalog@1",
+  "catalogId": "SOTHOTH-RECOMMENDED-SKILLS",
+  "catalogRevision": 1,
+  "automaticDiscovery": false,
+  "recommendations": [
+    {
+      "applicable-diagnostic": "sothoth.profile/unknown-mapping",
+      "digest": "sha256:327a2b50620e2fd70abc6893cd6965e76b20f8d0adb0dc2c8d5eb3845efb643e",
+      "exact-commit-or-tag": "3cca18b368ae95cdbdebbff572ccafa662551015",
+      "license": "MIT",
+      "path": "skills/engineering/domain-modeling",
+      "source-repository": "mattpocock/skills"
+    }
+  ]
+}

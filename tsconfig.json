@@ -8,6 +8,7 @@
     { "path": "packages/selectors" },
     { "path": "packages/governance" },
     { "path": "packages/planning" },
+    { "path": "packages/profile-sdk" },
     { "path": "test" }
   ]
 }
