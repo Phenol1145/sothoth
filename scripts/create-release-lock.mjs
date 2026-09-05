@@ -29,7 +29,7 @@ export const RELEASE_TAG = "v0.1.0";
 export const PACKAGE_VERSION = "0.1.0";
 export const REPOSITORY = "Phenol1145/sothoth";
 export const SCOPE_BOM_ID = "SOTHOTH-RELEASE-SCOPE-BOM-0.1";
-export const SCOPE_BOM_REVISION = 3;
+export const SCOPE_BOM_REVISION = 4;
 
 function sha512Of(bytes) {
   const raw = createHash("sha512").update(bytes).digest();

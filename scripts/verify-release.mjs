@@ -346,7 +346,7 @@ async function main() {
   const scopeBomPath = join(rootDir, "docs", "release", "v0.1.0-scope-bom.json");
   const scopeBom = JSON.parse(readFileSync(scopeBomPath, "utf8"));
   const scopeBomBindingOk =
-    scopeBom.bomId === "SOTHOTH-RELEASE-SCOPE-BOM-0.1" && scopeBom.bomRevision === 3;
+    scopeBom.bomId === "SOTHOTH-RELEASE-SCOPE-BOM-0.1" && scopeBom.bomRevision === 4;
   const candidateBomPath = join(releaseDir, "v0.1.0-candidate-bom.json");
   const candidateBom = {
     schema: "sothoth.release-candidate-bom/v1",
