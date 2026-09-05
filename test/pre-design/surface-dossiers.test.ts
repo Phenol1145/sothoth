@@ -12,7 +12,7 @@ const REGISTRY_PATH = `${root}/docs/design/document-registry.json`;
 const REGISTRATIONS_PATH = `${root}/docs/design/artifact-design-registrations.json`;
 
 const CAPSULE_ID = "DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN";
-const CAPSULE_REVISION = 2;
+const CAPSULE_REVISION = 3;
 const CAPSULE_AUTHORITY_SECTION = "authority-boundary";
 
 // The section/topic vocabulary is derived from the accepted Dossier Document Contract instead of
@@ -64,14 +64,14 @@ const CLI_INVOCATION_STATE = "sothoth.cli/cli-invocation-result@1";
 const OUTPUT_UNWRITABLE_DIAGNOSTIC = "sothoth.pre-design/output-unwritable";
 
 const SDK_CAPABILITY_OWNERS = [
-  "@sothoth/contracts",
-  "@sothoth/core",
-  "@sothoth/document-index",
-  "@sothoth/git",
-  "@sothoth/governance",
-  "@sothoth/planning",
-  "@sothoth/profile-sdk",
-  "@sothoth/selectors",
+  "@project-sothoth/contracts",
+  "@project-sothoth/core",
+  "@project-sothoth/document-index",
+  "@project-sothoth/git",
+  "@project-sothoth/governance",
+  "@project-sothoth/planning",
+  "@project-sothoth/profile-sdk",
+  "@project-sothoth/selectors",
 ];
 
 const SDK_REQUIRED_CONTRACTS = [
@@ -124,20 +124,20 @@ interface SurfaceSpec {
 
 const SURFACE: SurfaceSpec[] = [
   {
-    packageId: "@sothoth/sdk",
+    packageId: "@project-sothoth/sdk",
     designId: "SOTHOTH-SDK-DOSSIER",
     documentId: "DOC-SOTHOTH-SDK-DOSSIER",
     path: "docs/design/dossiers/sdk.md",
     dependency: {
       kind: DEPENDENCY_KIND,
-      packageId: "@sothoth/sdk",
+      packageId: "@project-sothoth/sdk",
       runtimeImportAllowlist: SDK_CAPABILITY_OWNERS,
       providedContracts: ["CONTRACT/SOTHOTH/PUBLIC-SDK@1"],
       requiredContracts: SDK_REQUIRED_CONTRACTS,
     },
     forbidden: {
       kind: FORBIDDEN_KIND,
-      packageId: "@sothoth/sdk",
+      packageId: "@project-sothoth/sdk",
       capabilityClasses: {
         "ambient-global-configuration": "forbidden",
         "arbitrary-process-runner": "forbidden",
@@ -161,7 +161,7 @@ const SURFACE: SurfaceSpec[] = [
     },
     truth: {
       kind: TRUTH_KIND,
-      packageId: "@sothoth/sdk",
+      packageId: "@project-sothoth/sdk",
       producedStateRefs: [SDK_FACADE_STATE],
       issuedAuthorityRefs: [],
       emittedObservationRefs: [],
@@ -170,29 +170,29 @@ const SURFACE: SurfaceSpec[] = [
     },
     surface: {
       kind: SURFACE_KIND,
-      packageId: "@sothoth/sdk",
+      packageId: "@project-sothoth/sdk",
       publicModules: [
-        "@sothoth/sdk/change-plan",
-        "@sothoth/sdk/check",
-        "@sothoth/sdk/compile",
-        "@sothoth/sdk/diagnostics",
-        "@sothoth/sdk/documents",
-        "@sothoth/sdk/git",
-        "@sothoth/sdk/profiles",
-        "@sothoth/sdk/verify",
+        "@project-sothoth/sdk/change-plan",
+        "@project-sothoth/sdk/check",
+        "@project-sothoth/sdk/compile",
+        "@project-sothoth/sdk/diagnostics",
+        "@project-sothoth/sdk/documents",
+        "@project-sothoth/sdk/git",
+        "@project-sothoth/sdk/profiles",
+        "@project-sothoth/sdk/verify",
       ],
       surfaceKind: "typed-outcome-library-facade",
     },
     determinism: {
       kind: DETERMINISM_KIND,
-      packageId: "@sothoth/sdk",
+      packageId: "@project-sothoth/sdk",
       byteStableOutputs: true,
       stringOrdering: "unicode-code-point",
       tieBreaking: "canonical-identity-then-diagnostic-code",
     },
     criteria: {
       kind: CRITERIA_KIND,
-      packageId: "@sothoth/sdk",
+      packageId: "@project-sothoth/sdk",
       criteria: [
         { criterionId: "sdk-facade-delegation-only", sectionId: "core-sdk-protocol-boundary" },
         { criterionId: "sdk-import-boundary-closure", sectionId: "dependency-and-topology" },
@@ -204,7 +204,7 @@ const SURFACE: SurfaceSpec[] = [
     extra: {
       [FACADE_KIND]: {
         kind: FACADE_KIND,
-        packageId: "@sothoth/sdk",
+        packageId: "@project-sothoth/sdk",
         facadeKind: "aggregate-public-library-facade",
         solePublicLibraryFacade: true,
         secondCore: false,
@@ -217,7 +217,7 @@ const SURFACE: SurfaceSpec[] = [
       },
       [SDK_OUTCOME_KIND]: {
         kind: SDK_OUTCOME_KIND,
-        packageId: "@sothoth/sdk",
+        packageId: "@project-sothoth/sdk",
         outcomeEnvelope: "closed-typed-outcome-with-diagnostics",
         selectsProcessExitCode: false,
         extensionSelectsOutcome: false,
@@ -232,20 +232,20 @@ const SURFACE: SurfaceSpec[] = [
     allowedImports: SDK_CAPABILITY_OWNERS,
   },
   {
-    packageId: "@sothoth/cli",
+    packageId: "@project-sothoth/cli",
     designId: "SOTHOTH-CLI-DOSSIER",
     documentId: "DOC-SOTHOTH-CLI-DOSSIER",
     path: "docs/design/dossiers/cli.md",
     dependency: {
       kind: DEPENDENCY_KIND,
-      packageId: "@sothoth/cli",
-      runtimeImportAllowlist: ["@sothoth/sdk"],
+      packageId: "@project-sothoth/cli",
+      runtimeImportAllowlist: ["@project-sothoth/sdk"],
       providedContracts: ["CONTRACT/SOTHOTH/CLI-IO@1"],
       requiredContracts: ["CONTRACT/SOTHOTH/PUBLIC-SDK@1"],
     },
     forbidden: {
       kind: FORBIDDEN_KIND,
-      packageId: "@sothoth/cli",
+      packageId: "@project-sothoth/cli",
       capabilityClasses: {
         "arbitrary-command-execution": "forbidden",
         "direct-domain-package-import": "forbidden",
@@ -266,7 +266,7 @@ const SURFACE: SurfaceSpec[] = [
     },
     truth: {
       kind: TRUTH_KIND,
-      packageId: "@sothoth/cli",
+      packageId: "@project-sothoth/cli",
       producedStateRefs: [CLI_INVOCATION_STATE],
       issuedAuthorityRefs: [],
       emittedObservationRefs: [],
@@ -277,26 +277,26 @@ const SURFACE: SurfaceSpec[] = [
     },
     surface: {
       kind: SURFACE_KIND,
-      packageId: "@sothoth/cli",
+      packageId: "@project-sothoth/cli",
       publicModules: [
-        "@sothoth/cli/commands",
-        "@sothoth/cli/exit",
-        "@sothoth/cli/input",
-        "@sothoth/cli/render",
-        "@sothoth/cli/write",
+        "@project-sothoth/cli/commands",
+        "@project-sothoth/cli/exit",
+        "@project-sothoth/cli/input",
+        "@project-sothoth/cli/render",
+        "@project-sothoth/cli/write",
       ],
       surfaceKind: "explicit-command-surface",
     },
     determinism: {
       kind: DETERMINISM_KIND,
-      packageId: "@sothoth/cli",
+      packageId: "@project-sothoth/cli",
       byteStableOutputs: true,
       stringOrdering: "unicode-code-point",
       tieBreaking: "canonical-identity-then-diagnostic-code",
     },
     criteria: {
       kind: CRITERIA_KIND,
-      packageId: "@sothoth/cli",
+      packageId: "@project-sothoth/cli",
       criteria: [
         { criterionId: "cli-atomic-explicit-output", sectionId: "state-lifecycle-and-data-flow" },
         { criterionId: "cli-command-surface-closure", sectionId: "public-surface-and-consumers" },
@@ -308,7 +308,7 @@ const SURFACE: SurfaceSpec[] = [
     extra: {
       [CLI_COMMAND_KIND]: {
         kind: CLI_COMMAND_KIND,
-        packageId: "@sothoth/cli",
+        packageId: "@project-sothoth/cli",
         surfaceKind: "explicit-command-surface",
         commands: CLI_COMMANDS,
         hiddenCommands: [],
@@ -316,7 +316,7 @@ const SURFACE: SurfaceSpec[] = [
       },
       [CLI_INPUT_KIND]: {
         kind: CLI_INPUT_KIND,
-        packageId: "@sothoth/cli",
+        packageId: "@project-sothoth/cli",
         explicitInputSources: ["argv-flags", "explicit-path-arguments"],
         implicitScanning: "forbidden",
         environmentVariableSemantics: "forbidden",
@@ -324,14 +324,14 @@ const SURFACE: SurfaceSpec[] = [
       },
       [CLI_EXIT_KIND]: {
         kind: CLI_EXIT_KIND,
-        packageId: "@sothoth/cli",
+        packageId: "@project-sothoth/cli",
         exitMap: CLI_EXIT_MAP,
         ownsExitCodeMapping: true,
         extensionExitOverride: "forbidden",
       },
       [CLI_OUTPUT_KIND]: {
         kind: CLI_OUTPUT_KIND,
-        packageId: "@sothoth/cli",
+        packageId: "@project-sothoth/cli",
         defaultOutput: "stdout",
         writeStrategy: "same-directory-temp-then-replace",
         atomicExplicitWrites: true,
@@ -342,14 +342,14 @@ const SURFACE: SurfaceSpec[] = [
       },
       [CLI_STREAM_KIND]: {
         kind: CLI_STREAM_KIND,
-        packageId: "@sothoth/cli",
+        packageId: "@project-sothoth/cli",
         stdoutContract: "exactly-one-machine-document",
         stdoutContamination: "forbidden",
         operationalNarration: "stderr-only",
       },
     },
     inheritedApplicability: "specializes",
-    allowedImports: ["@sothoth/sdk"],
+    allowedImports: ["@project-sothoth/sdk"],
   },
 ];
 
@@ -704,7 +704,7 @@ function validateSurfaceDesign(facts: {
     const truth = declaration(TRUTH_KIND)?.value;
     const forbiddenValue = declaration(FORBIDDEN_KIND)?.value;
 
-    if (spec.packageId === "@sothoth/sdk") {
+    if (spec.packageId === "@project-sothoth/sdk") {
       if (truth) {
         for (const ref of Array.isArray(truth.producedStateRefs) ? truth.producedStateRefs : []) {
           if (typeof ref === "string" && !ref.startsWith("sothoth.sdk/")) {
@@ -758,7 +758,7 @@ function validateSurfaceDesign(facts: {
       }
     }
 
-    if (spec.packageId === "@sothoth/cli") {
+    if (spec.packageId === "@project-sothoth/cli") {
       for (const target of Array.isArray(dependency?.runtimeImportAllowlist)
         ? dependency.runtimeImportAllowlist
         : []) {
@@ -888,7 +888,7 @@ function validateSurfaceDesign(facts: {
     if (!registryEntry) {
       push("registry-entry-missing", spec.documentId);
     } else {
-      if (registryEntry.documentRevision !== 1 || registryEntry.status !== "proposed") {
+      if (registryEntry.documentRevision !== 2 || registryEntry.status !== "proposed") {
         push("registry-entry-invalid", spec.documentId);
       }
       if (registryEntry.path !== spec.path) {
@@ -906,16 +906,16 @@ function validateSurfaceDesign(facts: {
     }
     if (
       registration.designId !== spec.designId ||
-      registration.designRevision !== 1 ||
+      registration.designRevision !== 2 ||
       registration.designRequirement !== "full" ||
       registration.status !== "accepted" ||
-      registration.supersedes !== null
+      registration.supersedes !== `${spec.designId}@1`
     ) {
       push("registration-identity-invalid", spec.packageId);
     }
     if (
       registration.documentRef?.documentId !== spec.documentId ||
-      registration.documentRef?.documentRevision !== 1
+      registration.documentRef?.documentRevision !== 2
     ) {
       push("registration-document-ref-unresolved", spec.packageId);
     }
@@ -1294,7 +1294,7 @@ describe("surface dossier structured design facts", () => {
 
   test("the SDK is the sole aggregate facade that owns no domain truth and never wraps GENERIC-GRAPH", async () => {
     const facts = await repositoryFacts();
-    const declarations = extractDeclarations(facts.documents["@sothoth/sdk"]).declarations;
+    const declarations = extractDeclarations(facts.documents["@project-sothoth/sdk"]).declarations;
     const facade = declarations.find((site) => site.kind === FACADE_KIND)?.value;
     expect(facade.solePublicLibraryFacade).toBe(true);
     expect(facade.secondCore).toBe(false);
@@ -1313,7 +1313,7 @@ describe("surface dossier structured design facts", () => {
 
   test("the CLI maps the five public outcomes to exits 0-4 with one uncontaminated stdout document and atomic explicit writes", async () => {
     const facts = await repositoryFacts();
-    const declarations = extractDeclarations(facts.documents["@sothoth/cli"]).declarations;
+    const declarations = extractDeclarations(facts.documents["@project-sothoth/cli"]).declarations;
     const command = declarations.find((site) => site.kind === CLI_COMMAND_KIND)?.value;
     expect(command.commands).toEqual(CLI_COMMANDS);
     expect(command.hiddenCommands).toEqual([]);
@@ -1330,7 +1330,7 @@ describe("surface dossier structured design facts", () => {
     expect(stream.stdoutContract).toBe("exactly-one-machine-document");
     expect(stream.stdoutContamination).toBe("forbidden");
     const dependency = declarations.find((site) => site.kind === DEPENDENCY_KIND)?.value;
-    expect(dependency.runtimeImportAllowlist).toEqual(["@sothoth/sdk"]);
+    expect(dependency.runtimeImportAllowlist).toEqual(["@project-sothoth/sdk"]);
     expect(dependency.requiredContracts).toEqual(["CONTRACT/SOTHOTH/PUBLIC-SDK@1"]);
     expect(validateSurfaceDesign(facts)).toEqual([]);
   });
@@ -1354,7 +1354,7 @@ describe("surface dossier mutation tests", () => {
   test("rejects the SDK duplicating domain truth owned by another package", async () => {
     expect(validateSurfaceDesign(await repositoryFacts())).toEqual([]);
     const facts = await mutatedFacts(
-      "@sothoth/sdk",
+      "@project-sothoth/sdk",
       (markdown) =>
         mutateDeclaration(markdown, TRUTH_KIND, (value) => {
           value.producedStateRefs = ["sothoth.core/compilation-outcome@1", ...value.producedStateRefs];
@@ -1366,14 +1366,14 @@ describe("surface dossier mutation tests", () => {
     expect(validateSurfaceDesign(facts)).toEqual([
       {
         code: "sothoth.surface/sdk-domain-truth-duplicated",
-        subject: "@sothoth/sdk:sothoth.core/compilation-outcome@1",
+        subject: "@project-sothoth/sdk:sothoth.core/compilation-outcome@1",
       },
     ]);
   });
 
   test("rejects the SDK claiming domain truth ownership", async () => {
     expect(validateSurfaceDesign(await repositoryFacts())).toEqual([]);
-    const facts = await mutatedFacts("@sothoth/sdk", (markdown) =>
+    const facts = await mutatedFacts("@project-sothoth/sdk", (markdown) =>
       mutateDeclaration(markdown, TRUTH_KIND, (value) => {
         value.ownsDomainTruth = true;
       }),
@@ -1381,14 +1381,14 @@ describe("surface dossier mutation tests", () => {
     expect(validateSurfaceDesign(facts)).toEqual([
       {
         code: "sothoth.surface/sdk-domain-truth-owned",
-        subject: "@sothoth/sdk:ownsDomainTruth",
+        subject: "@project-sothoth/sdk:ownsDomainTruth",
       },
     ]);
   });
 
   test("rejects the SDK exposing private Core capability", async () => {
     expect(validateSurfaceDesign(await repositoryFacts())).toEqual([]);
-    const facts = await mutatedFacts("@sothoth/sdk", (markdown) =>
+    const facts = await mutatedFacts("@project-sothoth/sdk", (markdown) =>
       mutateDeclaration(markdown, FACADE_KIND, (value) => {
         value.exposesPrivateCoreCapability = true;
       }),
@@ -1396,7 +1396,7 @@ describe("surface dossier mutation tests", () => {
     expect(validateSurfaceDesign(facts)).toEqual([
       {
         code: "sothoth.surface/sdk-private-core-exposed",
-        subject: "@sothoth/sdk",
+        subject: "@project-sothoth/sdk",
       },
     ]);
   });
@@ -1409,7 +1409,7 @@ describe("surface dossier mutation tests", () => {
       ...refs.slice(4),
     ];
     const facts = await mutatedFacts(
-      "@sothoth/sdk",
+      "@project-sothoth/sdk",
       (markdown) =>
         mutateDeclaration(markdown, DEPENDENCY_KIND, (value) => {
           value.requiredContracts = spliceGenericGraph(value.requiredContracts);
@@ -1421,37 +1421,37 @@ describe("surface dossier mutation tests", () => {
     expect(validateSurfaceDesign(facts)).toEqual([
       {
         code: "sothoth.surface/contract-owner-not-imported",
-        subject: `@sothoth/sdk:${GENERIC_GRAPH_REF}:@sothoth/graph`,
+        subject: `@project-sothoth/sdk:${GENERIC_GRAPH_REF}:@project-sothoth/graph`,
       },
       {
         code: "sothoth.surface/sdk-generic-graph-required",
-        subject: `@sothoth/sdk:${GENERIC_GRAPH_REF}`,
+        subject: `@project-sothoth/sdk:${GENERIC_GRAPH_REF}`,
       },
     ]);
   });
 
   test("rejects the CLI importing Core directly instead of the public SDK facade", async () => {
     expect(validateSurfaceDesign(await repositoryFacts())).toEqual([]);
-    const facts = await mutatedFacts("@sothoth/cli", (markdown) =>
+    const facts = await mutatedFacts("@project-sothoth/cli", (markdown) =>
       mutateDeclaration(markdown, DEPENDENCY_KIND, (value) => {
-        value.runtimeImportAllowlist = [...value.runtimeImportAllowlist, "@sothoth/core"];
+        value.runtimeImportAllowlist = [...value.runtimeImportAllowlist, "@project-sothoth/core"];
       }),
     );
     expect(validateSurfaceDesign(facts)).toEqual([
       {
         code: "sothoth.surface/cli-forbidden-import",
-        subject: "@sothoth/cli:@sothoth/core",
+        subject: "@project-sothoth/cli:@project-sothoth/core",
       },
       {
         code: "sothoth.surface/import-without-required-contract",
-        subject: "@sothoth/cli:@sothoth/core",
+        subject: "@project-sothoth/cli:@project-sothoth/core",
       },
     ]);
   });
 
   test("rejects hidden or undocumented commands", async () => {
     expect(validateSurfaceDesign(await repositoryFacts())).toEqual([]);
-    const facts = await mutatedFacts("@sothoth/cli", (markdown) =>
+    const facts = await mutatedFacts("@project-sothoth/cli", (markdown) =>
       mutateDeclaration(markdown, CLI_COMMAND_KIND, (value) => {
         value.hiddenCommands = ["internal-check"];
       }),
@@ -1459,14 +1459,14 @@ describe("surface dossier mutation tests", () => {
     expect(validateSurfaceDesign(facts)).toEqual([
       {
         code: "sothoth.surface/cli-hidden-command",
-        subject: "@sothoth/cli:internal-check",
+        subject: "@project-sothoth/cli:internal-check",
       },
     ]);
   });
 
   test("rejects enabling arbitrary process execution", async () => {
     expect(validateSurfaceDesign(await repositoryFacts())).toEqual([]);
-    const facts = await mutatedFacts("@sothoth/cli", (markdown) =>
+    const facts = await mutatedFacts("@project-sothoth/cli", (markdown) =>
       mutateDeclaration(markdown, FORBIDDEN_KIND, (value) => {
         value.capabilityClasses["arbitrary-command-execution"] = "permitted";
       }),
@@ -1474,14 +1474,14 @@ describe("surface dossier mutation tests", () => {
     expect(validateSurfaceDesign(facts)).toEqual([
       {
         code: "sothoth.surface/cli-forbidden-capability-enabled",
-        subject: "@sothoth/cli:arbitrary-command-execution",
+        subject: "@project-sothoth/cli:arbitrary-command-execution",
       },
     ]);
   });
 
   test("rejects implicit repository or filesystem scanning", async () => {
     expect(validateSurfaceDesign(await repositoryFacts())).toEqual([]);
-    const facts = await mutatedFacts("@sothoth/cli", (markdown) =>
+    const facts = await mutatedFacts("@project-sothoth/cli", (markdown) =>
       mutateDeclaration(markdown, CLI_INPUT_KIND, (value) => {
         value.implicitScanning = "permitted";
       }),
@@ -1489,14 +1489,14 @@ describe("surface dossier mutation tests", () => {
     expect(validateSurfaceDesign(facts)).toEqual([
       {
         code: "sothoth.surface/cli-implicit-scan-enabled",
-        subject: "@sothoth/cli",
+        subject: "@project-sothoth/cli",
       },
     ]);
   });
 
   test("rejects contaminating the machine stdout document", async () => {
     expect(validateSurfaceDesign(await repositoryFacts())).toEqual([]);
-    const facts = await mutatedFacts("@sothoth/cli", (markdown) =>
+    const facts = await mutatedFacts("@project-sothoth/cli", (markdown) =>
       mutateDeclaration(markdown, CLI_STREAM_KIND, (value) => {
         value.stdoutContamination = "permitted";
       }),
@@ -1504,14 +1504,14 @@ describe("surface dossier mutation tests", () => {
     expect(validateSurfaceDesign(facts)).toEqual([
       {
         code: "sothoth.surface/cli-stdout-contamination-enabled",
-        subject: "@sothoth/cli",
+        subject: "@project-sothoth/cli",
       },
     ]);
   });
 
   test("rejects an undocumented exit code outside the frozen 0-4 mapping", async () => {
     expect(validateSurfaceDesign(await repositoryFacts())).toEqual([]);
-    const facts = await mutatedFacts("@sothoth/cli", (markdown) =>
+    const facts = await mutatedFacts("@project-sothoth/cli", (markdown) =>
       mutateDeclaration(markdown, CLI_EXIT_KIND, (value) => {
         value.exitMap = { ...value.exitMap, "5": "valid" };
       }),
@@ -1526,7 +1526,7 @@ describe("surface dossier mutation tests", () => {
 
   test("rejects an extension overriding the exit-code mapping", async () => {
     expect(validateSurfaceDesign(await repositoryFacts())).toEqual([]);
-    const facts = await mutatedFacts("@sothoth/cli", (markdown) =>
+    const facts = await mutatedFacts("@project-sothoth/cli", (markdown) =>
       mutateDeclaration(markdown, CLI_EXIT_KIND, (value) => {
         value.extensionExitOverride = "permitted";
       }),
@@ -1534,14 +1534,14 @@ describe("surface dossier mutation tests", () => {
     expect(validateSurfaceDesign(facts)).toEqual([
       {
         code: "sothoth.surface/cli-exit-override-enabled",
-        subject: "@sothoth/cli",
+        subject: "@project-sothoth/cli",
       },
     ]);
   });
 
   test("rejects non-atomic explicit output writes that can leave partial target files", async () => {
     expect(validateSurfaceDesign(await repositoryFacts())).toEqual([]);
-    const facts = await mutatedFacts("@sothoth/cli", (markdown) =>
+    const facts = await mutatedFacts("@project-sothoth/cli", (markdown) =>
       mutateDeclaration(markdown, CLI_OUTPUT_KIND, (value) => {
         value.writeStrategy = "direct-streaming-write";
       }),
@@ -1549,7 +1549,7 @@ describe("surface dossier mutation tests", () => {
     expect(validateSurfaceDesign(facts)).toEqual([
       {
         code: "sothoth.surface/cli-atomic-write-violated",
-        subject: "@sothoth/cli:writeStrategy",
+        subject: "@project-sothoth/cli:writeStrategy",
       },
     ]);
   });

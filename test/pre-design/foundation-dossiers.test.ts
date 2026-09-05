@@ -13,7 +13,7 @@ const REGISTRATIONS_PATH = `${root}/docs/design/artifact-design-registrations.js
 const GOVERNANCE_DOC_PATH = `${root}/docs/design/governance-control-plane.md`;
 
 const CAPSULE_ID = "DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN";
-const CAPSULE_REVISION = 2;
+const CAPSULE_REVISION = 3;
 const CAPSULE_SECTION_IDS = [
   "decision",
   "authority-boundary",
@@ -115,13 +115,13 @@ interface FoundationSpec {
 
 const FOUNDATION: FoundationSpec[] = [
   {
-    packageId: "@sothoth/contracts",
+    packageId: "@project-sothoth/contracts",
     designId: "SOTHOTH-CONTRACTS-DOSSIER",
     documentId: "DOC-SOTHOTH-CONTRACTS-DOSSIER",
     path: "docs/design/dossiers/contracts.md",
-    expectedDesignRevision: 1,
-    expectedDocumentRevision: 1,
-    expectedSupersedes: null,
+    expectedDesignRevision: 2,
+    expectedDocumentRevision: 2,
+    expectedSupersedes: "SOTHOTH-CONTRACTS-DOSSIER@1",
     importAllowlist: [],
     providedContracts: ["CONTRACT/SOTHOTH/SCHEMAS@1"],
     requiredContracts: [],
@@ -143,12 +143,12 @@ const FOUNDATION: FoundationSpec[] = [
     tieBreaking: "declared-enumeration-order",
     surfaceKind: "types-and-validation-only",
     publicModules: [
-      "@sothoth/contracts/identity",
-      "@sothoth/contracts/schema",
-      "@sothoth/contracts/diagnostic",
-      "@sothoth/contracts/projection",
-      "@sothoth/contracts/pre-design",
-      "@sothoth/contracts/extension",
+      "@project-sothoth/contracts/identity",
+      "@project-sothoth/contracts/schema",
+      "@project-sothoth/contracts/diagnostic",
+      "@project-sothoth/contracts/projection",
+      "@project-sothoth/contracts/pre-design",
+      "@project-sothoth/contracts/extension",
     ],
     criteria: [
       "contracts-schema-closure",
@@ -159,14 +159,14 @@ const FOUNDATION: FoundationSpec[] = [
     notApplicableTopics: [],
   },
   {
-    packageId: "@sothoth/core",
+    packageId: "@project-sothoth/core",
     designId: "SOTHOTH-CORE-DOSSIER",
     documentId: "DOC-SOTHOTH-CORE-DOSSIER",
     path: "docs/design/dossiers/core.md",
-    expectedDesignRevision: 1,
-    expectedDocumentRevision: 1,
-    expectedSupersedes: null,
-    importAllowlist: ["@sothoth/contracts"],
+    expectedDesignRevision: 2,
+    expectedDocumentRevision: 2,
+    expectedSupersedes: "SOTHOTH-CORE-DOSSIER@1",
+    importAllowlist: ["@project-sothoth/contracts"],
     providedContracts: ["CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1"],
     requiredContracts: ["CONTRACT/SOTHOTH/SCHEMAS@1"],
     producedStateRefs: ["sothoth.core/canonical-bytes@1", "sothoth.core/compilation-outcome@1"],
@@ -188,11 +188,11 @@ const FOUNDATION: FoundationSpec[] = [
     tieBreaking: "canonical-identity-then-code-point",
     surfaceKind: "pure-functions-only",
     publicModules: [
-      "@sothoth/core/canonical-json",
-      "@sothoth/core/digest",
-      "@sothoth/core/compile",
-      "@sothoth/core/diagnostics",
-      "@sothoth/core/outcome",
+      "@project-sothoth/core/canonical-json",
+      "@project-sothoth/core/digest",
+      "@project-sothoth/core/compile",
+      "@project-sothoth/core/diagnostics",
+      "@project-sothoth/core/outcome",
     ],
     criteria: [
       "core-pure-kernel-boundary",
@@ -203,14 +203,14 @@ const FOUNDATION: FoundationSpec[] = [
     notApplicableTopics: [],
   },
   {
-    packageId: "@sothoth/graph",
+    packageId: "@project-sothoth/graph",
     designId: "SOTHOTH-GRAPH-DOSSIER",
     documentId: "DOC-SOTHOTH-GRAPH-DOSSIER",
     path: "docs/design/dossiers/graph.md",
-    expectedDesignRevision: 2,
-    expectedDocumentRevision: 2,
-    expectedSupersedes: "SOTHOTH-GRAPH-DOSSIER@1",
-    importAllowlist: ["@sothoth/contracts", "@sothoth/core"],
+    expectedDesignRevision: 3,
+    expectedDocumentRevision: 3,
+    expectedSupersedes: "SOTHOTH-GRAPH-DOSSIER@2",
+    importAllowlist: ["@project-sothoth/contracts", "@project-sothoth/core"],
     providedContracts: ["CONTRACT/SOTHOTH/GENERIC-GRAPH@1"],
     requiredContracts: ["CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1", "CONTRACT/SOTHOTH/SCHEMAS@1"],
     producedStateRefs: ["sothoth.graph/algorithm-result@1"],
@@ -230,12 +230,12 @@ const FOUNDATION: FoundationSpec[] = [
     tieBreaking: "caller-sort-key-then-node-identity",
     surfaceKind: "pure-functions-only",
     publicModules: [
-      "@sothoth/graph/digraph",
-      "@sothoth/graph/traversal",
-      "@sothoth/graph/scc",
-      "@sothoth/graph/condensation",
-      "@sothoth/graph/waves",
-      "@sothoth/graph/longest-paths",
+      "@project-sothoth/graph/digraph",
+      "@project-sothoth/graph/traversal",
+      "@project-sothoth/graph/scc",
+      "@project-sothoth/graph/condensation",
+      "@project-sothoth/graph/waves",
+      "@project-sothoth/graph/longest-paths",
     ],
     criteria: [
       "graph-generic-algorithm-surface",
@@ -247,7 +247,7 @@ const FOUNDATION: FoundationSpec[] = [
       {
         topic: "observation-and-audit",
         reason:
-          "@sothoth/graph computes pure results over caller-provided nodes, edges, weights, and sort keys; every diagnostic, audit trail, and observation identity is declared by @sothoth/contracts and aggregated by @sothoth/core or the consuming domain compiler, so the graph package owns no observation or audit surface of its own.",
+          "@project-sothoth/graph computes pure results over caller-provided nodes, edges, weights, and sort keys; every diagnostic, audit trail, and observation identity is declared by @project-sothoth/contracts and aggregated by @project-sothoth/core or the consuming domain compiler, so the graph package owns no observation or audit surface of its own.",
       },
     ],
   },
@@ -490,7 +490,7 @@ function validateFoundationDesign(facts: {
       }
     }
 
-    if (spec.packageId === "@sothoth/graph") {
+    if (spec.packageId === "@project-sothoth/graph") {
       const domain = declaration("sothoth-dossier/domain-semantics-declaration@1");
       if (!domain) {
         push("declaration-missing", `${spec.packageId}:domain-semantics-declaration`);
@@ -878,8 +878,8 @@ describe("foundation dossier structured design facts", () => {
       const member = result.projection.members.find((entry: any) => entry.componentId === spec.packageId);
       // Historically, the revision-1 registrations were accepted by the external human owner on
       // 2026-09-03 (Task 8), and revision 2 kept them accepted with Graph at design revision 2.
-      // The live revision-3 facts keep every live registration accepted — Graph at design revision
-      // 2 and Document Index at design revision 2, the other nine at revision 1 — while only the
+      // The live revision-4 facts keep every live registration accepted — Graph at design revision
+      // 3 and Document Index at design revision 3, the other nine at revision 2 — while only the
       // synthetic fixture registrations stay in the proposed stage.
       expect(member.registrationStatus).toBe("accepted");
       expect(member.localTopics + member.inheritedTopics + member.notApplicableTopics).toBe(18);
@@ -904,31 +904,31 @@ describe("foundation dossier mutation tests", () => {
   }
 
   test("rejects a reverse import that inverts the graph -> core -> contracts direction", async () => {
-    const coreFacts = await mutatedFacts("@sothoth/core", (markdown) =>
+    const coreFacts = await mutatedFacts("@project-sothoth/core", (markdown) =>
       mutateDeclaration(markdown, "dependency-and-topology", "sothoth-dossier/dependency-declaration@1", (value) => {
-        value.runtimeImportAllowlist = ["@sothoth/contracts", "@sothoth/graph"];
+        value.runtimeImportAllowlist = ["@project-sothoth/contracts", "@project-sothoth/graph"];
       }),
     );
     expectBaselineValid(await repositoryFacts());
     expect(validateFoundationDesign(coreFacts)).toContainEqual({
       code: "sothoth.foundation/reverse-import",
-      subject: "@sothoth/core:@sothoth/graph",
+      subject: "@project-sothoth/core:@project-sothoth/graph",
     });
 
-    const contractsFacts = await mutatedFacts("@sothoth/contracts", (markdown) =>
+    const contractsFacts = await mutatedFacts("@project-sothoth/contracts", (markdown) =>
       mutateDeclaration(markdown, "dependency-and-topology", "sothoth-dossier/dependency-declaration@1", (value) => {
-        value.runtimeImportAllowlist = ["@sothoth/core"];
+        value.runtimeImportAllowlist = ["@project-sothoth/core"];
       }),
     );
     expect(validateFoundationDesign(contractsFacts)).toContainEqual({
       code: "sothoth.foundation/reverse-import",
-      subject: "@sothoth/contracts:@sothoth/core",
+      subject: "@project-sothoth/contracts:@project-sothoth/core",
     });
   });
 
   test("rejects filesystem access declared for Core or Graph", async () => {
     expectBaselineValid(await repositoryFacts());
-    for (const packageId of ["@sothoth/core", "@sothoth/graph"]) {
+    for (const packageId of ["@project-sothoth/core", "@project-sothoth/graph"]) {
       const facts = await mutatedFacts(packageId, (markdown) =>
         mutateDeclaration(markdown, "purpose-and-non-goals", "sothoth-dossier/forbidden-capability-declaration@1", (value) => {
           value.capabilityClasses.filesystem = "permitted";
@@ -943,50 +943,50 @@ describe("foundation dossier mutation tests", () => {
 
   test("rejects duplicated contract truth ownership between foundation packages", async () => {
     expectBaselineValid(await repositoryFacts());
-    const facts = await mutatedFacts("@sothoth/core", (markdown) =>
+    const facts = await mutatedFacts("@project-sothoth/core", (markdown) =>
       mutateDeclaration(markdown, "dependency-and-topology", "sothoth-dossier/dependency-declaration@1", (value) => {
         value.providedContracts = ["CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1", "CONTRACT/SOTHOTH/SCHEMAS@1"];
       }),
     );
     expect(validateFoundationDesign(facts)).toContainEqual({
       code: "sothoth.foundation/contract-owner-duplicate",
-      subject: "CONTRACT/SOTHOTH/SCHEMAS:@sothoth/contracts:@sothoth/core",
+      subject: "CONTRACT/SOTHOTH/SCHEMAS:@project-sothoth/contracts:@project-sothoth/core",
     });
   });
 
   test("rejects Graph acquiring domain semantics such as the impact relation role", async () => {
     expectBaselineValid(await repositoryFacts());
-    const facts = await mutatedFacts("@sothoth/graph", (markdown) =>
+    const facts = await mutatedFacts("@project-sothoth/graph", (markdown) =>
       mutateDeclaration(markdown, "responsibility-and-truth-ownership", "sothoth-dossier/domain-semantics-declaration@1", (value) => {
         value.interpretedEdgeRoles = ["impact"];
       }),
     );
     expect(validateFoundationDesign(facts)).toContainEqual({
       code: "sothoth.foundation/graph-domain-semantics-owned",
-      subject: "@sothoth/graph",
+      subject: "@project-sothoth/graph",
     });
   });
 
   test("rejects a missing or weakened Unicode code-point determinism criterion", async () => {
     expectBaselineValid(await repositoryFacts());
-    const graphFacts = await mutatedFacts("@sothoth/graph", (markdown) =>
+    const graphFacts = await mutatedFacts("@project-sothoth/graph", (markdown) =>
       mutateDeclaration(markdown, "failure-recovery-and-consistency", "sothoth-dossier/determinism-declaration@1", (value) => {
         value.stringOrdering = "locale-collation";
       }),
     );
     expect(validateFoundationDesign(graphFacts)).toContainEqual({
       code: "sothoth.foundation/determinism-ordering-missing",
-      subject: "@sothoth/graph",
+      subject: "@project-sothoth/graph",
     });
 
-    const coreFacts = await mutatedFacts("@sothoth/core", (markdown) =>
+    const coreFacts = await mutatedFacts("@project-sothoth/core", (markdown) =>
       mutateDeclaration(markdown, "failure-recovery-and-consistency", "sothoth-dossier/determinism-declaration@1", (value) => {
         delete value.stringOrdering;
       }),
     );
     expect(validateFoundationDesign(coreFacts)).toContainEqual({
       code: "sothoth.foundation/determinism-ordering-missing",
-      subject: "@sothoth/core",
+      subject: "@project-sothoth/core",
     });
   });
 });

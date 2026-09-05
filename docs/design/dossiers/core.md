@@ -1,12 +1,12 @@
-# @sothoth/core Artifact Design Dossier
+# @project-sothoth/core Artifact Design Dossier
 
 Status: proposed design fact, pending external acceptance
 
-Document identity: `DOC-SOTHOTH-CORE-DOSSIER` revision `1`
+Document identity: `DOC-SOTHOTH-CORE-DOSSIER` revision `2`
 
-Design identity: `SOTHOTH-CORE-DOSSIER` revision `1`
+Design identity: `SOTHOTH-CORE-DOSSIER` revision `2`
 
-Component: `@sothoth/core`, candidate of `SOTHOTH-DESIGN-SCOPE-0.1` with `designRequirement: full`
+Component: `@project-sothoth/core`, candidate of `SOTHOTH-DESIGN-SCOPE-0.1` with `designRequirement: full`
 
 This Dossier closes the pre-design facts for the pure compilation kernel of Sothoth `0.1.0` under
 the Dossier Document Contract `sothoth.design-dossier/full/v1`. It authorizes no implementation:
@@ -17,15 +17,15 @@ accepted Architecture Baseline admit a formal Scope BOM.
 
 ## Decision summary
 
-`@sothoth/core` is the single functional kernel every compiler passes through: canonicalization,
+`@project-sothoth/core` is the single functional kernel every compiler passes through: canonicalization,
 digesting, diagnostic aggregation, and outcome aggregation. One Sothoth version, one canonical
 input, one Profile and Rule Module lock, and one compilation budget must yield byte-identical
 projections, and that guarantee is manufactured here before any domain meaning is attached.
 
 The kernel is a pure function assembly line. It receives already-parsed, already-validated facts
-whose shapes come from `@sothoth/contracts`; it never fetches, reads, parses, or mutates anything
-on its own initiative. Domain compilers (`@sothoth/governance`, `@sothoth/planning`,
-`@sothoth/document-index`, `@sothoth/selectors`) decide what the facts mean; the kernel decides
+whose shapes come from `@project-sothoth/contracts`; it never fetches, reads, parses, or mutates anything
+on its own initiative. Domain compilers (`@project-sothoth/governance`, `@project-sothoth/planning`,
+`@project-sothoth/document-index`, `@project-sothoth/selectors`) decide what the facts mean; the kernel decides
 what the compiled bytes are. Keeping those two powers in different packages is what prevents a
 mega-core and keeps every domain module replaceable.
 
@@ -33,9 +33,9 @@ mega-core and keeps every domain module replaceable.
 
 ## Artifact identity and classification
 
-The artifact is the npm package `@sothoth/core`, classified as a pure-function compilation library:
-no daemon, no service, no CLI, no adapter. Its design identity is `SOTHOTH-CORE-DOSSIER@1`, its
-document identity is `DOC-SOTHOTH-CORE-DOSSIER@1`, and it sits one layer above `@sothoth/contracts`
+The artifact is the npm package `@project-sothoth/core`, classified as a pure-function compilation library:
+no daemon, no service, no CLI, no adapter. Its design identity is `SOTHOTH-CORE-DOSSIER@2`, its
+document identity is `DOC-SOTHOTH-CORE-DOSSIER@2`, and it sits one layer above `@project-sothoth/contracts`
 in the pinned direction `graph -> core -> contracts`.
 
 It ships compiled ESM plus declarations with an explicit exports map. Everything it exports is a
@@ -56,7 +56,7 @@ Everything that would make the kernel environmental is excluded by the closed cl
 ```json
 {
   "kind": "sothoth-dossier/forbidden-capability-declaration@1",
-  "packageId": "@sothoth/core",
+  "packageId": "@project-sothoth/core",
   "capabilityClasses": {
     "business-acceptance": "forbidden",
     "consumer-identity": "forbidden",
@@ -89,7 +89,7 @@ which diagnostics coalesce, and which single outcome a compilation produces.
 ```json
 {
   "kind": "sothoth-dossier/truth-ownership-declaration@1",
-  "packageId": "@sothoth/core",
+  "packageId": "@project-sothoth/core",
   "producedStateRefs": [
     "sothoth.core/canonical-bytes@1",
     "sothoth.core/compilation-outcome@1"
@@ -112,13 +112,13 @@ return values; it cannot be observed from the outside except through its results
 ```json
 {
   "kind": "sothoth-dossier/public-surface-declaration@1",
-  "packageId": "@sothoth/core",
+  "packageId": "@project-sothoth/core",
   "publicModules": [
-    "@sothoth/core/canonical-json",
-    "@sothoth/core/digest",
-    "@sothoth/core/compile",
-    "@sothoth/core/diagnostics",
-    "@sothoth/core/outcome"
+    "@project-sothoth/core/canonical-json",
+    "@project-sothoth/core/digest",
+    "@project-sothoth/core/compile",
+    "@project-sothoth/core/diagnostics",
+    "@project-sothoth/core/outcome"
   ],
   "surfaceKind": "pure-functions-only"
 }
@@ -128,7 +128,7 @@ return values; it cannot be observed from the outside except through its results
 `sha256:`-prefixed hex over canonical bytes; `compile` drives a declared compilation over validated
 facts within a budget; `diagnostics` deduplicates, orders, and digests Structured Diagnostics;
 `outcome` folds severities into the `valid | invalid | invalid-input | extension-error |
-internal-error` verdict and its exit code. Consumers are the domain packages, `@sothoth/graph` for
+internal-error` verdict and its exit code. Consumers are the domain packages, `@project-sothoth/graph` for
 shared pure utilities, the Git adapter for canonical path handling, and — through the public SDK
 only — external library users. The CLI consumes the kernel indirectly and can obtain no private
 kernel capability.
@@ -138,7 +138,7 @@ kernel capability.
 ## Core, SDK, and protocol boundary
 
 The protocol between the kernel and its consumers is a closed data protocol: validated facts in,
-canonical results and diagnostics out, all shaped by `@sothoth/contracts`. The public SDK wraps
+canonical results and diagnostics out, all shaped by `@project-sothoth/contracts`. The public SDK wraps
 kernel functions for library consumers without adding behavior, and the boundary rule runs in both
 directions: the SDK exposes only what the kernel declares publicly, and the kernel accepts only
 inputs the contracts declare.
@@ -152,15 +152,15 @@ budget exhaustion is a structured `internal-error`, never a partial answer.
 
 ## Dependency and topology
 
-`@sothoth/core` occupies the middle of the pinned direction `graph -> core -> contracts` and may
+`@project-sothoth/core` occupies the middle of the pinned direction `graph -> core -> contracts` and may
 depend only on the contract vocabulary beneath it:
 
 ```json
 {
   "kind": "sothoth-dossier/dependency-declaration@1",
-  "packageId": "@sothoth/core",
+  "packageId": "@project-sothoth/core",
   "runtimeImportAllowlist": [
-    "@sothoth/contracts"
+    "@project-sothoth/contracts"
   ],
   "providedContracts": [
     "CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1"
@@ -171,7 +171,7 @@ depend only on the contract vocabulary beneath it:
 }
 ```
 
-Any import of `@sothoth/graph`, a domain package, an adapter, the SDK, or the CLI would create a
+Any import of `@project-sothoth/graph`, a domain package, an adapter, the SDK, or the CLI would create a
 reverse edge or a cycle and is a design violation. The provided contract
 `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` is the canonicalization, digest, diagnostic-aggregation,
 and outcome-aggregation behavior at revision 1; the required contract is the schema and identity
@@ -185,7 +185,7 @@ A compilation is the only lifecycle: facts arrive already parsed and validated, 
 canonicalization, digesting, rule evaluation by the calling compiler, diagnostic aggregation, and
 outcome folding, and leave as one immutable result. Nothing persists between calls — no cache, no
 memo table keyed on the environment, no lazy singletons. The optional Document Index cache lives in
-`@sothoth/document-index`, keyed by blob and compiler identity, and never here.
+`@project-sothoth/document-index`, keyed by blob and compiler identity, and never here.
 
 Data flow is therefore fully reconstructible from the arguments of a single call. A process that
 runs the same compilation twice allocates twice and observes no difference; deleting any derived
@@ -199,7 +199,7 @@ This topic is inherited exactly from the accepted governance control plane desig
 narrowing: rules can reject input but cannot grant business authority, and projections are
 non-authoritative, disposable, and rebuildable.
 
-Inherited from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2`, section `authority-boundary`,
+Inherited from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3`, section `authority-boundary`,
 applicability `adopts`.
 
 The security consequence is concrete: because the kernel touches no file, process, socket, or
@@ -220,7 +220,7 @@ machines, and releases is the core product:
 ```json
 {
   "kind": "sothoth-dossier/determinism-declaration@1",
-  "packageId": "@sothoth/core",
+  "packageId": "@project-sothoth/core",
   "byteStableOutputs": true,
   "stringOrdering": "unicode-code-point",
   "tieBreaking": "canonical-identity-then-code-point"
@@ -297,7 +297,7 @@ results trustworthy.
 ```json
 {
   "kind": "sothoth-dossier/verification-criteria@1",
-  "packageId": "@sothoth/core",
+  "packageId": "@project-sothoth/core",
   "criteria": [
     {
       "criterionId": "core-pure-kernel-boundary",
@@ -339,13 +339,13 @@ boundary between "same bytes" and "new revision" is the product, and it will sta
 
 ## Traceability and exact references
 
-This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` sections `decision`,
+This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3` sections `decision`,
 `authority-boundary`, `package-architecture`, and `diagnostics-and-process-outcomes`; to the
-contract vocabulary `CONTRACT/SOTHOTH/SCHEMAS@1` owned by `@sothoth/contracts`; and to the catalog
-candidate `@sothoth/core` in `SOTHOTH-DESIGN-SCOPE-0.1@1`.
+contract vocabulary `CONTRACT/SOTHOTH/SCHEMAS@1` owned by `@project-sothoth/contracts`; and to the catalog
+candidate `@project-sothoth/core` in `SOTHOTH-DESIGN-SCOPE-0.1@1`.
 
-The registration for this component is `SOTHOTH-CORE-DOSSIER@1` bound to
-`DOC-SOTHOTH-CORE-DOSSIER@1`, providing `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` and requiring
+The registration for this component is `SOTHOTH-CORE-DOSSIER@2` bound to
+`DOC-SOTHOTH-CORE-DOSSIER@2`, providing `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` and requiring
 `CONTRACT/SOTHOTH/SCHEMAS@1`. All references use the exact grammar
 `<identity>@<positive integer revision>`; none may be a path, a bare name, or `latest`.
 
@@ -365,5 +365,5 @@ All eighteen closed topics are resolved by this Dossier: seventeen locally — `
 `compatibility-and-migration`; `developer-and-operator-experience` by
 `developer-and-operator-experience`; `verification` by `verification-and-acceptance-criteria`; and
 `future-compatibility` by `future-capability-compatibility` — plus `authority-and-security`, which
-is inherited exactly from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` section
+is inherited exactly from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3` section
 `authority-boundary` with applicability `adopts`. No topic is resolved as not-applicable.

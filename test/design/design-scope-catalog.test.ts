@@ -46,12 +46,12 @@ describe("Sothoth v0.1 Design Scope Catalog", () => {
   test("rejects a Design Scope Catalog that omits an intended package candidate", async () => {
     const catalog = structuredClone(await readCatalog());
     catalog.candidates = catalog.candidates.filter(
-      (candidate) => candidate.componentId !== "@sothoth/graph",
+      (candidate) => candidate.componentId !== "@project-sothoth/graph",
     );
 
     expect(validateDesignScopeCatalog(catalog)).toContainEqual({
       code: "sothoth.design-scope/candidate-missing",
-      subject: "@sothoth/graph",
+      subject: "@project-sothoth/graph",
     });
   });
 
@@ -65,7 +65,7 @@ describe("Sothoth v0.1 Design Scope Catalog", () => {
 
   test("rejects a catalog published at the wrong revision", async () => {
     const catalog = structuredClone(await readCatalog());
-    catalog.catalogRevision = 2;
+    catalog.catalogRevision = 3;
     expect(validateDesignScopeCatalog(catalog)).toContainEqual({
       code: "sothoth.design-scope/catalog-revision-mismatch",
       subject: "catalogRevision",

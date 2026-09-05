@@ -14,7 +14,7 @@ const REGISTRATIONS_PATH = `${root}/docs/design/artifact-design-registrations.js
 const GOVERNANCE_DOC_PATH = `${root}/docs/design/governance-control-plane.md`;
 
 const CAPSULE_ID = "DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN";
-const CAPSULE_REVISION = 2;
+const CAPSULE_REVISION = 3;
 const FIXTURE_DOSSIER_ID = "DOC-FIXTURE-GOVERNANCE-PACKAGE-DOSSIER";
 
 const REQUIRED_SECTIONS = [
@@ -116,12 +116,12 @@ const DOCUMENT_INDEX_NORMATIVE_BOUNDARIES = {
   failureEnd: '<!-- sothoth:section id="observation-and-audit" -->',
 } as const;
 
-const DOCUMENT_INDEX_REVISION_2_NORMATIVE_BLOCK_HASHES = {
-  "state-lifecycle-and-data-flow": "3a8b0180f801df9de8fb78538569c72bb2035da83e7689547072fe3335842bec",
-  "failure-recovery-and-consistency": "8735881bd90adb2489453a469484d6b15c94e685c1097862f71a0ee02964335e",
+const DOCUMENT_INDEX_REVISION_3_NORMATIVE_BLOCK_HASHES = {
+  "state-lifecycle-and-data-flow": "12b31a49020a72cb13d9c792071f9519cfa91b57b1a136efbb9b814102e8567e",
+  "failure-recovery-and-consistency": "3ba7e2b277130ac146122accb047edfe657376a69ef0261d5f5882b433c689c5",
 } as const;
 
-const DOCUMENT_INDEX_REVISION_2_NORMATIVE_HEADINGS = [
+const DOCUMENT_INDEX_REVISION_3_NORMATIVE_HEADINGS = [
   { sectionId: "state-lifecycle-and-data-flow", heading: "### Exact input validation and suppression" },
   { sectionId: "state-lifecycle-and-data-flow", heading: "### Shared hostile stage-envelope validation" },
   { sectionId: "state-lifecycle-and-data-flow", heading: "### Parse and UTF-16 span projection" },
@@ -135,7 +135,7 @@ const DOCUMENT_INDEX_REVISION_2_NORMATIVE_HEADINGS = [
   { sectionId: "failure-recovery-and-consistency", heading: "### Exact digest formulas" },
 ] as const;
 
-const DOCUMENT_INDEX_REVISION_2_FORMER_LANDMARKS = [
+const DOCUMENT_INDEX_REVISION_3_FORMER_LANDMARKS = [
   "`what-yes--no-v2`",
   "`relationId` is exactly `canonicalJson({ from, kind, role, to, revision })`",
   "Only a fresh success is comparison-eligible.",
@@ -144,7 +144,7 @@ const DOCUMENT_INDEX_REVISION_2_FORMER_LANDMARKS = [
   "`indexDigest = sha256Digest(canonicalJson({ schema: \"sothoth.document-index/document-index@1\", documents, provenance }))`",
 ] as const;
 
-type DocumentIndexNormativeSectionId = keyof typeof DOCUMENT_INDEX_REVISION_2_NORMATIVE_BLOCK_HASHES;
+type DocumentIndexNormativeSectionId = keyof typeof DOCUMENT_INDEX_REVISION_3_NORMATIVE_BLOCK_HASHES;
 
 function sha256Utf8(value: string): string {
   return createHash("sha256").update(value, "utf8").digest("hex");
@@ -254,17 +254,17 @@ interface GovernanceSpec {
 
 const DOCUMENT_GOVERNANCE: GovernanceSpec[] = [
   {
-    packageId: "@sothoth/document-index",
+    packageId: "@project-sothoth/document-index",
     designId: "SOTHOTH-DOCUMENT-INDEX-DOSSIER",
     documentId: "DOC-SOTHOTH-DOCUMENT-INDEX-DOSSIER",
     path: "docs/design/dossiers/document-index.md",
-    expectedDesignRevision: 2,
-    expectedDocumentRevision: 2,
-    expectedSupersedes: "SOTHOTH-DOCUMENT-INDEX-DOSSIER@1",
+    expectedDesignRevision: 3,
+    expectedDocumentRevision: 3,
+    expectedSupersedes: "SOTHOTH-DOCUMENT-INDEX-DOSSIER@2",
     importAllowlist: [
-      "@sothoth/contracts",
-      "@sothoth/core",
-      "@sothoth/graph",
+      "@project-sothoth/contracts",
+      "@project-sothoth/core",
+      "@project-sothoth/graph",
       "mdast-util-from-markdown",
     ],
     providedContracts: ["CONTRACT/SOTHOTH/DOCUMENT-INDEX@1"],
@@ -311,12 +311,12 @@ const DOCUMENT_GOVERNANCE: GovernanceSpec[] = [
     tieBreaking: "canonical-identity-then-source-span",
     surfaceKind: "pure-functions-only",
     publicModules: [
-      "@sothoth/document-index/parse",
-      "@sothoth/document-index/sections",
-      "@sothoth/document-index/anchors",
-      "@sothoth/document-index/references",
-      "@sothoth/document-index/index",
-      "@sothoth/document-index/cache",
+      "@project-sothoth/document-index/parse",
+      "@project-sothoth/document-index/sections",
+      "@project-sothoth/document-index/anchors",
+      "@project-sothoth/document-index/references",
+      "@project-sothoth/document-index/index",
+      "@project-sothoth/document-index/cache",
     ],
     criteria: [
       { criterionId: "document-index-structural-parse-boundary", sectionId: "purpose-and-non-goals" },
@@ -327,14 +327,14 @@ const DOCUMENT_GOVERNANCE: GovernanceSpec[] = [
     notApplicableTopics: [],
   },
   {
-    packageId: "@sothoth/selectors",
+    packageId: "@project-sothoth/selectors",
     designId: "SOTHOTH-SELECTORS-DOSSIER",
     documentId: "DOC-SOTHOTH-SELECTORS-DOSSIER",
     path: "docs/design/dossiers/selectors.md",
-    expectedDesignRevision: 1,
-    expectedDocumentRevision: 1,
-    expectedSupersedes: null,
-    importAllowlist: ["@sothoth/contracts", "@sothoth/core", "@sothoth/document-index"],
+    expectedDesignRevision: 2,
+    expectedDocumentRevision: 2,
+    expectedSupersedes: "SOTHOTH-SELECTORS-DOSSIER@1",
+    importAllowlist: ["@project-sothoth/contracts", "@project-sothoth/core", "@project-sothoth/document-index"],
     providedContracts: ["CONTRACT/SOTHOTH/SELECTOR@1"],
     requiredContracts: [
       "CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1",
@@ -384,11 +384,11 @@ const DOCUMENT_GOVERNANCE: GovernanceSpec[] = [
     tieBreaking: "canonical-identity-by-default",
     surfaceKind: "pure-functions-only",
     publicModules: [
-      "@sothoth/selectors/parse",
-      "@sothoth/selectors/ast",
-      "@sothoth/selectors/match",
-      "@sothoth/selectors/cardinality",
-      "@sothoth/selectors/explain",
+      "@project-sothoth/selectors/parse",
+      "@project-sothoth/selectors/ast",
+      "@project-sothoth/selectors/match",
+      "@project-sothoth/selectors/cardinality",
+      "@project-sothoth/selectors/explain",
     ],
     criteria: [
       { criterionId: "selectors-closed-selector-algebra", sectionId: "public-surface-and-consumers" },
@@ -399,19 +399,19 @@ const DOCUMENT_GOVERNANCE: GovernanceSpec[] = [
     notApplicableTopics: [],
   },
   {
-    packageId: "@sothoth/governance",
+    packageId: "@project-sothoth/governance",
     designId: "SOTHOTH-GOVERNANCE-DOSSIER",
     documentId: "DOC-SOTHOTH-GOVERNANCE-DOSSIER",
     path: "docs/design/dossiers/governance.md",
-    expectedDesignRevision: 1,
-    expectedDocumentRevision: 1,
-    expectedSupersedes: null,
+    expectedDesignRevision: 2,
+    expectedDocumentRevision: 2,
+    expectedSupersedes: "SOTHOTH-GOVERNANCE-DOSSIER@1",
     importAllowlist: [
-      "@sothoth/contracts",
-      "@sothoth/core",
-      "@sothoth/document-index",
-      "@sothoth/graph",
-      "@sothoth/selectors",
+      "@project-sothoth/contracts",
+      "@project-sothoth/core",
+      "@project-sothoth/document-index",
+      "@project-sothoth/graph",
+      "@project-sothoth/selectors",
     ],
     providedContracts: [
       "CONTRACT/SOTHOTH/CHANGE-PLAN@1",
@@ -480,13 +480,13 @@ const DOCUMENT_GOVERNANCE: GovernanceSpec[] = [
     tieBreaking: "canonical-identity-then-diagnostic-code",
     surfaceKind: "pure-functions-only",
     publicModules: [
-      "@sothoth/governance/registry",
-      "@sothoth/governance/ledger",
-      "@sothoth/governance/traceability",
-      "@sothoth/governance/manifest",
-      "@sothoth/governance/pre-design",
-      "@sothoth/governance/change-plan",
-      "@sothoth/governance/gate-macros",
+      "@project-sothoth/governance/registry",
+      "@project-sothoth/governance/ledger",
+      "@project-sothoth/governance/traceability",
+      "@project-sothoth/governance/manifest",
+      "@project-sothoth/governance/pre-design",
+      "@project-sothoth/governance/change-plan",
+      "@project-sothoth/governance/gate-macros",
     ],
     criteria: [
       { criterionId: "governance-source-fact-non-authority", sectionId: "responsibility-and-truth-ownership" },
@@ -1258,14 +1258,14 @@ describe("document governance dossier structured design facts", () => {
     },
   );
 
-  test("Document Index revision 2 pins every byte of the complete accepted normative blocks", async () => {
+  test("Document Index revision 3 pins every byte of the complete accepted normative blocks", async () => {
     const markdown = await readText(`${root}/docs/design/dossiers/document-index.md`);
     const blocks = extractDocumentIndexNormativeBlocks(markdown);
 
-    expect(normativeHeadingInventory(blocks)).toEqual(DOCUMENT_INDEX_REVISION_2_NORMATIVE_HEADINGS);
+    expect(normativeHeadingInventory(blocks)).toEqual(DOCUMENT_INDEX_REVISION_3_NORMATIVE_HEADINGS);
     for (const sectionId of Object.keys(blocks) as DocumentIndexNormativeSectionId[]) {
       expect(sha256Utf8(blocks[sectionId]), `${sectionId} complete normative block SHA-256`).toBe(
-        DOCUMENT_INDEX_REVISION_2_NORMATIVE_BLOCK_HASHES[sectionId],
+        DOCUMENT_INDEX_REVISION_3_NORMATIVE_BLOCK_HASHES[sectionId],
       );
     }
   });
@@ -1278,15 +1278,15 @@ describe("document governance dossier structured design facts", () => {
     const mutatedMarkdown = markdown.slice(0, deletedProseStart) + "\n\n" + markdown.slice(deletedProseEnd);
     const mutatedBlocks = extractDocumentIndexNormativeBlocks(mutatedMarkdown);
 
-    expect(normativeHeadingInventory(mutatedBlocks)).toEqual(DOCUMENT_INDEX_REVISION_2_NORMATIVE_HEADINGS);
-    for (const landmark of DOCUMENT_INDEX_REVISION_2_FORMER_LANDMARKS) {
+    expect(normativeHeadingInventory(mutatedBlocks)).toEqual(DOCUMENT_INDEX_REVISION_3_NORMATIVE_HEADINGS);
+    for (const landmark of DOCUMENT_INDEX_REVISION_3_FORMER_LANDMARKS) {
       expect(mutatedMarkdown, `mutation must retain former landmark ${landmark}`).toContain(landmark);
     }
     expect(
       sha256Utf8(mutatedBlocks["state-lifecycle-and-data-flow"]),
       "substantive deletion must change the complete state normative block hash",
     ).not.toBe(
-      DOCUMENT_INDEX_REVISION_2_NORMATIVE_BLOCK_HASHES["state-lifecycle-and-data-flow"],
+      DOCUMENT_INDEX_REVISION_3_NORMATIVE_BLOCK_HASHES["state-lifecycle-and-data-flow"],
     );
   });
 
@@ -1334,96 +1334,96 @@ describe("document governance dossier mutation tests", () => {
   test("rejects downgrading Document Contract checks to prose substring matching", async () => {
     expectBaselineValid(await repositoryFacts());
 
-    const indexFacts = await mutatedFacts("@sothoth/document-index", (markdown) =>
+    const indexFacts = await mutatedFacts("@project-sothoth/document-index", (markdown) =>
       mutateDeclaration(markdown, "purpose-and-non-goals", FORBIDDEN_KIND, (value) => {
         value.capabilityClasses["source-text-substring-matching"] = "permitted";
       }),
     );
     expect(validateDocumentGovernanceDesign(indexFacts)).toContainEqual({
       code: "sothoth.document-governance/capability-not-forbidden",
-      subject: "@sothoth/document-index:source-text-substring-matching",
+      subject: "@project-sothoth/document-index:source-text-substring-matching",
     });
 
-    const governanceFacts = await mutatedFacts("@sothoth/governance", (markdown) =>
+    const governanceFacts = await mutatedFacts("@project-sothoth/governance", (markdown) =>
       mutateDeclaration(markdown, "purpose-and-non-goals", FORBIDDEN_KIND, (value) => {
         value.capabilityClasses["prose-substring-conformance"] = "permitted";
       }),
     );
     expect(validateDocumentGovernanceDesign(governanceFacts)).toContainEqual({
       code: "sothoth.document-governance/capability-not-forbidden",
-      subject: "@sothoth/governance:prose-substring-conformance",
+      subject: "@project-sothoth/governance:prose-substring-conformance",
     });
   });
 
   test("rejects allowing unrestricted catastrophic-backtracking regular expressions in selectors", async () => {
     expectBaselineValid(await repositoryFacts());
-    const facts = await mutatedFacts("@sothoth/selectors", (markdown) =>
+    const facts = await mutatedFacts("@project-sothoth/selectors", (markdown) =>
       mutateDeclaration(markdown, "purpose-and-non-goals", FORBIDDEN_KIND, (value) => {
         value.capabilityClasses["unrestricted-backtracking-regexp"] = "permitted";
       }),
     );
     expect(validateDocumentGovernanceDesign(facts)).toContainEqual({
       code: "sothoth.document-governance/capability-not-forbidden",
-      subject: "@sothoth/selectors:unrestricted-backtracking-regexp",
+      subject: "@project-sothoth/selectors:unrestricted-backtracking-regexp",
     });
   });
 
   test("rejects letting the impact relation silently become an Ordering Edge", async () => {
     expectBaselineValid(await repositoryFacts());
-    const facts = await mutatedFacts("@sothoth/governance", (markdown) =>
+    const facts = await mutatedFacts("@project-sothoth/governance", (markdown) =>
       mutateDeclaration(markdown, "purpose-and-non-goals", FORBIDDEN_KIND, (value) => {
         value.capabilityClasses["implicit-ordering-edge-promotion"] = "permitted";
       }),
     );
     expect(validateDocumentGovernanceDesign(facts)).toContainEqual({
       code: "sothoth.document-governance/capability-not-forbidden",
-      subject: "@sothoth/governance:implicit-ordering-edge-promotion",
+      subject: "@project-sothoth/governance:implicit-ordering-edge-promotion",
     });
   });
 
   test("rejects a checker or projection marking a Dossier as accepted", async () => {
     expectBaselineValid(await repositoryFacts());
 
-    const capabilityFacts = await mutatedFacts("@sothoth/governance", (markdown) =>
+    const capabilityFacts = await mutatedFacts("@project-sothoth/governance", (markdown) =>
       mutateDeclaration(markdown, "purpose-and-non-goals", FORBIDDEN_KIND, (value) => {
         value.capabilityClasses["acceptance-state-marking"] = "permitted";
       }),
     );
     expect(validateDocumentGovernanceDesign(capabilityFacts)).toContainEqual({
       code: "sothoth.document-governance/capability-not-forbidden",
-      subject: "@sothoth/governance:acceptance-state-marking",
+      subject: "@project-sothoth/governance:acceptance-state-marking",
     });
 
     // After the human gate, rolling a reviewed registration back out of its accepted state is the
     // unauthorized lifecycle change; the validator still fails closed on it.
     const statusFacts = await mutatedRegistrations((registrations) => {
       const registration = registrations.registrations.find(
-        (entry: any) => entry.componentId === "@sothoth/governance",
+        (entry: any) => entry.componentId === "@project-sothoth/governance",
       );
       registration.status = "proposed";
     });
     expect(validateDocumentGovernanceDesign(statusFacts)).toContainEqual({
       code: "sothoth.document-governance/registration-status-invalid",
-      subject: "@sothoth/governance:proposed",
+      subject: "@project-sothoth/governance:proposed",
     });
   });
 
   test("rejects Governance creating, writing back, or replacing an authoritative Scope BOM", async () => {
     expectBaselineValid(await repositoryFacts());
-    const facts = await mutatedFacts("@sothoth/governance", (markdown) =>
+    const facts = await mutatedFacts("@project-sothoth/governance", (markdown) =>
       mutateDeclaration(markdown, "purpose-and-non-goals", FORBIDDEN_KIND, (value) => {
         value.capabilityClasses["authoritative-scope-bom-write"] = "permitted";
       }),
     );
     expect(validateDocumentGovernanceDesign(facts)).toContainEqual({
       code: "sothoth.document-governance/capability-not-forbidden",
-      subject: "@sothoth/governance:authoritative-scope-bom-write",
+      subject: "@project-sothoth/governance:authoritative-scope-bom-write",
     });
   });
 
   test("rejects a duplicated structured declaration instead of reading only the first occurrence", async () => {
     expectBaselineValid(await repositoryFacts());
-    const facts = await mutatedFacts("@sothoth/selectors", (markdown) => {
+    const facts = await mutatedFacts("@project-sothoth/selectors", (markdown) => {
       const { declarations } = extractDeclarations(markdown);
       const site = declarations.find(
         (entry) => entry.sectionId === "dependency-and-topology" && entry.kind === DEPENDENCY_KIND,
@@ -1434,12 +1434,12 @@ describe("document governance dossier mutation tests", () => {
     });
     expect(validateDocumentGovernanceDesign(facts)).toContainEqual({
       code: "sothoth.document-governance/declaration-duplicate",
-      subject: `@sothoth/selectors:${DEPENDENCY_KIND}`,
+      subject: `@project-sothoth/selectors:${DEPENDENCY_KIND}`,
     });
   });
 
   test("declaration comparison is insensitive to JSON key order", async () => {
-    const facts = await mutatedFacts("@sothoth/governance", (markdown) =>
+    const facts = await mutatedFacts("@project-sothoth/governance", (markdown) =>
       rewriteDeclarationWithReversedKeys(markdown, "responsibility-and-truth-ownership", TRUTH_KIND),
     );
     expect(validateDocumentGovernanceDesign(facts)).toEqual([]);
@@ -1473,7 +1473,7 @@ describe("controller dependency ruling regression", () => {
     return site.value;
   }
 
-  test("SCHEMAS@1 and @sothoth/contracts are declared directly by every Dossier, registration, and spec", async () => {
+  test("SCHEMAS@1 and @project-sothoth/contracts are declared directly by every Dossier, registration, and spec", async () => {
     const facts = await repositoryFacts();
     const registrationsByComponent = new Map<string, any>(
       (facts.registrations.registrations ?? []).map((registration: any) => [registration.componentId, registration]),
@@ -1481,10 +1481,10 @@ describe("controller dependency ruling regression", () => {
 
     for (const spec of DOCUMENT_GOVERNANCE) {
       expect(spec.requiredContracts).toContain(SCHEMAS_REF);
-      expect(spec.importAllowlist).toContain("@sothoth/contracts");
+      expect(spec.importAllowlist).toContain("@project-sothoth/contracts");
 
       const declaration = dependencyDeclarationOf(facts.documents[spec.packageId]);
-      expect(declaration.runtimeImportAllowlist).toContain("@sothoth/contracts");
+      expect(declaration.runtimeImportAllowlist).toContain("@project-sothoth/contracts");
       expect(declaration.requiredContracts).toContain(SCHEMAS_REF);
 
       const registration = registrationsByComponent.get(spec.packageId);
@@ -1493,63 +1493,63 @@ describe("controller dependency ruling regression", () => {
       expect(declaration.requiredContracts).toEqual(registration.requiredContractRefs);
     }
 
-    const governance = DOCUMENT_GOVERNANCE.find((spec) => spec.packageId === "@sothoth/governance")!;
+    const governance = DOCUMENT_GOVERNANCE.find((spec) => spec.packageId === "@project-sothoth/governance")!;
     expect(governance.requiredContracts).toContain(CANONICAL_REF);
-    expect(governance.importAllowlist).toContain("@sothoth/core");
+    expect(governance.importAllowlist).toContain("@project-sothoth/core");
 
-    const governanceDeclaration = dependencyDeclarationOf(facts.documents["@sothoth/governance"]);
-    expect(governanceDeclaration.runtimeImportAllowlist).toContain("@sothoth/core");
+    const governanceDeclaration = dependencyDeclarationOf(facts.documents["@project-sothoth/governance"]);
+    expect(governanceDeclaration.runtimeImportAllowlist).toContain("@project-sothoth/core");
     expect(governanceDeclaration.requiredContracts).toContain(CANONICAL_REF);
-    expect(registrationsByComponent.get("@sothoth/governance").requiredContractRefs).toContain(CANONICAL_REF);
+    expect(registrationsByComponent.get("@project-sothoth/governance").requiredContractRefs).toContain(CANONICAL_REF);
   });
 
   test.each([
     {
-      packageId: "@sothoth/document-index",
+      packageId: "@project-sothoth/document-index",
       field: "requiredContracts",
       removed: "CONTRACT/SOTHOTH/SCHEMAS@1",
       code: "sothoth.document-governance/required-contracts-mismatch",
     },
     {
-      packageId: "@sothoth/selectors",
+      packageId: "@project-sothoth/selectors",
       field: "requiredContracts",
       removed: "CONTRACT/SOTHOTH/SCHEMAS@1",
       code: "sothoth.document-governance/required-contracts-mismatch",
     },
     {
-      packageId: "@sothoth/governance",
+      packageId: "@project-sothoth/governance",
       field: "requiredContracts",
       removed: "CONTRACT/SOTHOTH/SCHEMAS@1",
       code: "sothoth.document-governance/required-contracts-mismatch",
     },
     {
-      packageId: "@sothoth/governance",
+      packageId: "@project-sothoth/governance",
       field: "requiredContracts",
       removed: "CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1",
       code: "sothoth.document-governance/required-contracts-mismatch",
     },
     {
-      packageId: "@sothoth/document-index",
+      packageId: "@project-sothoth/document-index",
       field: "runtimeImportAllowlist",
-      removed: "@sothoth/contracts",
+      removed: "@project-sothoth/contracts",
       code: "sothoth.document-governance/import-allowlist-mismatch",
     },
     {
-      packageId: "@sothoth/selectors",
+      packageId: "@project-sothoth/selectors",
       field: "runtimeImportAllowlist",
-      removed: "@sothoth/contracts",
+      removed: "@project-sothoth/contracts",
       code: "sothoth.document-governance/import-allowlist-mismatch",
     },
     {
-      packageId: "@sothoth/governance",
+      packageId: "@project-sothoth/governance",
       field: "runtimeImportAllowlist",
-      removed: "@sothoth/contracts",
+      removed: "@project-sothoth/contracts",
       code: "sothoth.document-governance/import-allowlist-mismatch",
     },
     {
-      packageId: "@sothoth/governance",
+      packageId: "@project-sothoth/governance",
       field: "runtimeImportAllowlist",
-      removed: "@sothoth/core",
+      removed: "@project-sothoth/core",
       code: "sothoth.document-governance/import-allowlist-mismatch",
     },
   ])(

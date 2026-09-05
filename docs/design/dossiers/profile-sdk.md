@@ -1,12 +1,12 @@
-# @sothoth/profile-sdk Artifact Design Dossier
+# @project-sothoth/profile-sdk Artifact Design Dossier
 
 Status: proposed design fact, pending external acceptance
 
-Document identity: `DOC-SOTHOTH-PROFILE-SDK-DOSSIER` revision `1`
+Document identity: `DOC-SOTHOTH-PROFILE-SDK-DOSSIER` revision `2`
 
-Design identity: `SOTHOTH-PROFILE-SDK-DOSSIER` revision `1`
+Design identity: `SOTHOTH-PROFILE-SDK-DOSSIER` revision `2`
 
-Component: `@sothoth/profile-sdk`, candidate of `SOTHOTH-DESIGN-SCOPE-0.1` with `designRequirement: full`
+Component: `@project-sothoth/profile-sdk`, candidate of `SOTHOTH-DESIGN-SCOPE-0.1` with `designRequirement: full`
 
 This Dossier closes the pre-design facts for the Consumer Profile contract, loading, and
 conformance package of Sothoth `0.1.0` under the Dossier Document Contract
@@ -18,7 +18,7 @@ Baseline, and a mechanically admissible Scope BOM admit implementation at all.
 
 ## Decision summary
 
-`@sothoth/profile-sdk` is a consumer-neutral contract, loading, and conformance boundary. A
+`@project-sothoth/profile-sdk` is a consumer-neutral contract, loading, and conformance boundary. A
 Consumer Profile is an externally owned and accepted Source Fact; this package validates its
 closed shape, exact references, compatibility, and conformance, and returns a non-authoritative
 Projection or diagnostic. It is not a consumer policy engine.
@@ -32,10 +32,10 @@ Task State, Capacity Policy, Evidence, and Release BOM truth all remain outside 
 
 ## Artifact identity and classification
 
-The artifact is the npm package `@sothoth/profile-sdk`, classified as a pure-function
+The artifact is the npm package `@project-sothoth/profile-sdk`, classified as a pure-function
 profile-contract and conformance library. Its design identity is
-`SOTHOTH-PROFILE-SDK-DOSSIER@1`, its document identity is
-`DOC-SOTHOTH-PROFILE-SDK-DOSSIER@1`, and it sits on the inward foundation
+`SOTHOTH-PROFILE-SDK-DOSSIER@2`, its document identity is
+`DOC-SOTHOTH-PROFILE-SDK-DOSSIER@2`, and it sits on the inward foundation
 `core -> contracts` without touching any domain package above it.
 
 It ships compiled ESM plus TypeScript declarations with an explicit exports map. It owns no
@@ -56,7 +56,7 @@ The non-goals are the policy-engine fence:
 ```json
 {
   "kind": "sothoth-dossier/forbidden-capability-declaration@1",
-  "packageId": "@sothoth/profile-sdk",
+  "packageId": "@project-sothoth/profile-sdk",
   "capabilityClasses": {
     "automatic-default-policy": "forbidden",
     "automatic-skill-discovery": "forbidden",
@@ -98,7 +98,7 @@ caller-owned facts it was given:
 ```json
 {
   "kind": "sothoth-dossier/truth-ownership-declaration@1",
-  "packageId": "@sothoth/profile-sdk",
+  "packageId": "@project-sothoth/profile-sdk",
   "producedStateRefs": [
     "sothoth.profile-sdk/conformance-result@1"
   ],
@@ -121,13 +121,13 @@ repairs, writes back, or re-authors them, and it issues no authority over any do
 ```json
 {
   "kind": "sothoth-dossier/public-surface-declaration@1",
-  "packageId": "@sothoth/profile-sdk",
+  "packageId": "@project-sothoth/profile-sdk",
   "publicModules": [
-    "@sothoth/profile-sdk/conformance",
-    "@sothoth/profile-sdk/contract-composition",
-    "@sothoth/profile-sdk/load",
-    "@sothoth/profile-sdk/recommendations",
-    "@sothoth/profile-sdk/relation-roles"
+    "@project-sothoth/profile-sdk/conformance",
+    "@project-sothoth/profile-sdk/contract-composition",
+    "@project-sothoth/profile-sdk/load",
+    "@project-sothoth/profile-sdk/recommendations",
+    "@project-sothoth/profile-sdk/relation-roles"
   ],
   "surfaceKind": "pure-functions-only"
 }
@@ -137,7 +137,7 @@ repairs, writes back, or re-authors them, and it issues no authority over any do
 references as caller-owned data; `conformance` validates structure, compatibility, and
 conformance; `relation-roles` validates explicit versioned relation-role mappings;
 `recommendations` records and outputs explicit recommendation references. Primary consumers are
-`@sothoth/sdk` and `@sothoth/cli` through the SDK, plus external owners supplying profiles.
+`@project-sothoth/sdk` and `@project-sothoth/cli` through the SDK, plus external owners supplying profiles.
 
 <!-- sothoth:section id="core-sdk-protocol-boundary" -->
 
@@ -155,7 +155,7 @@ Recommended Skill Catalog is a caller-supplied, human-curated, versioned data as
 ```json
 {
   "kind": "sothoth-dossier/skill-recommendation-declaration@1",
-  "packageId": "@sothoth/profile-sdk",
+  "packageId": "@project-sothoth/profile-sdk",
   "sourceKind": "caller-supplied-curated-versioned-catalog",
   "automaticDiscovery": false,
   "revisionLocking": "exact-only",
@@ -194,16 +194,16 @@ download, install, host, invoke, or use floating revisions.
 
 ## Dependency and topology
 
-`@sothoth/profile-sdk` may import only the two foundation packages whose contracts it directly
+`@project-sothoth/profile-sdk` may import only the two foundation packages whose contracts it directly
 requires:
 
 ```json
 {
   "kind": "sothoth-dossier/dependency-declaration@1",
-  "packageId": "@sothoth/profile-sdk",
+  "packageId": "@project-sothoth/profile-sdk",
   "runtimeImportAllowlist": [
-    "@sothoth/contracts",
-    "@sothoth/core"
+    "@project-sothoth/contracts",
+    "@project-sothoth/core"
   ],
   "providedContracts": [
     "CONTRACT/SOTHOTH/CONSUMER-PROFILE@1"
@@ -240,7 +240,7 @@ this component: Consumer Profiles and Recommended Skill Catalogs are caller-owne
 the SDK validates them without owning consumer identity, consumer policy, or any referenced
 domain truth.
 
-Inherited from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2`, section `authority-boundary`,
+Inherited from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3`, section `authority-boundary`,
 applicability `specializes`.
 
 The specialization is a closed ownership boundary:
@@ -248,7 +248,7 @@ The specialization is a closed ownership boundary:
 ```json
 {
   "kind": "sothoth-dossier/profile-boundary-declaration@1",
-  "packageId": "@sothoth/profile-sdk",
+  "packageId": "@project-sothoth/profile-sdk",
   "compositionMode": "caller-owned-exact-reference-data",
   "ownsConsumerIdentity": false,
   "ownsConsumerPolicy": false,
@@ -284,7 +284,7 @@ The failure surface is closed and deterministic:
 ```json
 {
   "kind": "sothoth-dossier/profile-failure-declaration@1",
-  "packageId": "@sothoth/profile-sdk",
+  "packageId": "@project-sothoth/profile-sdk",
   "conformanceResult": "non-authoritative-projection-or-diagnostic",
   "failClosedConditions": [
     "duplicate-identity",
@@ -301,7 +301,7 @@ The failure surface is closed and deterministic:
 ```json
 {
   "kind": "sothoth-dossier/determinism-declaration@1",
-  "packageId": "@sothoth/profile-sdk",
+  "packageId": "@project-sothoth/profile-sdk",
   "byteStableOutputs": true,
   "stringOrdering": "unicode-code-point",
   "tieBreaking": "canonical-identity-then-diagnostic-code"
@@ -317,8 +317,8 @@ construction: pure validation shares no mutable state.
 ## Observation and audit
 
 The package emits exactly one observation identity, `sothoth.profile-sdk/profile-diagnostic@1`,
-under the Structured Diagnostic vocabulary of `@sothoth/contracts` and the aggregation contract of
-`@sothoth/core`. It keeps no logs, counters, or telemetry of its own.
+under the Structured Diagnostic vocabulary of `@project-sothoth/contracts` and the aggregation contract of
+`@project-sothoth/core`. It keeps no logs, counters, or telemetry of its own.
 
 Every conformance result records the exact profile facts and contract references it evaluated, so
 an auditor can re-run the same pure validation and compare bytes. A conformance result never
@@ -330,7 +330,7 @@ mutates the Profile it describes.
 
 Deployment is one reproducible npm package — compiled ESM, declarations, explicit exports map,
 Apache-2.0 inclusion, clean CI publication — with runtime dependencies exactly
-`@sothoth/contracts` and `@sothoth/core`.
+`@project-sothoth/contracts` and `@project-sothoth/core`.
 
 There is nothing to configure or operate: profiles and recommended-skill catalogs arrive as
 explicit caller-owned values, no environment variable or config file is consulted, and the
@@ -368,7 +368,7 @@ for an owned Profile or an accepted policy.
 ```json
 {
   "kind": "sothoth-dossier/verification-criteria@1",
-  "packageId": "@sothoth/profile-sdk",
+  "packageId": "@project-sothoth/profile-sdk",
   "criteria": [
     {
       "criterionId": "profile-consumer-neutral-boundary",
@@ -411,14 +411,14 @@ mutation, or domain-implementation imports.
 
 ## Traceability and exact references
 
-This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` sections `decision`,
+This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3` sections `decision`,
 `authority-boundary`, `package-architecture`, `graphs-change-order-and-scheduling`, and
 `extensions-and-evidence`; to `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` consumed directly from
-`@sothoth/core`; to `CONTRACT/SOTHOTH/SCHEMAS@1` consumed directly from `@sothoth/contracts`; and
-to the catalog candidate `@sothoth/profile-sdk` in `SOTHOTH-DESIGN-SCOPE-0.1@1`.
+`@project-sothoth/core`; to `CONTRACT/SOTHOTH/SCHEMAS@1` consumed directly from `@project-sothoth/contracts`; and
+to the catalog candidate `@project-sothoth/profile-sdk` in `SOTHOTH-DESIGN-SCOPE-0.1@1`.
 
-The registration for this component is `SOTHOTH-PROFILE-SDK-DOSSIER@1` bound to
-`DOC-SOTHOTH-PROFILE-SDK-DOSSIER@1`, providing `CONTRACT/SOTHOTH/CONSUMER-PROFILE@1` and
+The registration for this component is `SOTHOTH-PROFILE-SDK-DOSSIER@2` bound to
+`DOC-SOTHOTH-PROFILE-SDK-DOSSIER@2`, providing `CONTRACT/SOTHOTH/CONSUMER-PROFILE@1` and
 requiring `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` and `CONTRACT/SOTHOTH/SCHEMAS@1`. Every
 reference uses the exact grammar `<identity>@<positive integer revision>`; paths, bare names,
 and `latest` are forbidden.
@@ -439,6 +439,6 @@ by `public-surface-and-consumers`; `core-sdk-boundary` and `protocol-and-data-fl
 `compatibility-and-migration`; `developer-and-operator-experience` by
 `developer-and-operator-experience`; `verification` by `verification-and-acceptance-criteria`;
 and `future-compatibility` by `future-capability-compatibility`. `authority-and-security` is
-inherited exactly from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` section
+inherited exactly from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3` section
 `authority-boundary` with applicability `specializes`; the consumer-neutral conformance
 ownership boundary is the specialization declared in that section.

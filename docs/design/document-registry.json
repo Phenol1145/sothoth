@@ -1,11 +1,11 @@
 {
   "schema": "sothoth.design-document-registry/v1",
   "registryId": "SOTHOTH-DESIGN-DOCUMENT-REGISTRY",
-  "registryRevision": 3,
+  "registryRevision": 4,
   "documents": [
     {
       "documentId": "DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN",
-      "documentRevision": 2,
+      "documentRevision": 3,
       "path": "docs/design/governance-control-plane.md",
       "status": "accepted",
       "sectionIds": [
@@ -22,7 +22,7 @@
     },
     {
       "documentId": "DOC-SOTHOTH-CLI-DOSSIER",
-      "documentRevision": 1,
+      "documentRevision": 2,
       "path": "docs/design/dossiers/cli.md",
       "status": "proposed",
       "sectionIds": [
@@ -48,7 +48,7 @@
     },
     {
       "documentId": "DOC-SOTHOTH-CONTRACTS-DOSSIER",
-      "documentRevision": 1,
+      "documentRevision": 2,
       "path": "docs/design/dossiers/contracts.md",
       "status": "proposed",
       "sectionIds": [
@@ -74,7 +74,7 @@
     },
     {
       "documentId": "DOC-SOTHOTH-CORE-DOSSIER",
-      "documentRevision": 1,
+      "documentRevision": 2,
       "path": "docs/design/dossiers/core.md",
       "status": "proposed",
       "sectionIds": [
@@ -100,7 +100,7 @@
     },
     {
       "documentId": "DOC-SOTHOTH-DOCUMENT-INDEX-DOSSIER",
-      "documentRevision": 2,
+      "documentRevision": 3,
       "path": "docs/design/dossiers/document-index.md",
       "status": "proposed",
       "sectionIds": [
@@ -126,7 +126,7 @@
     },
     {
       "documentId": "DOC-SOTHOTH-GIT-DOSSIER",
-      "documentRevision": 1,
+      "documentRevision": 2,
       "path": "docs/design/dossiers/git.md",
       "status": "proposed",
       "sectionIds": [
@@ -152,7 +152,7 @@
     },
     {
       "documentId": "DOC-SOTHOTH-GOVERNANCE-DOSSIER",
-      "documentRevision": 1,
+      "documentRevision": 2,
       "path": "docs/design/dossiers/governance.md",
       "status": "proposed",
       "sectionIds": [
@@ -178,7 +178,7 @@
     },
     {
       "documentId": "DOC-SOTHOTH-GRAPH-DOSSIER",
-      "documentRevision": 2,
+      "documentRevision": 3,
       "path": "docs/design/dossiers/graph.md",
       "status": "proposed",
       "sectionIds": [
@@ -204,7 +204,7 @@
     },
     {
       "documentId": "DOC-SOTHOTH-PLANNING-DOSSIER",
-      "documentRevision": 1,
+      "documentRevision": 2,
       "path": "docs/design/dossiers/planning.md",
       "status": "proposed",
       "sectionIds": [
@@ -230,7 +230,7 @@
     },
     {
       "documentId": "DOC-SOTHOTH-PROFILE-SDK-DOSSIER",
-      "documentRevision": 1,
+      "documentRevision": 2,
       "path": "docs/design/dossiers/profile-sdk.md",
       "status": "proposed",
       "sectionIds": [
@@ -256,7 +256,7 @@
     },
     {
       "documentId": "DOC-SOTHOTH-SDK-DOSSIER",
-      "documentRevision": 1,
+      "documentRevision": 2,
       "path": "docs/design/dossiers/sdk.md",
       "status": "proposed",
       "sectionIds": [
@@ -282,7 +282,7 @@
     },
     {
       "documentId": "DOC-SOTHOTH-SELECTORS-DOSSIER",
-      "documentRevision": 1,
+      "documentRevision": 2,
       "path": "docs/design/dossiers/selectors.md",
       "status": "proposed",
       "sectionIds": [

@@ -1,20 +1,20 @@
 {
   "schema": "sothoth.release-bom/v1",
   "bomId": "SOTHOTH-RELEASE-SCOPE-BOM-0.1",
-  "bomRevision": 3,
+  "bomRevision": 4,
   "targetRelease": "0.1.0",
   "members": [
     {
-      "id": "@sothoth/cli",
+      "id": "@project-sothoth/cli",
       "version": "0.1.0",
       "type": "npm-package",
       "layer": "required",
       "owner": "sothoth",
       "designRef": {
         "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
-        "architectureBaselineRevision": 3,
+        "architectureBaselineRevision": 4,
         "designId": "SOTHOTH-CLI-DOSSIER",
-        "designRevision": 1
+        "designRevision": 2
       },
       "completionGates": [
         {
@@ -30,16 +30,16 @@
       ]
     },
     {
-      "id": "@sothoth/contracts",
+      "id": "@project-sothoth/contracts",
       "version": "0.1.0",
       "type": "npm-package",
       "layer": "required",
       "owner": "sothoth",
       "designRef": {
         "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
-        "architectureBaselineRevision": 3,
+        "architectureBaselineRevision": 4,
         "designId": "SOTHOTH-CONTRACTS-DOSSIER",
-        "designRevision": 1
+        "designRevision": 2
       },
       "completionGates": [
         {
@@ -53,16 +53,16 @@
       ]
     },
     {
-      "id": "@sothoth/core",
+      "id": "@project-sothoth/core",
       "version": "0.1.0",
       "type": "npm-package",
       "layer": "required",
       "owner": "sothoth",
       "designRef": {
         "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
-        "architectureBaselineRevision": 3,
+        "architectureBaselineRevision": 4,
         "designId": "SOTHOTH-CORE-DOSSIER",
-        "designRevision": 1
+        "designRevision": 2
       },
       "completionGates": [
         {
@@ -76,16 +76,16 @@
       ]
     },
     {
-      "id": "@sothoth/document-index",
+      "id": "@project-sothoth/document-index",
       "version": "0.1.0",
       "type": "npm-package",
       "layer": "required",
       "owner": "sothoth",
       "designRef": {
         "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
-        "architectureBaselineRevision": 3,
+        "architectureBaselineRevision": 4,
         "designId": "SOTHOTH-DOCUMENT-INDEX-DOSSIER",
-        "designRevision": 2
+        "designRevision": 3
       },
       "completionGates": [
         {
@@ -99,16 +99,16 @@
       ]
     },
     {
-      "id": "@sothoth/git",
+      "id": "@project-sothoth/git",
       "version": "0.1.0",
       "type": "npm-package",
       "layer": "required",
       "owner": "sothoth",
       "designRef": {
         "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
-        "architectureBaselineRevision": 3,
+        "architectureBaselineRevision": 4,
         "designId": "SOTHOTH-GIT-DOSSIER",
-        "designRevision": 1
+        "designRevision": 2
       },
       "completionGates": [
         {
@@ -124,16 +124,16 @@
       ]
     },
     {
-      "id": "@sothoth/governance",
+      "id": "@project-sothoth/governance",
       "version": "0.1.0",
       "type": "npm-package",
       "layer": "required",
       "owner": "sothoth",
       "designRef": {
         "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
-        "architectureBaselineRevision": 3,
+        "architectureBaselineRevision": 4,
         "designId": "SOTHOTH-GOVERNANCE-DOSSIER",
-        "designRevision": 1
+        "designRevision": 2
       },
       "completionGates": [
         {
@@ -148,16 +148,16 @@
       ]
     },
     {
-      "id": "@sothoth/graph",
+      "id": "@project-sothoth/graph",
       "version": "0.1.0",
       "type": "npm-package",
       "layer": "required",
       "owner": "sothoth",
       "designRef": {
         "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
-        "architectureBaselineRevision": 3,
+        "architectureBaselineRevision": 4,
         "designId": "SOTHOTH-GRAPH-DOSSIER",
-        "designRevision": 2
+        "designRevision": 3
       },
       "completionGates": [
         {
@@ -171,16 +171,16 @@
       ]
     },
     {
-      "id": "@sothoth/planning",
+      "id": "@project-sothoth/planning",
       "version": "0.1.0",
       "type": "npm-package",
       "layer": "required",
       "owner": "sothoth",
       "designRef": {
         "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
-        "architectureBaselineRevision": 3,
+        "architectureBaselineRevision": 4,
         "designId": "SOTHOTH-PLANNING-DOSSIER",
-        "designRevision": 1
+        "designRevision": 2
       },
       "completionGates": [
         {
@@ -195,16 +195,16 @@
       ]
     },
     {
-      "id": "@sothoth/profile-sdk",
+      "id": "@project-sothoth/profile-sdk",
       "version": "0.1.0",
       "type": "npm-package",
       "layer": "required",
       "owner": "sothoth",
       "designRef": {
         "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
-        "architectureBaselineRevision": 3,
+        "architectureBaselineRevision": 4,
         "designId": "SOTHOTH-PROFILE-SDK-DOSSIER",
-        "designRevision": 1
+        "designRevision": 2
       },
       "completionGates": [
         {
@@ -219,16 +219,16 @@
       ]
     },
     {
-      "id": "@sothoth/sdk",
+      "id": "@project-sothoth/sdk",
       "version": "0.1.0",
       "type": "npm-package",
       "layer": "required",
       "owner": "sothoth",
       "designRef": {
         "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
-        "architectureBaselineRevision": 3,
+        "architectureBaselineRevision": 4,
         "designId": "SOTHOTH-SDK-DOSSIER",
-        "designRevision": 1
+        "designRevision": 2
       },
       "completionGates": [
         {
@@ -244,16 +244,16 @@
       ]
     },
     {
-      "id": "@sothoth/selectors",
+      "id": "@project-sothoth/selectors",
       "version": "0.1.0",
       "type": "npm-package",
       "layer": "required",
       "owner": "sothoth",
       "designRef": {
         "architectureBaselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
-        "architectureBaselineRevision": 3,
+        "architectureBaselineRevision": 4,
         "designId": "SOTHOTH-SELECTORS-DOSSIER",
-        "designRevision": 1
+        "designRevision": 2
       },
       "completionGates": [
         {

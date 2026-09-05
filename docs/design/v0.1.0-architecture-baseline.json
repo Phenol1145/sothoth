@@ -1,124 +1,124 @@
 {
   "schema": "sothoth.architecture-baseline/v1",
   "baselineId": "SOTHOTH-ARCHITECTURE-BASELINE-0.1",
-  "baselineRevision": 3,
+  "baselineRevision": 4,
   "targetRelease": "0.1.0",
   "status": "accepted",
   "acceptedBy": {
     "principalType": "human",
     "principalId": "anzhize"
   },
-  "acceptedAt": "2026-09-04",
+  "acceptedAt": "2026-09-05",
   "members": [
     {
-      "componentId": "@sothoth/cli",
+      "componentId": "@project-sothoth/cli",
       "designId": "SOTHOTH-CLI-DOSSIER",
-      "designRevision": 1,
+      "designRevision": 2,
       "documentRef": {
         "documentId": "DOC-SOTHOTH-CLI-DOSSIER",
-        "documentRevision": 1
+        "documentRevision": 2
       },
-      "dossierDigest": "sha256:4a601688dda2ac9b17dd21cb4a09647c923d728d533abcf177896b5e9dc3f9b6"
+      "dossierDigest": "sha256:6c7514ec37045749298bd8142ea6f9d5b0da7b23b3b7b84abcf6e48eb790e892"
     },
     {
-      "componentId": "@sothoth/contracts",
+      "componentId": "@project-sothoth/contracts",
       "designId": "SOTHOTH-CONTRACTS-DOSSIER",
-      "designRevision": 1,
+      "designRevision": 2,
       "documentRef": {
         "documentId": "DOC-SOTHOTH-CONTRACTS-DOSSIER",
-        "documentRevision": 1
+        "documentRevision": 2
       },
-      "dossierDigest": "sha256:fb58c975cacf789cc9073ba0d84aadaa8792965335a21f5a8e2cf9f576ed8930"
+      "dossierDigest": "sha256:0c81aef36d97468c3e85c5bc5bc599613ebbdda70197c7951ddbbe5f75929db8"
     },
     {
-      "componentId": "@sothoth/core",
+      "componentId": "@project-sothoth/core",
       "designId": "SOTHOTH-CORE-DOSSIER",
-      "designRevision": 1,
+      "designRevision": 2,
       "documentRef": {
         "documentId": "DOC-SOTHOTH-CORE-DOSSIER",
-        "documentRevision": 1
+        "documentRevision": 2
       },
-      "dossierDigest": "sha256:dc5f7df911d4fc75480cc86395dfa585016c53b94ad32a63c9475b0ff5ea1a9f"
+      "dossierDigest": "sha256:377fff5b9916f8b096c202ee26648f2d58336ff60153c72bf77c2ea24131c428"
     },
     {
-      "componentId": "@sothoth/document-index",
+      "componentId": "@project-sothoth/document-index",
       "designId": "SOTHOTH-DOCUMENT-INDEX-DOSSIER",
-      "designRevision": 2,
+      "designRevision": 3,
       "documentRef": {
         "documentId": "DOC-SOTHOTH-DOCUMENT-INDEX-DOSSIER",
-        "documentRevision": 2
+        "documentRevision": 3
       },
-      "dossierDigest": "sha256:1189af5beb2a4e8edc500381a64e6faee8b9a713a47a9ec0f6dd13adda23361b"
+      "dossierDigest": "sha256:978e53e9e27e2374ba9adeecfa2695dba7398a0c51d6a9af6a482d0c60d4d697"
     },
     {
-      "componentId": "@sothoth/git",
+      "componentId": "@project-sothoth/git",
       "designId": "SOTHOTH-GIT-DOSSIER",
-      "designRevision": 1,
-      "documentRef": {
-        "documentId": "DOC-SOTHOTH-GIT-DOSSIER",
-        "documentRevision": 1
-      },
-      "dossierDigest": "sha256:3342df11e6bf872f8511b1b2e43a6c54b9c22a7a34b1c8c48ae6584eddbc53de"
-    },
-    {
-      "componentId": "@sothoth/governance",
-      "designId": "SOTHOTH-GOVERNANCE-DOSSIER",
-      "designRevision": 1,
-      "documentRef": {
-        "documentId": "DOC-SOTHOTH-GOVERNANCE-DOSSIER",
-        "documentRevision": 1
-      },
-      "dossierDigest": "sha256:cf2727044e0c15c434722aeb9f807a83aa5c4093da4f49e81c50ca9741f8c3dc"
-    },
-    {
-      "componentId": "@sothoth/graph",
-      "designId": "SOTHOTH-GRAPH-DOSSIER",
       "designRevision": 2,
       "documentRef": {
-        "documentId": "DOC-SOTHOTH-GRAPH-DOSSIER",
+        "documentId": "DOC-SOTHOTH-GIT-DOSSIER",
         "documentRevision": 2
       },
-      "dossierDigest": "sha256:cbe1dd253148c746197140248cdf93b2fd11d00a4c802565b50a63b793066c18"
+      "dossierDigest": "sha256:9359f06504ceb8698091e6e56a09bfac25aa0c9bb8760618046568ed94ca9314"
     },
     {
-      "componentId": "@sothoth/planning",
+      "componentId": "@project-sothoth/governance",
+      "designId": "SOTHOTH-GOVERNANCE-DOSSIER",
+      "designRevision": 2,
+      "documentRef": {
+        "documentId": "DOC-SOTHOTH-GOVERNANCE-DOSSIER",
+        "documentRevision": 2
+      },
+      "dossierDigest": "sha256:05699d7021da4669182ddf4b9922ad6fa05c0453b296ae5b0b833172759f6bf4"
+    },
+    {
+      "componentId": "@project-sothoth/graph",
+      "designId": "SOTHOTH-GRAPH-DOSSIER",
+      "designRevision": 3,
+      "documentRef": {
+        "documentId": "DOC-SOTHOTH-GRAPH-DOSSIER",
+        "documentRevision": 3
+      },
+      "dossierDigest": "sha256:995f8c56a824dd8f4c4a867c6e7ec0d7ff901fc5ab68f033223d4830dcce80b7"
+    },
+    {
+      "componentId": "@project-sothoth/planning",
       "designId": "SOTHOTH-PLANNING-DOSSIER",
-      "designRevision": 1,
+      "designRevision": 2,
       "documentRef": {
         "documentId": "DOC-SOTHOTH-PLANNING-DOSSIER",
-        "documentRevision": 1
+        "documentRevision": 2
       },
-      "dossierDigest": "sha256:b042075591825c170d4c97109242b099aa7d3302a2b714fcb00fd20bdcc25f69"
+      "dossierDigest": "sha256:6a3d4c901a2121eddcb8d8f9c197ed2677b9c3fa8df877073a1b34d6425b8cd3"
     },
     {
-      "componentId": "@sothoth/profile-sdk",
+      "componentId": "@project-sothoth/profile-sdk",
       "designId": "SOTHOTH-PROFILE-SDK-DOSSIER",
-      "designRevision": 1,
+      "designRevision": 2,
       "documentRef": {
         "documentId": "DOC-SOTHOTH-PROFILE-SDK-DOSSIER",
-        "documentRevision": 1
+        "documentRevision": 2
       },
-      "dossierDigest": "sha256:9ab71b36c0d18d6cfc0fb7d9073f52c8ed302b484ba6d47fc967cf26325f3201"
+      "dossierDigest": "sha256:57d80acba61ce661b8e413922526a763121ef24d4570e03e8da67a4808886605"
     },
     {
-      "componentId": "@sothoth/sdk",
+      "componentId": "@project-sothoth/sdk",
       "designId": "SOTHOTH-SDK-DOSSIER",
-      "designRevision": 1,
+      "designRevision": 2,
       "documentRef": {
         "documentId": "DOC-SOTHOTH-SDK-DOSSIER",
-        "documentRevision": 1
+        "documentRevision": 2
       },
-      "dossierDigest": "sha256:25d9fc452994a9b2a35586786c65537c720a92b6bc26c2bfa952a53fe498f331"
+      "dossierDigest": "sha256:4c9c56202e450f17118c4a04ab277369226fc8a11ec73352b2908e95367a0407"
     },
     {
-      "componentId": "@sothoth/selectors",
+      "componentId": "@project-sothoth/selectors",
       "designId": "SOTHOTH-SELECTORS-DOSSIER",
-      "designRevision": 1,
+      "designRevision": 2,
       "documentRef": {
         "documentId": "DOC-SOTHOTH-SELECTORS-DOSSIER",
-        "documentRevision": 1
+        "documentRevision": 2
       },
-      "dossierDigest": "sha256:938e27f17d39b5e6215376a7765597b5452f4bb9eb0e68107ff06b4f7c9b81a9"
+      "dossierDigest": "sha256:f1cc10c217694c05df71833a218f24669941b54c74cc08c2f35d06793aa193f6"
     }
   ]
 }

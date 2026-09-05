@@ -2,13 +2,13 @@
 
 Status: bootstrap documentation, pending registration as a governed design document
 
-Version: `SOTHOTH-DOSSIER-GOVERNANCE-BOOTSTRAP-2`
+Version: `SOTHOTH-DOSSIER-GOVERNANCE-BOOTSTRAP-3`
 
 Decision date: 2026-09-02 (revision 2 records the Task 8 accepted-scope extension)
 
 This document records the consumer-neutral Dossier governance bootstrap that gates Sothoth `0.1.0`
 pre-design closure. It is implemented by the temporary bootstrap oracle
-`scripts/check-pre-design.mjs` and will be replaced by `@sothoth/governance` plus a self-host replay
+`scripts/check-pre-design.mjs` and will be replaced by `@project-sothoth/governance` plus a self-host replay
 once implementation is authorized. The bootstrap checker and the formal compiler must agree on
 closure and admissibility conclusions before any candidate release.
 

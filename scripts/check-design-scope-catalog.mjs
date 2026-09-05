@@ -2,17 +2,17 @@ import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
 const EXPECTED_CANDIDATES = Object.freeze([
-  "@sothoth/cli",
-  "@sothoth/contracts",
-  "@sothoth/core",
-  "@sothoth/document-index",
-  "@sothoth/git",
-  "@sothoth/governance",
-  "@sothoth/graph",
-  "@sothoth/planning",
-  "@sothoth/profile-sdk",
-  "@sothoth/sdk",
-  "@sothoth/selectors",
+  "@project-sothoth/cli",
+  "@project-sothoth/contracts",
+  "@project-sothoth/core",
+  "@project-sothoth/document-index",
+  "@project-sothoth/git",
+  "@project-sothoth/governance",
+  "@project-sothoth/graph",
+  "@project-sothoth/planning",
+  "@project-sothoth/profile-sdk",
+  "@project-sothoth/sdk",
+  "@project-sothoth/selectors",
 ]);
 
 const TOP_LEVEL_FIELDS = new Set([
@@ -88,7 +88,7 @@ export function validateDesignScopeCatalog(value) {
   if (value.catalogId !== "SOTHOTH-DESIGN-SCOPE-0.1") {
     issues.push(issue("sothoth.design-scope/catalog-id-mismatch", "catalogId"));
   }
-  if (value.catalogRevision !== 1) {
+  if (value.catalogRevision !== 2) {
     issues.push(issue("sothoth.design-scope/catalog-revision-mismatch", "catalogRevision"));
   }
   if (value.targetReleaseIntent !== "0.1.0") {

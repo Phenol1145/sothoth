@@ -151,11 +151,11 @@ describe("Task 11 exports binding (manifest + Dossier)", () => {
         surface,
         `missing accepted public-surface-declaration@1 in docs/design/dossiers/${p}.md`,
       ).toBeTruthy();
-      expect(surface!.packageId).toBe(`@sothoth/${p}`);
+      expect(surface!.packageId).toBe(`@project-sothoth/${p}`);
 
       const manifestSubpaths = Object.keys(manifest.exports ?? {})
         .filter((key) => key !== ".")
-        .map((key) => `@sothoth/${p}${key.slice(1)}`)
+        .map((key) => `@project-sothoth/${p}${key.slice(1)}`)
         .sort();
       const dossierModules = [...surface!.publicModules].sort();
       expect(

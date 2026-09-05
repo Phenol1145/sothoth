@@ -1,12 +1,12 @@
-# @sothoth/graph Artifact Design Dossier
+# @project-sothoth/graph Artifact Design Dossier
 
 Status: proposed design fact, pending external acceptance
 
-Document identity: `DOC-SOTHOTH-GRAPH-DOSSIER` revision `2`
+Document identity: `DOC-SOTHOTH-GRAPH-DOSSIER` revision `3`
 
-Design identity: `SOTHOTH-GRAPH-DOSSIER` revision `2`
+Design identity: `SOTHOTH-GRAPH-DOSSIER` revision `3`
 
-Component: `@sothoth/graph`, candidate of `SOTHOTH-DESIGN-SCOPE-0.1` with `designRequirement: full`
+Component: `@project-sothoth/graph`, candidate of `SOTHOTH-DESIGN-SCOPE-0.1` with `designRequirement: full`
 
 This Dossier closes the pre-design facts for the generic graph package of Sothoth `0.1.0` under the
 Dossier Document Contract `sothoth.design-dossier/full/v1`. It authorizes no implementation:
@@ -17,7 +17,7 @@ a mechanically admissible Scope BOM admit implementation at all.
 
 ## Decision summary
 
-`@sothoth/graph` owns the deterministic, meaning-free graph machinery of the control plane: a
+`@project-sothoth/graph` owns the deterministic, meaning-free graph machinery of the control plane: a
 generic directed multigraph representation plus traversal, strongly connected components,
 condensation, topological waves, and DAG longest paths. Every domain that needs to reason about
 ordering — governance change plans, planning waves, document inheritance review — calls the same
@@ -40,9 +40,9 @@ supersedes `SOTHOTH-GRAPH-DOSSIER@1` and by itself authorizes no implementation.
 
 ## Artifact identity and classification
 
-The artifact is the npm package `@sothoth/graph`, classified as a generic algorithm library: pure
+The artifact is the npm package `@project-sothoth/graph`, classified as a generic algorithm library: pure
 functions over caller-constructed graphs, with conformance-tested determinism. Its design identity
-is `SOTHOTH-GRAPH-DOSSIER@2`, its document identity is `DOC-SOTHOTH-GRAPH-DOSSIER@2`, and it is
+is `SOTHOTH-GRAPH-DOSSIER@3`, its document identity is `DOC-SOTHOTH-GRAPH-DOSSIER@3`, and it is
 the top declared layer of the pinned foundation direction `graph -> core -> contracts`. Revision 2
 supersedes `SOTHOTH-GRAPH-DOSSIER@1`, which closed the module surface, boundary declarations, and
 determinism posture; revision 2 adds the closed public contract — the declaration wrappers, the
@@ -68,7 +68,7 @@ The non-goals are the mirror of that purpose — the package must not know what 
 ```json
 {
   "kind": "sothoth-dossier/forbidden-capability-declaration@1",
-  "packageId": "@sothoth/graph",
+  "packageId": "@project-sothoth/graph",
   "capabilityClasses": {
     "consumer-fracta-semantics": "forbidden",
     "document-reference-semantics": "forbidden",
@@ -100,7 +100,7 @@ was given, and nothing else:
 ```json
 {
   "kind": "sothoth-dossier/truth-ownership-declaration@1",
-  "packageId": "@sothoth/graph",
+  "packageId": "@project-sothoth/graph",
   "producedStateRefs": [
     "sothoth.graph/algorithm-result@1"
   ],
@@ -114,7 +114,7 @@ The domain-semantics boundary is declared as a closed fact rather than a habit:
 ```json
 {
   "kind": "sothoth-dossier/domain-semantics-declaration@1",
-  "packageId": "@sothoth/graph",
+  "packageId": "@project-sothoth/graph",
   "ownedDomainSemantics": [],
   "interpretedEdgeRoles": [],
   "semanticsDeferredTo": "consuming-domain-package"
@@ -124,7 +124,7 @@ The domain-semantics boundary is declared as a closed fact rather than a habit:
 Responsibilities explicitly declined: deciding which relations create ordering (Consumer Profile
 and domain mapping rules), validating reference identities (domain compilers and contracts),
 assigning dispositions like `revise` or `rebuild` (the change-plan domain), and any scheduling
-axis beyond deterministic waves (the Schedule Solution in `@sothoth/planning`). The package
+axis beyond deterministic waves (the Schedule Solution in `@project-sothoth/planning`). The package
 returns structures; the meaning of the structures is assembled by whoever called it.
 
 <!-- sothoth:section id="public-surface-and-consumers" -->
@@ -134,14 +134,14 @@ returns structures; the meaning of the structures is assembled by whoever called
 ```json
 {
   "kind": "sothoth-dossier/public-surface-declaration@1",
-  "packageId": "@sothoth/graph",
+  "packageId": "@project-sothoth/graph",
   "publicModules": [
-    "@sothoth/graph/digraph",
-    "@sothoth/graph/traversal",
-    "@sothoth/graph/scc",
-    "@sothoth/graph/condensation",
-    "@sothoth/graph/waves",
-    "@sothoth/graph/longest-paths"
+    "@project-sothoth/graph/digraph",
+    "@project-sothoth/graph/traversal",
+    "@project-sothoth/graph/scc",
+    "@project-sothoth/graph/condensation",
+    "@project-sothoth/graph/waves",
+    "@project-sothoth/graph/longest-paths"
   ],
   "surfaceKind": "pure-functions-only"
 }
@@ -154,8 +154,8 @@ strongly connected components; `condensation` collapses them into a component DA
 solves longest paths with caller weights over the condensation of its input — which for an acyclic
 graph is the graph itself — rejecting cyclic input itself with the deterministic cycle witness,
 while component-level critical paths over cyclic graphs re-enter through the condensation's DAG.
-Primary consumers are `@sothoth/governance`, `@sothoth/planning`, `@sothoth/document-index`, and
-`@sothoth/selectors`; the SDK exposes none of this directly, and the CLI reaches it only through
+Primary consumers are `@project-sothoth/governance`, `@project-sothoth/planning`, `@project-sothoth/document-index`, and
+`@project-sothoth/selectors`; the SDK exposes none of this directly, and the CLI reaches it only through
 domain compilation.
 
 Revision 2 closes the exact export matrix. Each public module exports exactly this surface and
@@ -163,12 +163,12 @@ nothing else:
 
 | Public module | Required exports (complete list) |
 | --- | --- |
-| `@sothoth/graph/digraph` | `createCanonicalGraphV1`; types `GraphNodeDeclarationV1`, `GraphEdgeDeclarationV1`, `DirectedMultigraphDeclarationV1`, `CanonicalGraphV1`, `GraphIssueV1`, `CreateCanonicalGraphSuccessV1`, `GraphFailureV1`, `CreateCanonicalGraphResultV1` |
-| `@sothoth/graph/traversal` | `adjacencyV1`, `reachableFromV1`; types `AdjacencyEntryV1`, `AdjacencySuccessV1`, `AdjacencyResultV1`, `ReachableFromSuccessV1`, `ReachableFromResultV1` |
-| `@sothoth/graph/scc` | `stronglyConnectedComponentsV1`; types `StronglyConnectedComponentsSuccessV1`, `StronglyConnectedComponentsResultV1` |
-| `@sothoth/graph/condensation` | `condenseGraphV1`; types `CondensationComponentV1`, `CondensationV1`, `CondenseGraphSuccessV1`, `CondenseGraphResultV1` |
-| `@sothoth/graph/waves` | `topologicalWavesV1`; types `TopologicalWavesSuccessV1`, `TopologicalWavesResultV1` |
-| `@sothoth/graph/longest-paths` | `longestPathDagV1`; types `LongestPathNodeV1`, `LongestPathDagSuccessV1`, `LongestPathDagResultV1` |
+| `@project-sothoth/graph/digraph` | `createCanonicalGraphV1`; types `GraphNodeDeclarationV1`, `GraphEdgeDeclarationV1`, `DirectedMultigraphDeclarationV1`, `CanonicalGraphV1`, `GraphIssueV1`, `CreateCanonicalGraphSuccessV1`, `GraphFailureV1`, `CreateCanonicalGraphResultV1` |
+| `@project-sothoth/graph/traversal` | `adjacencyV1`, `reachableFromV1`; types `AdjacencyEntryV1`, `AdjacencySuccessV1`, `AdjacencyResultV1`, `ReachableFromSuccessV1`, `ReachableFromResultV1` |
+| `@project-sothoth/graph/scc` | `stronglyConnectedComponentsV1`; types `StronglyConnectedComponentsSuccessV1`, `StronglyConnectedComponentsResultV1` |
+| `@project-sothoth/graph/condensation` | `condenseGraphV1`; types `CondensationComponentV1`, `CondensationV1`, `CondenseGraphSuccessV1`, `CondenseGraphResultV1` |
+| `@project-sothoth/graph/waves` | `topologicalWavesV1`; types `TopologicalWavesSuccessV1`, `TopologicalWavesResultV1` |
+| `@project-sothoth/graph/longest-paths` | `longestPathDagV1`; types `LongestPathNodeV1`, `LongestPathDagSuccessV1`, `LongestPathDagResultV1` |
 
 The shared result types (`GraphIssueV1`, `GraphFailureV1`, `CanonicalGraphV1`,
 `CreateCanonicalGraphResultV1`) are exported from `digraph` and imported type-only by the other
@@ -188,7 +188,7 @@ form. Canonical node order is ascending by `(sortKey, node identity)` and canoni
 `(edge sortKey, edge identity)`, both compared in Unicode code-point order; the deterministic
 topological order repeatedly takes the zero-indegree node with the smallest canonical node rank.
 
-The package root is deliberately absent: importing the bare specifier `@sothoth/graph` fails with
+The package root is deliberately absent: importing the bare specifier `@project-sothoth/graph` fails with
 `ERR_PACKAGE_PATH_NOT_EXPORTED`. Every declared consumer is a package that can import exact
 subpaths, the SDK wraps none of this surface (criterion `sdk-no-generic-graph-wrap`), and a root
 entry would be a seventh import surface the accepted six-module declaration above does not name.
@@ -198,8 +198,8 @@ Every value returned by any function below is runtime-frozen and descriptor-safe
 `readonly` is compile-time documentation only and is not the runtime guarantee.
 
 ```ts
-// @sothoth/graph/digraph
-import type { DiagnosticCodeV1, GraphEdgeV1, GraphNodeV1 } from "@sothoth/contracts";
+// @project-sothoth/graph/digraph
+import type { DiagnosticCodeV1, GraphEdgeV1, GraphNodeV1 } from "@project-sothoth/contracts";
 
 /** A caller-declared node: the contracts-owned node plus its explicit sort key. */
 export interface GraphNodeDeclarationV1 {
@@ -253,7 +253,7 @@ export function createCanonicalGraphV1(
   declaration: DirectedMultigraphDeclarationV1,
 ): CreateCanonicalGraphResultV1;
 
-// @sothoth/graph/traversal
+// @project-sothoth/graph/traversal
 /** One node's incident edges. Self-loop edge ids appear in both lists. */
 export interface AdjacencyEntryV1 {
   readonly nodeId: string;
@@ -284,7 +284,7 @@ export function reachableFromV1(
   startNodeId: string,
 ): ReachableFromResultV1;
 
-// @sothoth/graph/scc
+// @project-sothoth/graph/scc
 export interface StronglyConnectedComponentsSuccessV1 {
   readonly ok: true;
   /** components[i] lists component i's node ids in canonical node order; components ordered canonically. */
@@ -299,7 +299,7 @@ export function stronglyConnectedComponentsV1(
   graph: CreateCanonicalGraphResultV1,
 ): StronglyConnectedComponentsResultV1;
 
-// @sothoth/graph/condensation
+// @project-sothoth/graph/condensation
 /** One component: its representative-derived identity and its members in canonical node order. */
 export interface CondensationComponentV1 {
   readonly componentId: string;
@@ -325,7 +325,7 @@ export function condenseGraphV1(
   graph: CreateCanonicalGraphResultV1,
 ): CondenseGraphResultV1;
 
-// @sothoth/graph/waves
+// @project-sothoth/graph/waves
 export interface TopologicalWavesSuccessV1 {
   readonly ok: true;
   /** waves[i] lists wave i's node ids in canonical node order; wave indices are consecutive from 0. */
@@ -338,7 +338,7 @@ export function topologicalWavesV1(
   graph: CreateCanonicalGraphResultV1,
 ): TopologicalWavesResultV1;
 
-// @sothoth/graph/longest-paths
+// @project-sothoth/graph/longest-paths
 /** Per-node longest-path value and the deterministic incoming edge that achieves it. */
 export interface LongestPathNodeV1 {
   readonly nodeId: string;
@@ -367,9 +367,9 @@ export function longestPathDagV1(
 ## Core, SDK, and protocol boundary
 
 The protocol is a value protocol: the package consumes the canonical identity, canonical JSON, and
-digest utilities of `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` from `@sothoth/core` when a result
+digest utilities of `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` from `@project-sothoth/core` when a result
 must carry canonical bytes, and the type vocabulary of `CONTRACT/SOTHOTH/SCHEMAS@1` from
-`@sothoth/contracts`; it returns plain deterministic structures. It never calls the kernel's
+`@project-sothoth/contracts`; it returns plain deterministic structures. It never calls the kernel's
 compilation driver, and the kernel never calls back — the acyclicity of the package graph is itself
 an instance of what this package proves.
 
@@ -382,16 +382,16 @@ consumed by packages, not by end users.
 
 ## Dependency and topology
 
-`@sothoth/graph` completes the pinned direction `graph -> core -> contracts` and may depend only on
+`@project-sothoth/graph` completes the pinned direction `graph -> core -> contracts` and may depend only on
 the two pure foundation packages beneath it:
 
 ```json
 {
   "kind": "sothoth-dossier/dependency-declaration@1",
-  "packageId": "@sothoth/graph",
+  "packageId": "@project-sothoth/graph",
   "runtimeImportAllowlist": [
-    "@sothoth/contracts",
-    "@sothoth/core"
+    "@project-sothoth/contracts",
+    "@project-sothoth/core"
   ],
   "providedContracts": [
     "CONTRACT/SOTHOTH/GENERIC-GRAPH@1"
@@ -454,7 +454,7 @@ This topic is inherited exactly from the accepted governance control plane desig
 narrowing: an algorithm result can inform a recommendation but grants no authority, and nothing the
 package computes becomes a Source Fact.
 
-Inherited from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2`, section `authority-boundary`,
+Inherited from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3`, section `authority-boundary`,
 applicability `adopts`.
 
 Security posture is minimal by construction: the package opens no files, spawns no processes,
@@ -478,7 +478,7 @@ every machine and release, under the closed determinism contract:
 ```json
 {
   "kind": "sothoth-dossier/determinism-declaration@1",
-  "packageId": "@sothoth/graph",
+  "packageId": "@project-sothoth/graph",
   "byteStableOutputs": true,
   "stringOrdering": "unicode-code-point",
   "tieBreaking": "caller-sort-key-then-node-identity"
@@ -499,7 +499,7 @@ Declaration-structural codes anchor the exact input path (`nodes[3].node.id`);
 algorithm-envelope codes anchor under `graph` (`graph.ok`, `graph.issues[0].code`);
 identity-level codes anchor identities (so they are independent of array positions); and
 `unknown-start-node` anchors the requested start string itself. No graph result or issue ever
-carries an exit code: the outcome-to-exit mapping is owned by `@sothoth/contracts` and rendered by
+carries an exit code: the outcome-to-exit mapping is owned by `@project-sothoth/contracts` and rendered by
 the CLI only.
 
 Validation is descriptor-only and hostile. Parameters are typed narrowly, but every function
@@ -512,7 +512,7 @@ required — is `invalid-field`; an extra own string or symbol key outside the c
 `unknown-field` regardless of whether it is a data or accessor property. Suppression is part of
 the contract, not an optimization: an invalid parent or container shape suppresses all descendant
 validation, and an invalid field suppresses every cross-field or cross-entry check that depends on
-it. Facets are validated by the `canonicalJson` grammar of `@sothoth/core/canonical-json` inside a
+it. Facets are validated by the `canonicalJson` grammar of `@project-sothoth/core/canonical-json` inside a
 fail-closed try/catch — the single owner of the JSON value grammar, so this package contains no
 second grammar implementation — and any exception that grammar raises, including a depth-induced
 native `RangeError`, becomes `invalid-field` on the facets path; nothing is thrown onward. Every
@@ -561,9 +561,9 @@ anywhere.
 ## Observation and audit
 
 This topic is resolved as not-applicable, with the closed reason recorded in this component's
-registration: `@sothoth/graph` computes pure results over caller-provided nodes, edges, weights,
+registration: `@project-sothoth/graph` computes pure results over caller-provided nodes, edges, weights,
 and sort keys; every diagnostic, audit trail, and observation identity is declared by
-`@sothoth/contracts` and aggregated by `@sothoth/core` or the consuming domain compiler, so the
+`@project-sothoth/contracts` and aggregated by `@project-sothoth/core` or the consuming domain compiler, so the
 graph package owns no observation or audit surface of its own.
 
 The algorithms do return explain-capable structures — which nodes form a cycle, which edges
@@ -644,7 +644,7 @@ stable inheritance reviews in governance output, and identical answers across CI
 ```json
 {
   "kind": "sothoth-dossier/verification-criteria@1",
-  "packageId": "@sothoth/graph",
+  "packageId": "@project-sothoth/graph",
   "criteria": [
     {
       "criterionId": "graph-generic-algorithm-surface",
@@ -678,7 +678,7 @@ Growth stays generic: additional order statistics over condensations, richer cal
 weights, or parallel-friendly query variants may join later revisions of
 `CONTRACT/SOTHOTH/GENERIC-GRAPH@1`, always preserving deterministic ordering for identical inputs.
 Scheduling intelligence — calendars, resources, placement, release trains — will never live here;
-it extends the Schedule Solution in `@sothoth/planning` while this package keeps supplying only
+it extends the Schedule Solution in `@project-sothoth/planning` while this package keeps supplying only
 dependency and wave primitives.
 
 No future revision will begin interpreting relation roles: the domain-semantics boundary declared
@@ -689,14 +689,14 @@ new accepted architecture decision rather than a minor algorithm addition.
 
 ## Traceability and exact references
 
-This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` sections `decision`,
+This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3` sections `decision`,
 `authority-boundary`, `package-architecture`, and `graphs-change-order-and-scheduling`; to
 `CONTRACT/SOTHOTH/SCHEMAS@1` and `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` consumed from the
-foundation packages beneath it; and to the catalog candidate `@sothoth/graph` in
+foundation packages beneath it; and to the catalog candidate `@project-sothoth/graph` in
 `SOTHOTH-DESIGN-SCOPE-0.1@1`.
 
-The registration for this component is `SOTHOTH-GRAPH-DOSSIER@2`, superseding
-`SOTHOTH-GRAPH-DOSSIER@1` and bound to `DOC-SOTHOTH-GRAPH-DOSSIER@2`, providing
+The registration for this component is `SOTHOTH-GRAPH-DOSSIER@3`, superseding
+`SOTHOTH-GRAPH-DOSSIER@2` and bound to `DOC-SOTHOTH-GRAPH-DOSSIER@3`, providing
 `CONTRACT/SOTHOTH/GENERIC-GRAPH@1` and requiring
 `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` plus `CONTRACT/SOTHOTH/SCHEMAS@1`. Every reference
 follows the exact grammar `<identity>@<positive integer revision>` with the last `@` separating
@@ -717,6 +717,6 @@ by `deployment-configuration-and-operations`; `compatibility-and-migration` by
 `compatibility-and-migration`; `developer-and-operator-experience` by
 `developer-and-operator-experience`; `verification` by `verification-and-acceptance-criteria`; and
 `future-compatibility` by `future-capability-compatibility`. `authority-and-security` is inherited
-exactly from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` section `authority-boundary` with
+exactly from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3` section `authority-boundary` with
 applicability `adopts`. `observation-and-audit` is resolved as not-applicable for the closed reason
 declared in that section and recorded verbatim in the registration.

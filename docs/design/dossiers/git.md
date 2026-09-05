@@ -1,12 +1,12 @@
-# @sothoth/git Artifact Design Dossier
+# @project-sothoth/git Artifact Design Dossier
 
 Status: proposed design fact, pending external acceptance
 
-Document identity: `DOC-SOTHOTH-GIT-DOSSIER` revision `1`
+Document identity: `DOC-SOTHOTH-GIT-DOSSIER` revision `2`
 
-Design identity: `SOTHOTH-GIT-DOSSIER` revision `1`
+Design identity: `SOTHOTH-GIT-DOSSIER` revision `2`
 
-Component: `@sothoth/git`, candidate of `SOTHOTH-DESIGN-SCOPE-0.1` with `designRequirement: full`
+Component: `@project-sothoth/git`, candidate of `SOTHOTH-DESIGN-SCOPE-0.1` with `designRequirement: full`
 
 This Dossier closes the pre-design facts for the read-only Git Source Adapter of Sothoth `0.1.0`
 under the Dossier Document Contract `sothoth.design-dossier/full/v1`. It authorizes no
@@ -17,10 +17,10 @@ Architecture Baseline, and a mechanically admissible Scope BOM admit implementat
 
 ## Decision summary
 
-`@sothoth/git` is the single Sothoth package allowed to read repositories and invoke Git
+`@project-sothoth/git` is the single Sothoth package allowed to read repositories and invoke Git
 processes. It supports exactly three explicit modes — `commit`, `compare`, and `workspace` — and
 never mutates a repository. Path normalization, canonical identity, digest, diagnostic, and
-projection vocabulary remain inward from `@sothoth/core` and `@sothoth/contracts`; no filesystem,
+projection vocabulary remain inward from `@project-sothoth/core` and `@project-sothoth/contracts`; no filesystem,
 Git, or process capability leaks outward to Core, Graph, or any other pure domain component.
 
 The adapter is read-only by design. Every byte it returns is bound to an exact snapshot identity,
@@ -31,9 +31,9 @@ cannot be normalized or bounded fails closed.
 
 ## Artifact identity and classification
 
-The artifact is the npm package `@sothoth/git`, classified as a read-only source adapter with the
+The artifact is the npm package `@project-sothoth/git`, classified as a read-only source adapter with the
 narrowest permitted I/O surface in the control plane. Its design identity is
-`SOTHOTH-GIT-DOSSIER@1`, its document identity is `DOC-SOTHOTH-GIT-DOSSIER@1`, and it sits on the
+`SOTHOTH-GIT-DOSSIER@2`, its document identity is `DOC-SOTHOTH-GIT-DOSSIER@2`, and it sits on the
 inward foundation `core -> contracts` without importing any domain package.
 
 It ships compiled ESM plus TypeScript declarations with an explicit exports map. GitHub and other
@@ -52,7 +52,7 @@ The non-goals are the mutation and ambiguity fence:
 ```json
 {
   "kind": "sothoth-dossier/forbidden-capability-declaration@1",
-  "packageId": "@sothoth/git",
+  "packageId": "@project-sothoth/git",
   "capabilityClasses": {
     "ambiguous-ref-acceptance": "forbidden",
     "environment-variable-semantics": "forbidden",
@@ -81,7 +81,7 @@ identities, normalized paths, and digests:
 ```json
 {
   "kind": "sothoth-dossier/truth-ownership-declaration@1",
-  "packageId": "@sothoth/git",
+  "packageId": "@project-sothoth/git",
   "producedStateRefs": [
     "sothoth.git/commit-snapshot@1",
     "sothoth.git/compare-snapshot@1",
@@ -105,14 +105,14 @@ Facts and never creates, stages, or mutates repository bytes.
 ```json
 {
   "kind": "sothoth-dossier/public-surface-declaration@1",
-  "packageId": "@sothoth/git",
+  "packageId": "@project-sothoth/git",
   "publicModules": [
-    "@sothoth/git/commit",
-    "@sothoth/git/compare",
-    "@sothoth/git/path",
-    "@sothoth/git/process",
-    "@sothoth/git/snapshot",
-    "@sothoth/git/workspace"
+    "@project-sothoth/git/commit",
+    "@project-sothoth/git/compare",
+    "@project-sothoth/git/path",
+    "@project-sothoth/git/process",
+    "@project-sothoth/git/snapshot",
+    "@project-sothoth/git/workspace"
   ],
   "surfaceKind": "pure-functions-only"
 }
@@ -122,7 +122,7 @@ Facts and never creates, stages, or mutates repository bytes.
 `compare` binds exact base/head snapshots; `workspace` binds the explicit HEAD/index/unstaged/
 untracked composition for local feedback only; `path` normalizes and rejects unsafe paths;
 `process` executes the closed Git allowlist with fixed argument arrays; `snapshot` emits the
-digest-bearing snapshot contract. Primary consumers are `@sothoth/sdk` and `@sothoth/cli`
+digest-bearing snapshot contract. Primary consumers are `@project-sothoth/sdk` and `@project-sothoth/cli`
 through the SDK; pure domain packages never import Git.
 
 <!-- sothoth:section id="core-sdk-protocol-boundary" -->
@@ -142,15 +142,15 @@ path to filesystem, Git, or process capability.
 
 ## Dependency and topology
 
-`@sothoth/git` may import only the two foundation packages whose contracts it directly requires:
+`@project-sothoth/git` may import only the two foundation packages whose contracts it directly requires:
 
 ```json
 {
   "kind": "sothoth-dossier/dependency-declaration@1",
-  "packageId": "@sothoth/git",
+  "packageId": "@project-sothoth/git",
   "runtimeImportAllowlist": [
-    "@sothoth/contracts",
-    "@sothoth/core"
+    "@project-sothoth/contracts",
+    "@project-sothoth/core"
   ],
   "providedContracts": [
     "CONTRACT/SOTHOTH/GIT-SOURCE-SNAPSHOT@1"
@@ -180,7 +180,7 @@ Provenance is structurally separated:
 ```json
 {
   "kind": "sothoth-dossier/git-provenance-declaration@1",
-  "packageId": "@sothoth/git",
+  "packageId": "@project-sothoth/git",
   "workspaceMasqueradesAsCommit": false,
   "provenanceIdentitySeparation": "strict",
   "modes": [
@@ -220,7 +220,7 @@ as commit-bound evidence.
 This topic is inherited exactly from the accepted governance control plane design: Git snapshots
 bind input bytes, and the Git adapter never checks out, stages, commits, tags, or pushes.
 
-Inherited from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2`, section `authority-boundary`,
+Inherited from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3`, section `authority-boundary`,
 applicability `adopts`.
 
 The read-only process boundary is closed:
@@ -228,7 +228,7 @@ The read-only process boundary is closed:
 ```json
 {
   "kind": "sothoth-dossier/git-process-declaration@1",
-  "packageId": "@sothoth/git",
+  "packageId": "@project-sothoth/git",
   "executableSubcommands": [
     "diff",
     "ls-tree",
@@ -282,7 +282,7 @@ Path rejection and budget enforcement are closed:
 ```json
 {
   "kind": "sothoth-dossier/git-path-declaration@1",
-  "packageId": "@sothoth/git",
+  "packageId": "@project-sothoth/git",
   "normalization": "repository-relative-posix",
   "ambiguousRefPolicy": "reject",
   "rejectedPathClasses": [
@@ -298,7 +298,7 @@ Path rejection and budget enforcement are closed:
 ```json
 {
   "kind": "sothoth-dossier/git-budget-declaration@1",
-  "packageId": "@sothoth/git",
+  "packageId": "@project-sothoth/git",
   "enforcedBudgets": [
     "file-count",
     "per-file-byte",
@@ -313,7 +313,7 @@ Path rejection and budget enforcement are closed:
 ```json
 {
   "kind": "sothoth-dossier/determinism-declaration@1",
-  "packageId": "@sothoth/git",
+  "packageId": "@project-sothoth/git",
   "byteStableOutputs": true,
   "stringOrdering": "unicode-code-point",
   "tieBreaking": "canonical-identity-then-diagnostic-code"
@@ -329,8 +329,8 @@ never yield truncated bytes with a success verdict.
 ## Observation and audit
 
 The package emits exactly one observation identity, `sothoth.git/git-adapter-diagnostic@1`,
-under the Structured Diagnostic vocabulary of `@sothoth/contracts` and the aggregation contract of
-`@sothoth/core`. It keeps no logs, counters, or telemetry of its own.
+under the Structured Diagnostic vocabulary of `@project-sothoth/contracts` and the aggregation contract of
+`@project-sothoth/core`. It keeps no logs, counters, or telemetry of its own.
 
 Every returned snapshot records exact snapshot identity, Git object identity, normalized path,
 and digest, so an auditor can re-derive which bytes were read and prove they were not edited.
@@ -341,7 +341,7 @@ and digest, so an auditor can re-derive which bytes were read and prove they wer
 
 Deployment is one reproducible npm package — compiled ESM, declarations, explicit exports map,
 Apache-2.0 inclusion, clean CI publication — with runtime dependencies exactly
-`@sothoth/contracts` and `@sothoth/core`.
+`@project-sothoth/contracts` and `@project-sothoth/core`.
 
 The package is configured only by explicit request arguments: budgets, mode, exact refs, and
 paths. No environment variable, config file, daemon, or service exists, and Git discovery and
@@ -379,7 +379,7 @@ no Sothoth invocation mutated a repository.
 ```json
 {
   "kind": "sothoth-dossier/verification-criteria@1",
-  "packageId": "@sothoth/git",
+  "packageId": "@project-sothoth/git",
   "criteria": [
     {
       "criterionId": "git-command-allowlist-closure",
@@ -428,14 +428,14 @@ environment-variable semantics, or floating ref resolution.
 
 ## Traceability and exact references
 
-This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` sections `decision`,
+This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3` sections `decision`,
 `authority-boundary`, `package-architecture`, and `documents-and-selectors`; to
-`CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` consumed directly from `@sothoth/core`; to
-`CONTRACT/SOTHOTH/SCHEMAS@1` consumed directly from `@sothoth/contracts`; and to the catalog
-candidate `@sothoth/git` in `SOTHOTH-DESIGN-SCOPE-0.1@1`.
+`CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` consumed directly from `@project-sothoth/core`; to
+`CONTRACT/SOTHOTH/SCHEMAS@1` consumed directly from `@project-sothoth/contracts`; and to the catalog
+candidate `@project-sothoth/git` in `SOTHOTH-DESIGN-SCOPE-0.1@1`.
 
-The registration for this component is `SOTHOTH-GIT-DOSSIER@1` bound to
-`DOC-SOTHOTH-GIT-DOSSIER@1`, providing `CONTRACT/SOTHOTH/GIT-SOURCE-SNAPSHOT@1` and requiring
+The registration for this component is `SOTHOTH-GIT-DOSSIER@2` bound to
+`DOC-SOTHOTH-GIT-DOSSIER@2`, providing `CONTRACT/SOTHOTH/GIT-SOURCE-SNAPSHOT@1` and requiring
 `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` and `CONTRACT/SOTHOTH/SCHEMAS@1`. Every reference
 uses the exact grammar `<identity>@<positive integer revision>`; paths, bare names, and `latest`
 are forbidden.
@@ -456,6 +456,6 @@ by `public-surface-and-consumers`; `core-sdk-boundary` and `protocol-and-data-fl
 `compatibility-and-migration`; `developer-and-operator-experience` by
 `developer-and-operator-experience`; `verification` by `verification-and-acceptance-criteria`;
 and `future-compatibility` by `future-capability-compatibility`. `authority-and-security` is
-inherited exactly from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` section
+inherited exactly from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3` section
 `authority-boundary` with applicability `adopts`; the read-only repository observation boundary
 is declared in that section.

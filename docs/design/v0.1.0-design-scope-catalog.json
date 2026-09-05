@@ -1,12 +1,12 @@
 {
   "schema": "sothoth.design-scope-catalog/v1",
   "catalogId": "SOTHOTH-DESIGN-SCOPE-0.1",
-  "catalogRevision": 1,
+  "catalogRevision": 2,
   "targetReleaseIntent": "0.1.0",
   "status": "working",
   "candidates": [
     {
-      "componentId": "@sothoth/cli",
+      "componentId": "@project-sothoth/cli",
       "designId": "SOTHOTH-CLI-DOSSIER",
       "artifactType": "npm-package",
       "designRequirement": "full",
@@ -14,7 +14,7 @@
       "owner": "sothoth"
     },
     {
-      "componentId": "@sothoth/contracts",
+      "componentId": "@project-sothoth/contracts",
       "designId": "SOTHOTH-CONTRACTS-DOSSIER",
       "artifactType": "npm-package",
       "designRequirement": "full",
@@ -22,7 +22,7 @@
       "owner": "sothoth"
     },
     {
-      "componentId": "@sothoth/core",
+      "componentId": "@project-sothoth/core",
       "designId": "SOTHOTH-CORE-DOSSIER",
       "artifactType": "npm-package",
       "designRequirement": "full",
@@ -30,7 +30,7 @@
       "owner": "sothoth"
     },
     {
-      "componentId": "@sothoth/document-index",
+      "componentId": "@project-sothoth/document-index",
       "designId": "SOTHOTH-DOCUMENT-INDEX-DOSSIER",
       "artifactType": "npm-package",
       "designRequirement": "full",
@@ -38,7 +38,7 @@
       "owner": "sothoth"
     },
     {
-      "componentId": "@sothoth/git",
+      "componentId": "@project-sothoth/git",
       "designId": "SOTHOTH-GIT-DOSSIER",
       "artifactType": "npm-package",
       "designRequirement": "full",
@@ -46,7 +46,7 @@
       "owner": "sothoth"
     },
     {
-      "componentId": "@sothoth/governance",
+      "componentId": "@project-sothoth/governance",
       "designId": "SOTHOTH-GOVERNANCE-DOSSIER",
       "artifactType": "npm-package",
       "designRequirement": "full",
@@ -54,7 +54,7 @@
       "owner": "sothoth"
     },
     {
-      "componentId": "@sothoth/graph",
+      "componentId": "@project-sothoth/graph",
       "designId": "SOTHOTH-GRAPH-DOSSIER",
       "artifactType": "npm-package",
       "designRequirement": "full",
@@ -62,7 +62,7 @@
       "owner": "sothoth"
     },
     {
-      "componentId": "@sothoth/planning",
+      "componentId": "@project-sothoth/planning",
       "designId": "SOTHOTH-PLANNING-DOSSIER",
       "artifactType": "npm-package",
       "designRequirement": "full",
@@ -70,7 +70,7 @@
       "owner": "sothoth"
     },
     {
-      "componentId": "@sothoth/profile-sdk",
+      "componentId": "@project-sothoth/profile-sdk",
       "designId": "SOTHOTH-PROFILE-SDK-DOSSIER",
       "artifactType": "npm-package",
       "designRequirement": "full",
@@ -78,7 +78,7 @@
       "owner": "sothoth"
     },
     {
-      "componentId": "@sothoth/sdk",
+      "componentId": "@project-sothoth/sdk",
       "designId": "SOTHOTH-SDK-DOSSIER",
       "artifactType": "npm-package",
       "designRequirement": "full",
@@ -86,7 +86,7 @@
       "owner": "sothoth"
     },
     {
-      "componentId": "@sothoth/selectors",
+      "componentId": "@project-sothoth/selectors",
       "designId": "SOTHOTH-SELECTORS-DOSSIER",
       "artifactType": "npm-package",
       "designRequirement": "full",

@@ -1,12 +1,12 @@
-# @sothoth/selectors Artifact Design Dossier
+# @project-sothoth/selectors Artifact Design Dossier
 
 Status: proposed design fact, pending external acceptance
 
-Document identity: `DOC-SOTHOTH-SELECTORS-DOSSIER` revision `1`
+Document identity: `DOC-SOTHOTH-SELECTORS-DOSSIER` revision `2`
 
-Design identity: `SOTHOTH-SELECTORS-DOSSIER` revision `1`
+Design identity: `SOTHOTH-SELECTORS-DOSSIER` revision `2`
 
-Component: `@sothoth/selectors`, candidate of `SOTHOTH-DESIGN-SCOPE-0.1` with `designRequirement: full`
+Component: `@project-sothoth/selectors`, candidate of `SOTHOTH-DESIGN-SCOPE-0.1` with `designRequirement: full`
 
 This Dossier closes the pre-design facts for the declarative selector engine of Sothoth `0.1.0`
 under the Dossier Document Contract `sothoth.design-dossier/full/v1`. It authorizes no
@@ -17,11 +17,11 @@ Architecture Baseline, and a mechanically admissible Scope BOM admit implementat
 
 ## Decision summary
 
-`@sothoth/selectors` owns the closed query algebra of the control plane. A Selector is a
+`@project-sothoth/selectors` owns the closed query algebra of the control plane. A Selector is a
 declarative expression — `all`, `any`, `not` over exact identities, normalized path globs,
 kind/status/owner/tag sets, explicit reference and traceability relations, diagnostic identity
 and namespace terms, and cardinality bounds — that compiles once into a canonical AST and then
-matches deterministically against entries of a `@sothoth/document-index` projection.
+matches deterministically against entries of a `@project-sothoth/document-index` projection.
 
 The defining decision is that selection is a closed language, not an escape hatch. Nothing that
 would make a Selector convenient by borrowing power is admitted: no JavaScript predicates, no
@@ -34,10 +34,10 @@ can say why it matched, because an explain trace is a first-class output, not a 
 
 ## Artifact identity and classification
 
-The artifact is the npm package `@sothoth/selectors`, classified as a document-governance domain
+The artifact is the npm package `@project-sothoth/selectors`, classified as a document-governance domain
 library: a pure compiler-and-matcher over index entries supplied by
-`CONTRACT/SOTHOTH/DOCUMENT-INDEX@1`. Its design identity is `SOTHOTH-SELECTORS-DOSSIER@1`, its
-document identity is `DOC-SOTHOTH-SELECTORS-DOSSIER@1`, and it completes the structural half of
+`CONTRACT/SOTHOTH/DOCUMENT-INDEX@1`. Its design identity is `SOTHOTH-SELECTORS-DOSSIER@2`, its
+document identity is `DOC-SOTHOTH-SELECTORS-DOSSIER@2`, and it completes the structural half of
 the document-governance layer above the pinned foundation `graph -> core -> contracts`.
 
 It ships compiled ESM plus declarations with an explicit exports map, as a public package in its
@@ -59,7 +59,7 @@ The non-goals close the algebra:
 ```json
 {
   "kind": "sothoth-dossier/forbidden-capability-declaration@1",
-  "packageId": "@sothoth/selectors",
+  "packageId": "@project-sothoth/selectors",
   "capabilityClasses": {
     "external-executable": "forbidden",
     "filesystem": "forbidden",
@@ -95,7 +95,7 @@ and nothing else:
 ```json
 {
   "kind": "sothoth-dossier/truth-ownership-declaration@1",
-  "packageId": "@sothoth/selectors",
+  "packageId": "@project-sothoth/selectors",
   "producedStateRefs": [
     "sothoth.selectors/selector-canonical-ast@1",
     "sothoth.selectors/selection-result@1",
@@ -111,7 +111,7 @@ The knowledge inside those truths is bounded and declared:
 ```json
 {
   "kind": "sothoth-dossier/domain-semantics-declaration@1",
-  "packageId": "@sothoth/selectors",
+  "packageId": "@project-sothoth/selectors",
   "ownedDomainSemantics": [
     "selector-syntax",
     "selector-canonical-ast",
@@ -141,13 +141,13 @@ permission.
 ```json
 {
   "kind": "sothoth-dossier/public-surface-declaration@1",
-  "packageId": "@sothoth/selectors",
+  "packageId": "@project-sothoth/selectors",
   "publicModules": [
-    "@sothoth/selectors/parse",
-    "@sothoth/selectors/ast",
-    "@sothoth/selectors/match",
-    "@sothoth/selectors/cardinality",
-    "@sothoth/selectors/explain"
+    "@project-sothoth/selectors/parse",
+    "@project-sothoth/selectors/ast",
+    "@project-sothoth/selectors/match",
+    "@project-sothoth/selectors/cardinality",
+    "@project-sothoth/selectors/explain"
   ],
   "surfaceKind": "pure-functions-only"
 }
@@ -159,7 +159,7 @@ terms, normalized path globs, kind/status/owner/tag set terms, explicit referenc
 terms, diagnostic identity and namespace terms; `match` evaluates an AST against document-index
 entries; `cardinality` enforces declared bounds and produces the default zero-match diagnostic;
 `explain` emits the trace showing which term admitted or rejected each candidate. Primary
-consumers are `@sothoth/governance` for closure scoping and change-plan compilation, and Consumer
+consumers are `@project-sothoth/governance` for closure scoping and change-plan compilation, and Consumer
 Profiles through the SDK's selection hooks; the CLI reaches the same surface through
 `sothoth select` and `sothoth explain`.
 
@@ -169,10 +169,10 @@ Profiles through the SDK's selection hooks; the CLI reaches the same surface thr
 
 The protocol is a closed value protocol. A Selector arrives as declarative source or data — never
 as an executable — and compiles against the canonical identity, digest, and canonical JSON
-utilities of `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` from `@sothoth/core`; matching consumes
-only the structural facts of `CONTRACT/SOTHOTH/DOCUMENT-INDEX@1` from `@sothoth/document-index`.
+utilities of `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` from `@project-sothoth/core`; matching consumes
+only the structural facts of `CONTRACT/SOTHOTH/DOCUMENT-INDEX@1` from `@project-sothoth/document-index`.
 The typed Selector terms, the selection-result shapes, and the zero-match diagnostic identity are
-expressed in the `CONTRACT/SOTHOTH/SCHEMAS@1` vocabulary of `@sothoth/contracts`, required and
+expressed in the `CONTRACT/SOTHOTH/SCHEMAS@1` vocabulary of `@project-sothoth/contracts`, required and
 imported directly rather than through any transitive surface. The package never calls a
 compilation driver, and no driver calls back into a running match.
 
@@ -185,16 +185,16 @@ byte for byte.
 
 ## Dependency and topology
 
-`@sothoth/selectors` may depend only on the pure packages whose contracts it requires:
+`@project-sothoth/selectors` may depend only on the pure packages whose contracts it requires:
 
 ```json
 {
   "kind": "sothoth-dossier/dependency-declaration@1",
-  "packageId": "@sothoth/selectors",
+  "packageId": "@project-sothoth/selectors",
   "runtimeImportAllowlist": [
-    "@sothoth/contracts",
-    "@sothoth/core",
-    "@sothoth/document-index"
+    "@project-sothoth/contracts",
+    "@project-sothoth/core",
+    "@project-sothoth/document-index"
   ],
   "providedContracts": [
     "CONTRACT/SOTHOTH/SELECTOR@1"
@@ -207,7 +207,7 @@ byte for byte.
 }
 ```
 
-`CONTRACT/SOTHOTH/SCHEMAS@1` is required directly from `@sothoth/contracts` because the algebra's
+`CONTRACT/SOTHOTH/SCHEMAS@1` is required directly from `@project-sothoth/contracts` because the algebra's
 typed terms, result shapes, and diagnostic identities are expressed in the shared schema,
 identity, and diagnostic vocabulary. The allowlist is the closed import boundary for runtime and
 type-level internal imports alike, so no vocabulary and no capability may arrive through a
@@ -242,7 +242,7 @@ This topic is inherited exactly from the accepted governance control plane desig
 narrowing: a selection can scope a review or a check but grants no authority, and nothing the
 package matches becomes a Source Fact or modifies one.
 
-Inherited from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2`, section `authority-boundary`,
+Inherited from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3`, section `authority-boundary`,
 applicability `adopts`.
 
 Security posture is dominated by hostile-input discipline, because Selectors are authored text
@@ -267,7 +267,7 @@ Consistency is the product, under the closed determinism contract:
 ```json
 {
   "kind": "sothoth-dossier/determinism-declaration@1",
-  "packageId": "@sothoth/selectors",
+  "packageId": "@project-sothoth/selectors",
   "byteStableOutputs": true,
   "stringOrdering": "unicode-code-point",
   "tieBreaking": "canonical-identity-by-default"
@@ -293,7 +293,7 @@ Everything else audit needs is carried by the explain trace: for each candidate,
 admitted or rejected it, under which canonical identities. The trace is a result, not a log — the
 engine keeps no counters, history, or telemetry — so an auditor replays the same pure selection
 and compares traces byte for byte. Diagnostic identity and namespace terms are matched as data
-declared in `@sothoth/contracts` vocabulary; the engine never invents observation identities.
+declared in `@project-sothoth/contracts` vocabulary; the engine never invents observation identities.
 
 <!-- sothoth:section id="deployment-configuration-and-operations" -->
 
@@ -301,7 +301,7 @@ declared in `@sothoth/contracts` vocabulary; the engine never invents observatio
 
 Deployment is one reproducible npm package — compiled ESM, declarations, explicit exports map,
 Apache-2.0 inclusion, clean CI publication — with runtime dependencies exactly the three declared
-packages beneath it: `@sothoth/contracts`, `@sothoth/core`, and `@sothoth/document-index`.
+packages beneath it: `@project-sothoth/contracts`, `@project-sothoth/core`, and `@project-sothoth/document-index`.
 Conformance fixtures published alongside the algebra let any consumer verify
 closed-vocabulary rejections, budget determinism, and ordering claims on its own machine.
 
@@ -352,7 +352,7 @@ while each criterion declared below points at the subject section it constrains.
 ```json
 {
   "kind": "sothoth-dossier/verification-criteria@1",
-  "packageId": "@sothoth/selectors",
+  "packageId": "@project-sothoth/selectors",
   "criteria": [
     {
       "criterionId": "selectors-closed-selector-algebra",
@@ -396,15 +396,15 @@ rather than a convenience feature.
 
 ## Traceability and exact references
 
-This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` sections `decision`,
+This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3` sections `decision`,
 `authority-boundary`, `package-architecture`, `documents-and-selectors`, and
 `diagnostics-and-process-outcomes`; to `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` consumed from
-`@sothoth/core`, `CONTRACT/SOTHOTH/DOCUMENT-INDEX@1` consumed from `@sothoth/document-index`, and
-`CONTRACT/SOTHOTH/SCHEMAS@1` consumed directly from `@sothoth/contracts`; and to the catalog
-candidate `@sothoth/selectors` in `SOTHOTH-DESIGN-SCOPE-0.1@1`.
+`@project-sothoth/core`, `CONTRACT/SOTHOTH/DOCUMENT-INDEX@1` consumed from `@project-sothoth/document-index`, and
+`CONTRACT/SOTHOTH/SCHEMAS@1` consumed directly from `@project-sothoth/contracts`; and to the catalog
+candidate `@project-sothoth/selectors` in `SOTHOTH-DESIGN-SCOPE-0.1@1`.
 
-The registration for this component is `SOTHOTH-SELECTORS-DOSSIER@1` bound to
-`DOC-SOTHOTH-SELECTORS-DOSSIER@1`, providing `CONTRACT/SOTHOTH/SELECTOR@1` and requiring
+The registration for this component is `SOTHOTH-SELECTORS-DOSSIER@2` bound to
+`DOC-SOTHOTH-SELECTORS-DOSSIER@2`, providing `CONTRACT/SOTHOTH/SELECTOR@1` and requiring
 `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1`, `CONTRACT/SOTHOTH/DOCUMENT-INDEX@1`, and
 `CONTRACT/SOTHOTH/SCHEMAS@1`. Every reference follows the exact grammar
 `<identity>@<positive integer revision>` with the last `@` separating the revision.
@@ -425,5 +425,5 @@ by `public-surface-and-consumers`; `core-sdk-boundary` and `protocol-and-data-fl
 `compatibility-and-migration`; `developer-and-operator-experience` by
 `developer-and-operator-experience`; `verification` by `verification-and-acceptance-criteria`;
 and `future-compatibility` by `future-capability-compatibility`. `authority-and-security` is
-inherited exactly from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` section
+inherited exactly from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3` section
 `authority-boundary` with applicability `adopts`.

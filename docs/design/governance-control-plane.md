@@ -2,11 +2,11 @@
 
 Status: accepted design baseline
 
-Version: `SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN-2`
+Version: `SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN-3`
 
 Decision date: 2026-09-02
 
-Implementation is gated by Dossier closure: no `@sothoth/*` package implementation is authorized until the retained
+Implementation is gated by Dossier closure: no `@project-sothoth/*` package implementation is authorized until the retained
 Design Scope Catalog candidates hold accepted Dossiers and an accepted Architecture Baseline.
 
 <!-- sothoth:section id="decision" -->
@@ -32,14 +32,14 @@ not an execution engine, final authority, database, daemon, forge, or free-text 
 ## Package architecture
 
 ```text
-@sothoth/cli -> @sothoth/sdk
-@sothoth/sdk -> governance | planning | document-index | selectors | git | profile-sdk
-governance | planning | document-index -> @sothoth/graph
-all pure packages -> @sothoth/core -> @sothoth/contracts
+@project-sothoth/cli -> @project-sothoth/sdk
+@project-sothoth/sdk -> governance | planning | document-index | selectors | git | profile-sdk
+governance | planning | document-index -> @project-sothoth/graph
+all pure packages -> @project-sothoth/core -> @project-sothoth/contracts
 ```
 
-`@sothoth/contracts` owns schemas and identities. `@sothoth/core` owns pure canonicalization, digesting, diagnostics, and
-outcome aggregation. `@sothoth/graph` owns generic deterministic graph algorithms without relation meaning. Governance,
+`@project-sothoth/contracts` owns schemas and identities. `@project-sothoth/core` owns pure canonicalization, digesting, diagnostics, and
+outcome aggregation. `@project-sothoth/graph` owns generic deterministic graph algorithms without relation meaning. Governance,
 planning, document indexing, and selection remain independent domains. Git and CLI are I/O adapters. The public SDK is a
 facade, not a second Core.
 
@@ -108,7 +108,7 @@ invalid`, `2 invalid-input`, `3 extension-error`, and `4 internal-error`.
 
 ## Release boundary
 
-Sothoth 0.1.0 targets Apache-2.0 publication of eleven `@sothoth/*` packages from `Phenol1145/sothoth`. Until the
+Sothoth 0.1.0 targets Apache-2.0 publication of eleven `@project-sothoth/*` packages from `Phenol1145/sothoth`. Until the
 Pre-design boundary closes, those packages remain provisional Design Scope Catalog candidates and no formal Scope BOM
 exists. Once Dossiers close and an Architecture Baseline is accepted, the formal Scope BOM becomes the release membership
 authority. Candidate BOM, SBOM, provenance, and Release Lock bind the clean tagged commit and tarball bytes.

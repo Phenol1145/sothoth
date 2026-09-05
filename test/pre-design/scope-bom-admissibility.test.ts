@@ -24,18 +24,19 @@ const BOM_SCHEMA = "sothoth.release-bom/v1";
 const BOM_ID = "SOTHOTH-RELEASE-SCOPE-BOM-0.1";
 const TARGET_RELEASE = "0.1.0";
 const PROJECTION_SCHEMA = "sothoth.scope-bom-admissibility-projection/v1";
-const SCOPE_PREFIX = "@sothoth/";
+const SCOPE_PREFIX = "@project-sothoth/";
 
 // The committed-fact constants below are populated verbatim with the exact `acceptedBy` JSON value
-// and `acceptedAt` string the human supplied for Architecture Baseline revision 3 (the 2026-09-04
-// acceptance act that accepted the Document Index Dossier revision-2 closure proposal); they are
-// not read back from the file under test. The identical-looking revision-2 principal/date recorded
-// on 2026-09-03 — and the revision-1 record before it — are historical facts only and never govern
-// the live revision-3 expectation by inference. The checker itself only requires a human principal
-// and a valid calendar date, so the generic in-memory fixture uses a different principal and date
-// to prove neither the Agent nor a passing projection is treated as the accepting authority.
+// and `acceptedAt` string the human supplied for Architecture Baseline revision 4 (the 2026-09-05
+// acceptance act that accepted the Package Identity Rebaseline to the `@project-sothoth` scope);
+// they are not read back from the file under test. The identical-looking revision-3 principal/date
+// recorded on 2026-09-04 — and the revision-2 and revision-1 records before it — are historical
+// facts only and never govern the live revision-4 expectation by inference. The checker itself
+// only requires a human principal and a valid calendar date, so the generic in-memory fixture uses
+// a different principal and date to prove neither the Agent nor a passing projection is treated as
+// the accepting authority.
 const COMMITTED_PRINCIPAL = { principalType: "human", principalId: "anzhize" };
-const COMMITTED_ACCEPTED_AT = "2026-09-04";
+const COMMITTED_ACCEPTED_AT = "2026-09-05";
 const FIXTURE_PRINCIPAL = { principalType: "human", principalId: "fixture-owner" };
 const FIXTURE_ACCEPTED_AT = "2026-09-01";
 
@@ -253,29 +254,29 @@ describe("formal Architecture Baseline and release Scope BOM admissibility", () 
 
   test("an unaccepted retained registration fails the scope phase", async () => {
     const facts = await formalScopeFacts();
-    registrationOf(facts, "@sothoth/core").status = "proposed";
+    registrationOf(facts, "@project-sothoth/core").status = "proposed";
     expect(checkPreDesign(facts).issues).toContainEqual({
       code: "sothoth.pre-design/registration-not-accepted",
-      subject: "@sothoth/core",
+      subject: "@project-sothoth/core",
     });
   });
 
   test("an absent Baseline member fails closed", async () => {
     const facts = await formalScopeFacts();
     facts.architectureBaseline.members = facts.architectureBaseline.members.filter(
-      (member: any) => member.componentId !== "@sothoth/graph",
+      (member: any) => member.componentId !== "@project-sothoth/graph",
     );
     const result = checkPreDesign(facts);
     expect(result.outcome).toBe("invalid");
     expect(result.issues).toContainEqual({
       code: "sothoth.pre-design/baseline-member-missing",
-      subject: "@sothoth/graph",
+      subject: "@project-sothoth/graph",
     });
   });
 
   test("an unknown Baseline member fails closed", async () => {
     const facts = await formalScopeFacts();
-    const clone = structuredClone(baselineMemberOf(facts, "@sothoth/graph"));
+    const clone = structuredClone(baselineMemberOf(facts, "@project-sothoth/graph"));
     clone.componentId = "@fracta/sothoth-profile";
     facts.architectureBaseline.members.push(clone);
     expect(checkPreDesign(facts).issues).toContainEqual({
@@ -286,65 +287,65 @@ describe("formal Architecture Baseline and release Scope BOM admissibility", () 
 
   test("a duplicated Baseline member fails closed", async () => {
     const facts = await formalScopeFacts();
-    facts.architectureBaseline.members.push(structuredClone(baselineMemberOf(facts, "@sothoth/core")));
+    facts.architectureBaseline.members.push(structuredClone(baselineMemberOf(facts, "@project-sothoth/core")));
     expect(checkPreDesign(facts).issues).toContainEqual({
       code: "sothoth.pre-design/baseline-member-duplicate",
-      subject: "@sothoth/core",
+      subject: "@project-sothoth/core",
     });
   });
 
   test("a designRef naming another Baseline revision or identity fails closed", async () => {
     const revisionFacts = await formalScopeFacts();
-    memberOf(revisionFacts, "@sothoth/core").designRef.architectureBaselineRevision = 2;
+    memberOf(revisionFacts, "@project-sothoth/core").designRef.architectureBaselineRevision = 2;
     expect(checkPreDesign(revisionFacts).issues).toContainEqual({
       code: "sothoth.pre-design/design-ref-baseline-mismatch",
-      subject: "@sothoth/core",
+      subject: "@project-sothoth/core",
     });
 
     const identityFacts = await formalScopeFacts();
-    memberOf(identityFacts, "@sothoth/sdk").designRef.architectureBaselineId = "SOTHOTH-ARCHITECTURE-BASELINE-0.2";
+    memberOf(identityFacts, "@project-sothoth/sdk").designRef.architectureBaselineId = "SOTHOTH-ARCHITECTURE-BASELINE-0.2";
     expect(checkPreDesign(identityFacts).issues).toContainEqual({
       code: "sothoth.pre-design/design-ref-baseline-mismatch",
-      subject: "@sothoth/sdk",
+      subject: "@project-sothoth/sdk",
     });
   });
 
   test("a Baseline member mapped to another component's design fails closed", async () => {
     const facts = await formalScopeFacts();
-    const core = baselineMemberOf(facts, "@sothoth/core");
-    const cli = baselineMemberOf(facts, "@sothoth/cli");
+    const core = baselineMemberOf(facts, "@project-sothoth/core");
+    const cli = baselineMemberOf(facts, "@project-sothoth/cli");
     core.designId = cli.designId;
     core.documentRef = structuredClone(cli.documentRef);
     core.dossierDigest = cli.dossierDigest;
     expect(checkPreDesign(facts).issues).toContainEqual({
       code: "sothoth.pre-design/baseline-member-component-mismatch",
-      subject: "@sothoth/core",
+      subject: "@project-sothoth/core",
     });
   });
 
   test("a Baseline member bound to a wrong design or document revision fails closed", async () => {
     const facts = await formalScopeFacts();
-    baselineMemberOf(facts, "@sothoth/core").designRevision = 2;
+    baselineMemberOf(facts, "@project-sothoth/core").designRevision = 3;
     const designResult = checkPreDesign(facts);
     expect(designResult.issues).toContainEqual({
       code: "sothoth.pre-design/baseline-member-design-mismatch",
-      subject: "@sothoth/core",
+      subject: "@project-sothoth/core",
     });
 
     const documentFacts = await formalScopeFacts();
-    baselineMemberOf(documentFacts, "@sothoth/contracts").documentRef.documentRevision = 2;
+    baselineMemberOf(documentFacts, "@project-sothoth/contracts").documentRef.documentRevision = 3;
     expect(checkPreDesign(documentFacts).issues).toContainEqual({
       code: "sothoth.pre-design/baseline-member-design-mismatch",
-      subject: "@sothoth/contracts",
+      subject: "@project-sothoth/contracts",
     });
   });
 
   test("a Dossier digest mismatch fails closed, including edited Dossier bytes", async () => {
     const declaredFacts = await formalScopeFacts();
-    baselineMemberOf(declaredFacts, "@sothoth/git").dossierDigest = sha256OfUtf8("tampered bytes");
+    baselineMemberOf(declaredFacts, "@project-sothoth/git").dossierDigest = sha256OfUtf8("tampered bytes");
     expect(checkPreDesign(declaredFacts).issues).toContainEqual({
       code: "sothoth.pre-design/baseline-dossier-digest-mismatch",
-      subject: "@sothoth/git",
+      subject: "@project-sothoth/git",
     });
 
     const byteFacts = await formalScopeFacts();
@@ -352,23 +353,23 @@ describe("formal Architecture Baseline and release Scope BOM admissibility", () 
     const result = checkPreDesign(byteFacts);
     expect(result.issues).toContainEqual({
       code: "sothoth.pre-design/baseline-dossier-digest-mismatch",
-      subject: "@sothoth/git",
+      subject: "@project-sothoth/git",
     });
   });
 
   test("a malformed Baseline member and unknown fields fail closed", async () => {
     const unknownFacts = await formalScopeFacts();
-    baselineMemberOf(unknownFacts, "@sothoth/graph").extraField = true;
+    baselineMemberOf(unknownFacts, "@project-sothoth/graph").extraField = true;
     expect(checkPreDesign(unknownFacts).issues).toContainEqual({
       code: "sothoth.pre-design/baseline-member-invalid",
-      subject: "@sothoth/graph:extraField",
+      subject: "@project-sothoth/graph:extraField",
     });
 
     const malformedFacts = await formalScopeFacts();
-    malformedFacts.architectureBaseline.members.push({ componentId: "@sothoth/graph" });
+    malformedFacts.architectureBaseline.members.push({ componentId: "@project-sothoth/graph" });
     expect(checkPreDesign(malformedFacts).issues).toContainEqual({
       code: "sothoth.pre-design/baseline-member-invalid",
-      subject: "@sothoth/graph:designId",
+      subject: "@project-sothoth/graph:designId",
     });
   });
 
@@ -477,44 +478,44 @@ describe("formal Architecture Baseline and release Scope BOM admissibility", () 
       ["owner", "fracta"],
     ] as const) {
       const facts = await formalScopeFacts();
-      memberOf(facts, "@sothoth/planning")[field] = value;
+      memberOf(facts, "@project-sothoth/planning")[field] = value;
       expect(checkPreDesign(facts).issues).toContainEqual({
         code: "sothoth.pre-design/scope-bom-invalid",
-        subject: `@sothoth/planning:${field}`,
+        subject: `@project-sothoth/planning:${field}`,
       });
     }
 
     const unknownFacts = await formalScopeFacts();
-    memberOf(unknownFacts, "@sothoth/sdk").tarballDigest = "sha256:0000";
+    memberOf(unknownFacts, "@project-sothoth/sdk").tarballDigest = "sha256:0000";
     expect(checkPreDesign(unknownFacts).issues).toContainEqual({
       code: "sothoth.pre-design/scope-bom-invalid",
-      subject: "@sothoth/sdk:tarballDigest",
+      subject: "@project-sothoth/sdk:tarballDigest",
     });
 
     const duplicateFacts = await formalScopeFacts();
-    duplicateFacts.scopeBom.members.push(structuredClone(memberOf(duplicateFacts, "@sothoth/core")));
+    duplicateFacts.scopeBom.members.push(structuredClone(memberOf(duplicateFacts, "@project-sothoth/core")));
     expect(checkPreDesign(duplicateFacts).issues).toContainEqual({
       code: "sothoth.pre-design/scope-bom-invalid",
-      subject: "@sothoth/core:member-duplicate",
+      subject: "@project-sothoth/core:member-duplicate",
     });
   });
 
   test("a release member outside the Design Scope Catalog fails closed", async () => {
     const facts = await formalScopeFacts();
-    const clone = structuredClone(memberOf(facts, "@sothoth/graph"));
-    clone.id = "@sothoth/extra-widget";
+    const clone = structuredClone(memberOf(facts, "@project-sothoth/graph"));
+    clone.id = "@project-sothoth/extra-widget";
     facts.scopeBom.members.push(clone);
     const result = checkPreDesign(facts);
     expect(result.outcome).toBe("invalid");
     expect(result.issues).toContainEqual({
       code: "sothoth.pre-design/scope-bom-member-unknown",
-      subject: "@sothoth/extra-widget",
+      subject: "@project-sothoth/extra-widget",
     });
   });
 
   test("the FRACTA external companion is never an admissible required member", async () => {
     const facts = await formalScopeFacts();
-    const clone = structuredClone(memberOf(facts, "@sothoth/graph"));
+    const clone = structuredClone(memberOf(facts, "@project-sothoth/graph"));
     clone.id = "@fracta/sothoth-profile";
     facts.scopeBom.members.push(clone);
     const result = checkPreDesign(facts);
@@ -527,126 +528,126 @@ describe("formal Architecture Baseline and release Scope BOM admissibility", () 
 
   test("a dropped release member fails closed", async () => {
     const facts = await formalScopeFacts();
-    facts.scopeBom.members = facts.scopeBom.members.filter((member: any) => member.id !== "@sothoth/sdk");
+    facts.scopeBom.members = facts.scopeBom.members.filter((member: any) => member.id !== "@project-sothoth/sdk");
     const result = checkPreDesign(facts);
     expect(result.outcome).toBe("invalid");
     expect(result.issues).toContainEqual({
       code: "sothoth.pre-design/scope-bom-member-missing",
-      subject: "@sothoth/sdk",
+      subject: "@project-sothoth/sdk",
     });
     expect(result.projection.admissible).toBe(false);
   });
 
   test("missing, unknown, duplicated, and unsorted gate criterion identities fail closed", async () => {
     const missingFacts = await formalScopeFacts();
-    const missingGate = memberOf(missingFacts, "@sothoth/git").completionGates[0];
+    const missingGate = memberOf(missingFacts, "@project-sothoth/git").completionGates[0];
     missingGate.criterionIds = missingGate.criterionIds.slice(1);
     expect(checkPreDesign(missingFacts).issues).toContainEqual({
       code: "sothoth.pre-design/scope-bom-criterion-missing",
-      subject: "@sothoth/git",
+      subject: "@project-sothoth/git",
     });
 
     const unknownFacts = await formalScopeFacts();
-    memberOf(unknownFacts, "@sothoth/git").completionGates[0].criterionIds.push("git-unknown-criterion");
+    memberOf(unknownFacts, "@project-sothoth/git").completionGates[0].criterionIds.push("git-unknown-criterion");
     expect(checkPreDesign(unknownFacts).issues).toContainEqual({
       code: "sothoth.pre-design/scope-bom-criterion-unknown",
-      subject: "@sothoth/git:git-unknown-criterion",
+      subject: "@project-sothoth/git:git-unknown-criterion",
     });
 
     const duplicateFacts = await formalScopeFacts();
-    const gates = memberOf(duplicateFacts, "@sothoth/git").completionGates;
+    const gates = memberOf(duplicateFacts, "@project-sothoth/git").completionGates;
     gates.push({
       gateId: "git-extra-gate",
       criterionIds: [gates[0].criterionIds[0]],
     });
     expect(checkPreDesign(duplicateFacts).issues).toContainEqual({
       code: "sothoth.pre-design/scope-bom-criterion-duplicate",
-      subject: `@sothoth/git:${gates[0].criterionIds[0]}`,
+      subject: `@project-sothoth/git:${gates[0].criterionIds[0]}`,
     });
 
     const unsortedFacts = await formalScopeFacts();
-    const unsortedIds = memberOf(unsortedFacts, "@sothoth/contracts").completionGates[0].criterionIds;
+    const unsortedIds = memberOf(unsortedFacts, "@project-sothoth/contracts").completionGates[0].criterionIds;
     unsortedIds.reverse();
     expect(checkPreDesign(unsortedFacts).issues).toContainEqual({
       code: "sothoth.pre-design/scope-bom-criterion-order",
-      subject: "@sothoth/contracts:contracts-dossier-criteria",
+      subject: "@project-sothoth/contracts:contracts-dossier-criteria",
     });
   });
 
   test("invalid, duplicated, and unsorted gate identities fail closed", async () => {
     const malformedFacts = await formalScopeFacts();
-    delete memberOf(malformedFacts, "@sothoth/planning").completionGates[0].criterionIds;
+    delete memberOf(malformedFacts, "@project-sothoth/planning").completionGates[0].criterionIds;
     expect(checkPreDesign(malformedFacts).issues).toContainEqual({
       code: "sothoth.pre-design/scope-bom-gate-invalid",
-      subject: "@sothoth/planning:planning-dossier-criteria",
+      subject: "@project-sothoth/planning:planning-dossier-criteria",
     });
 
     const duplicateFacts = await formalScopeFacts();
-    const gates = memberOf(duplicateFacts, "@sothoth/planning").completionGates;
+    const gates = memberOf(duplicateFacts, "@project-sothoth/planning").completionGates;
     gates.push(structuredClone(gates[0]));
     expect(checkPreDesign(duplicateFacts).issues).toContainEqual({
       code: "sothoth.pre-design/scope-bom-gate-duplicate",
-      subject: "@sothoth/planning:planning-dossier-criteria",
+      subject: "@project-sothoth/planning:planning-dossier-criteria",
     });
 
     const unsortedFacts = await formalScopeFacts();
-    const gate = memberOf(unsortedFacts, "@sothoth/git").completionGates[0];
+    const gate = memberOf(unsortedFacts, "@project-sothoth/git").completionGates[0];
     const ids = gate.criterionIds;
     gate.gateId = "git-zeta-gate";
     gate.criterionIds = [ids[1], ids[4]];
     unsortedFacts.scopeBom.members
-      .find((member: any) => member.id === "@sothoth/git")
+      .find((member: any) => member.id === "@project-sothoth/git")
       .completionGates.push({ gateId: "git-dossier-criteria", criterionIds: [ids[0], ids[2], ids[3]] });
     const result = checkPreDesign(unsortedFacts);
     expect(result.issues).toContainEqual({
       code: "sothoth.pre-design/scope-bom-gate-order",
-      subject: "@sothoth/git",
+      subject: "@project-sothoth/git",
     });
 
     const emptyGateFacts = await formalScopeFacts();
-    memberOf(emptyGateFacts, "@sothoth/git").completionGates.push({
+    memberOf(emptyGateFacts, "@project-sothoth/git").completionGates.push({
       gateId: "git-alpha-gate",
       criterionIds: [],
     });
     expect(checkPreDesign(emptyGateFacts).issues).toContainEqual({
       code: "sothoth.pre-design/scope-bom-gate-invalid",
-      subject: "@sothoth/git:git-alpha-gate",
+      subject: "@project-sothoth/git:git-alpha-gate",
     });
   });
 
   test("empty or missing completion gates fail closed", async () => {
     const emptyFacts = await formalScopeFacts();
-    memberOf(emptyFacts, "@sothoth/profile-sdk").completionGates = [];
+    memberOf(emptyFacts, "@project-sothoth/profile-sdk").completionGates = [];
     expect(checkPreDesign(emptyFacts).issues).toContainEqual({
       code: "sothoth.pre-design/scope-bom-invalid",
-      subject: "@sothoth/profile-sdk:completionGates",
+      subject: "@project-sothoth/profile-sdk:completionGates",
     });
 
     const missingFacts = await formalScopeFacts();
-    delete memberOf(missingFacts, "@sothoth/profile-sdk").completionGates;
+    delete memberOf(missingFacts, "@project-sothoth/profile-sdk").completionGates;
     expect(checkPreDesign(missingFacts).issues).toContainEqual({
       code: "sothoth.pre-design/scope-bom-invalid",
-      subject: "@sothoth/profile-sdk:completionGates",
+      subject: "@project-sothoth/profile-sdk:completionGates",
     });
   });
 
   test("an unresolved or cross-component designRef fails closed and projects unresolved members", async () => {
     const unresolvedFacts = await formalScopeFacts();
-    memberOf(unresolvedFacts, "@sothoth/core").designRef.designRevision = 7;
+    memberOf(unresolvedFacts, "@project-sothoth/core").designRef.designRevision = 7;
     const unresolvedResult = checkPreDesign(unresolvedFacts);
     expect(unresolvedResult.issues).toContainEqual({
       code: "sothoth.pre-design/design-ref-unresolved",
-      subject: "@sothoth/core",
+      subject: "@project-sothoth/core",
     });
 
     const crossFacts = await formalScopeFacts();
-    memberOf(crossFacts, "@sothoth/sdk").designRef = structuredClone(memberOf(crossFacts, "@sothoth/core").designRef);
+    memberOf(crossFacts, "@project-sothoth/sdk").designRef = structuredClone(memberOf(crossFacts, "@project-sothoth/core").designRef);
     const crossResult = checkPreDesign(crossFacts);
     expect(crossResult.issues).toContainEqual({
       code: "sothoth.pre-design/design-ref-component-mismatch",
-      subject: "@sothoth/sdk",
+      subject: "@project-sothoth/sdk",
     });
-    const projected = crossResult.projection.members.find((member: any) => member.componentId === "@sothoth/sdk");
+    const projected = crossResult.projection.members.find((member: any) => member.componentId === "@project-sothoth/sdk");
     expect(projected.designRefResolved).toBe(false);
   });
 
@@ -671,9 +672,9 @@ describe("committed scope Source Facts", () => {
     for (const registration of registrations.registrations) {
       expect(registration.status).toBe("accepted");
       const expectedSupersedes =
-        registration.componentId === "@sothoth/graph" ? "SOTHOTH-GRAPH-DOSSIER@1"
-        : registration.componentId === "@sothoth/document-index" ? "SOTHOTH-DOCUMENT-INDEX-DOSSIER@1"
-        : null;
+        registration.componentId === "@project-sothoth/graph" ? `${registration.designId}@2`
+        : registration.componentId === "@project-sothoth/document-index" ? `${registration.designId}@2`
+        : `${registration.designId}@1`;
       expect(registration.supersedes).toBe(expectedSupersedes);
     }
   });
@@ -683,7 +684,7 @@ describe("committed scope Source Facts", () => {
     expect(Object.keys(baseline).sort(codePointCompare)).toEqual(sortedCodePoint(BASELINE_FIELDS));
     expect(baseline.schema).toBe(BASELINE_SCHEMA);
     expect(baseline.baselineId).toBe(BASELINE_ID);
-    expect(baseline.baselineRevision).toBe(3);
+    expect(baseline.baselineRevision).toBe(4);
     expect(baseline.targetRelease).toBe(TARGET_RELEASE);
     expect(baseline.status).toBe("accepted");
     expect(baseline.acceptedBy).toEqual(COMMITTED_PRINCIPAL);
@@ -722,7 +723,7 @@ describe("committed scope Source Facts", () => {
     expect(Object.keys(bom).sort(codePointCompare)).toEqual(sortedCodePoint(BOM_FIELDS));
     expect(bom.schema).toBe(BOM_SCHEMA);
     expect(bom.bomId).toBe(BOM_ID);
-    expect(bom.bomRevision).toBe(3);
+    expect(bom.bomRevision).toBe(4);
     expect(bom.targetRelease).toBe(TARGET_RELEASE);
     expect(bom.members.map((member: any) => member.id)).toEqual(
       sortedCodePoint(bom.members.map((member: any) => member.id)),
@@ -735,7 +736,7 @@ describe("committed scope Source Facts", () => {
       expect(member.layer).toBe("required");
       expect(member.owner).toBe("sothoth");
       expect(member.designRef.architectureBaselineId).toBe(BASELINE_ID);
-      expect(member.designRef.architectureBaselineRevision).toBe(3);
+      expect(member.designRef.architectureBaselineRevision).toBe(4);
       const registration = byComponent.get(member.id);
       expect(member.designRef.designId).toBe(registration.designId);
       expect(member.designRef.designRevision).toBe(registration.designRevision);
@@ -765,10 +766,10 @@ describe("scope CLI defaults and explicit overrides", () => {
     expect(parsed.projection.memberCount).toBe(11);
     expect(parsed.projection.architectureBaseline).toEqual({
       baselineId: BASELINE_ID,
-      baselineRevision: 3,
+      baselineRevision: 4,
       status: "accepted",
     });
-    expect(parsed.projection.scopeBom).toEqual({ bomId: BOM_ID, bomRevision: 3, targetRelease: TARGET_RELEASE });
+    expect(parsed.projection.scopeBom).toEqual({ bomId: BOM_ID, bomRevision: 4, targetRelease: TARGET_RELEASE });
     expect(`${canonicalJsonStringify(parsed)}\n`).toBe(run.stdout);
   });
 

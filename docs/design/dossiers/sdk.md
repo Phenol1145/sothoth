@@ -1,12 +1,12 @@
-# @sothoth/sdk Artifact Design Dossier
+# @project-sothoth/sdk Artifact Design Dossier
 
 Status: proposed design fact, pending external acceptance
 
-Document identity: `DOC-SOTHOTH-SDK-DOSSIER` revision `1`
+Document identity: `DOC-SOTHOTH-SDK-DOSSIER` revision `2`
 
-Design identity: `SOTHOTH-SDK-DOSSIER` revision `1`
+Design identity: `SOTHOTH-SDK-DOSSIER` revision `2`
 
-Component: `@sothoth/sdk`, candidate of `SOTHOTH-DESIGN-SCOPE-0.1` with `designRequirement: full`
+Component: `@project-sothoth/sdk`, candidate of `SOTHOTH-DESIGN-SCOPE-0.1` with `designRequirement: full`
 
 This Dossier closes the pre-design facts for the aggregate public library facade of Sothoth
 `0.1.0` under the Dossier Document Contract `sothoth.design-dossier/full/v1`. It authorizes no
@@ -17,25 +17,25 @@ Baseline, and a mechanically admissible Scope BOM admit implementation at all.
 
 ## Decision summary
 
-`@sothoth/sdk` is the sole aggregate public library facade. It composes the public capabilities of
+`@project-sothoth/sdk` is the sole aggregate public library facade. It composes the public capabilities of
 the owning packages behind one typed, versioned surface and delegates every semantic operation to
-the package that owns it. It is not the only public package — `@sothoth/contracts` and the domain
+the package that owns it. It is not the only public package — `@project-sothoth/contracts` and the domain
 packages remain publicly consumable — and it is not a second Core: it adds no canonicalization,
 compilation, selection, or scheduling semantics of its own.
 
 The facade owns no domain truth, exposes no mutable singleton, performs no implicit filesystem
 scan, no Git mutation, and no arbitrary process execution, and it never selects a process exit
 code. Expected SDK/domain failures return through the closed typed outcome/diagnostic envelope; the
-process exit mapping belongs to `@sothoth/cli` alone. The SDK does not require or wrap
+process exit mapping belongs to `@project-sothoth/cli` alone. The SDK does not require or wrap
 `CONTRACT/SOTHOTH/GENERIC-GRAPH@1`, whose direct algorithms stay with domain-package consumers.
 
 <!-- sothoth:section id="artifact-identity-and-classification" -->
 
 ## Artifact identity and classification
 
-The artifact is the npm package `@sothoth/sdk`, classified as an aggregate public library facade.
-Its design identity is `SOTHOTH-SDK-DOSSIER@1`, its document identity is
-`DOC-SOTHOTH-SDK-DOSSIER@1`, and it sits directly below `@sothoth/cli` at the top of the internal
+The artifact is the npm package `@project-sothoth/sdk`, classified as an aggregate public library facade.
+Its design identity is `SOTHOTH-SDK-DOSSIER@2`, its document identity is
+`DOC-SOTHOTH-SDK-DOSSIER@2`, and it sits directly below `@project-sothoth/cli` at the top of the internal
 dependency DAG, importing exactly the eight packages whose contracts it directly requires.
 
 It ships compiled ESM plus TypeScript declarations with an explicit exports map. It owns no release
@@ -46,9 +46,9 @@ membership and no domain content; it only re-exposes owned capabilities behind o
 ## Purpose and non-goals
 
 The purpose is one facade: give library consumers a single typed entry point that composes the
-public capabilities of `@sothoth/governance`, `@sothoth/planning`, `@sothoth/document-index`,
-`@sothoth/git`, `@sothoth/profile-sdk`, and `@sothoth/selectors` over the
-`@sothoth/contracts`/`@sothoth/core` foundation, returning closed typed outcomes with Structured
+public capabilities of `@project-sothoth/governance`, `@project-sothoth/planning`, `@project-sothoth/document-index`,
+`@project-sothoth/git`, `@project-sothoth/profile-sdk`, and `@project-sothoth/selectors` over the
+`@project-sothoth/contracts`/`@project-sothoth/core` foundation, returning closed typed outcomes with Structured
 Diagnostics and never choosing process exits.
 
 The non-goals are the facade fence:
@@ -56,7 +56,7 @@ The non-goals are the facade fence:
 ```json
 {
   "kind": "sothoth-dossier/forbidden-capability-declaration@1",
-  "packageId": "@sothoth/sdk",
+  "packageId": "@project-sothoth/sdk",
   "capabilityClasses": {
     "ambient-global-configuration": "forbidden",
     "arbitrary-process-runner": "forbidden",
@@ -96,7 +96,7 @@ exact argument passing, and faithful return of the owner's typed outcome without
 ```json
 {
   "kind": "sothoth-dossier/truth-ownership-declaration@1",
-  "packageId": "@sothoth/sdk",
+  "packageId": "@project-sothoth/sdk",
   "producedStateRefs": [
     "sothoth.sdk/facade-result@1"
   ],
@@ -120,16 +120,16 @@ authority over any domain.
 ```json
 {
   "kind": "sothoth-dossier/public-surface-declaration@1",
-  "packageId": "@sothoth/sdk",
+  "packageId": "@project-sothoth/sdk",
   "publicModules": [
-    "@sothoth/sdk/change-plan",
-    "@sothoth/sdk/check",
-    "@sothoth/sdk/compile",
-    "@sothoth/sdk/diagnostics",
-    "@sothoth/sdk/documents",
-    "@sothoth/sdk/git",
-    "@sothoth/sdk/profiles",
-    "@sothoth/sdk/verify"
+    "@project-sothoth/sdk/change-plan",
+    "@project-sothoth/sdk/check",
+    "@project-sothoth/sdk/compile",
+    "@project-sothoth/sdk/diagnostics",
+    "@project-sothoth/sdk/documents",
+    "@project-sothoth/sdk/git",
+    "@project-sothoth/sdk/profiles",
+    "@project-sothoth/sdk/verify"
   ],
   "surfaceKind": "typed-outcome-library-facade"
 }
@@ -139,7 +139,7 @@ authority over any domain.
 `change-plan` exposes change-plan projection; `documents` exposes indexing, selection, and
 explanation; `git` exposes source snapshots; `profiles` exposes Consumer Profile conformance;
 `verify` exposes projection verification; `diagnostics` exposes the closed diagnostic vocabulary of
-`@sothoth/contracts` for envelope consumers. Primary consumers are `@sothoth/cli` and external
+`@project-sothoth/contracts` for envelope consumers. Primary consumers are `@project-sothoth/cli` and external
 library consumers; everything the facade exposes is a delegation to an owning public package.
 
 <!-- sothoth:section id="core-sdk-protocol-boundary" -->
@@ -152,7 +152,7 @@ out, with no semantic step performed by the facade itself.
 ```json
 {
   "kind": "sothoth-dossier/facade-capability-declaration@1",
-  "packageId": "@sothoth/sdk",
+  "packageId": "@project-sothoth/sdk",
   "facadeKind": "aggregate-public-library-facade",
   "solePublicLibraryFacade": true,
   "secondCore": false,
@@ -161,14 +161,14 @@ out, with no semantic step performed by the facade itself.
   "exposesPrivateCoreCapability": false,
   "delegatesSemanticOperations": true,
   "delegatesTo": [
-    "@sothoth/contracts",
-    "@sothoth/core",
-    "@sothoth/document-index",
-    "@sothoth/git",
-    "@sothoth/governance",
-    "@sothoth/planning",
-    "@sothoth/profile-sdk",
-    "@sothoth/selectors"
+    "@project-sothoth/contracts",
+    "@project-sothoth/core",
+    "@project-sothoth/document-index",
+    "@project-sothoth/git",
+    "@project-sothoth/governance",
+    "@project-sothoth/planning",
+    "@project-sothoth/profile-sdk",
+    "@project-sothoth/selectors"
   ],
   "nonDelegatedSemanticOperations": []
 }
@@ -183,21 +183,21 @@ capability: whatever Core offers beyond `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@
 
 ## Dependency and topology
 
-`@sothoth/sdk` may import exactly the eight packages that own the contracts it directly requires:
+`@project-sothoth/sdk` may import exactly the eight packages that own the contracts it directly requires:
 
 ```json
 {
   "kind": "sothoth-dossier/dependency-declaration@1",
-  "packageId": "@sothoth/sdk",
+  "packageId": "@project-sothoth/sdk",
   "runtimeImportAllowlist": [
-    "@sothoth/contracts",
-    "@sothoth/core",
-    "@sothoth/document-index",
-    "@sothoth/git",
-    "@sothoth/governance",
-    "@sothoth/planning",
-    "@sothoth/profile-sdk",
-    "@sothoth/selectors"
+    "@project-sothoth/contracts",
+    "@project-sothoth/core",
+    "@project-sothoth/document-index",
+    "@project-sothoth/git",
+    "@project-sothoth/governance",
+    "@project-sothoth/planning",
+    "@project-sothoth/profile-sdk",
+    "@project-sothoth/selectors"
   ],
   "providedContracts": [
     "CONTRACT/SOTHOTH/PUBLIC-SDK@1"
@@ -218,7 +218,7 @@ capability: whatever Core offers beyond `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@
 ```
 
 `runtimeImportAllowlist` is the closed runtime and type-level internal import boundary. The facade
-does not import `@sothoth/cli`, does not require or wrap
+does not import `@project-sothoth/cli`, does not require or wrap
 `CONTRACT/SOTHOTH/GENERIC-GRAPH@1`, and obtains no contract or semantics through re-exports or
 transitive acquisition: every consumed semantic contract is direct, and every allowlisted owner
 provides at least one required contract.
@@ -243,7 +243,7 @@ This topic is inherited from the accepted governance control plane design and na
 component: the facade is a non-authority surface, so every authority rule of the control plane
 applies in full while the facade additionally holds none of the domain truths those rules govern.
 
-Inherited from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2`, section `authority-boundary`,
+Inherited from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3`, section `authority-boundary`,
 applicability `narrows`.
 
 The narrowing is the delegation fence declared in `core-sdk-protocol-boundary`: the SDK issues no
@@ -262,7 +262,7 @@ closed instead of being ignored, and the SDK never selects a process exit — no
 ```json
 {
   "kind": "sothoth-dossier/sdk-outcome-declaration@1",
-  "packageId": "@sothoth/sdk",
+  "packageId": "@project-sothoth/sdk",
   "outcomeEnvelope": "closed-typed-outcome-with-diagnostics",
   "selectsProcessExitCode": false,
   "extensionSelectsOutcome": false,
@@ -277,7 +277,7 @@ closed instead of being ignored, and the SDK never selects a process exit — no
 ```json
 {
   "kind": "sothoth-dossier/determinism-declaration@1",
-  "packageId": "@sothoth/sdk",
+  "packageId": "@project-sothoth/sdk",
   "byteStableOutputs": true,
   "stringOrdering": "unicode-code-point",
   "tieBreaking": "canonical-identity-then-diagnostic-code"
@@ -332,7 +332,7 @@ references. No shims, deprecated fields, or automatic rewrites are shipped.
 A library consumer gets one typed facade with full declarations, errors as values, and no implicit
 behavior to reverse-engineer. The deliberate sharp edges are that the facade never guesses a
 missing argument, never defaults a configuration, and never converts a domain failure into a
-process exit — the caller (typically `@sothoth/cli`) owns that mapping explicitly.
+process exit — the caller (typically `@project-sothoth/cli`) owns that mapping explicitly.
 
 Operators see predictable, byte-stable envelopes they can diff and audit; nothing about the facade
 substitutes for the owning packages' semantics.
@@ -344,7 +344,7 @@ substitutes for the owning packages' semantics.
 ```json
 {
   "kind": "sothoth-dossier/verification-criteria@1",
-  "packageId": "@sothoth/sdk",
+  "packageId": "@project-sothoth/sdk",
   "criteria": [
     {
       "criterionId": "sdk-facade-delegation-only",
@@ -393,7 +393,7 @@ extension outcome selection, or exit-code authority.
 
 ## Traceability and exact references
 
-This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` sections `decision`,
+This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3` sections `decision`,
 `authority-boundary`, `package-architecture`, `pre-design-boundary`, and
 `diagnostics-and-process-outcomes`; to the ten directly required contracts
 `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1`, `CONTRACT/SOTHOTH/CHANGE-PLAN@1`,
@@ -401,10 +401,10 @@ This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` sections 
 `CONTRACT/SOTHOTH/GIT-SOURCE-SNAPSHOT@1`, `CONTRACT/SOTHOTH/GOVERNANCE-COMPILATION@1`,
 `CONTRACT/SOTHOTH/PLANNING@1`, `CONTRACT/SOTHOTH/PRE-DESIGN@1`, `CONTRACT/SOTHOTH/SCHEMAS@1`, and
 `CONTRACT/SOTHOTH/SELECTOR@1`, each consumed directly from its owning package; and to the catalog
-candidate `@sothoth/sdk` in `SOTHOTH-DESIGN-SCOPE-0.1@1`.
+candidate `@project-sothoth/sdk` in `SOTHOTH-DESIGN-SCOPE-0.1@1`.
 
-The registration for this component is `SOTHOTH-SDK-DOSSIER@1` bound to
-`DOC-SOTHOTH-SDK-DOSSIER@1`, providing `CONTRACT/SOTHOTH/PUBLIC-SDK@1` and requiring exactly the
+The registration for this component is `SOTHOTH-SDK-DOSSIER@2` bound to
+`DOC-SOTHOTH-SDK-DOSSIER@2`, providing `CONTRACT/SOTHOTH/PUBLIC-SDK@1` and requiring exactly the
 ten contracts above. Every reference uses the exact grammar
 `<identity>@<positive integer revision>`; paths, bare names, and `latest` are forbidden.
 
@@ -424,6 +424,6 @@ Seventeen of the eighteen closed topics are resolved locally by this Dossier: `i
 `compatibility-and-migration`; `developer-and-operator-experience` by
 `developer-and-operator-experience`; `verification` by `verification-and-acceptance-criteria`; and
 `future-compatibility` by `future-capability-compatibility`. `authority-and-security` is inherited
-exactly from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` section `authority-boundary` with
+exactly from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3` section `authority-boundary` with
 applicability `narrows`; the non-authority delegation fence is the narrowing declared in that
 section.

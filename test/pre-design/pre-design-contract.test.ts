@@ -147,7 +147,7 @@ function validRegistration(componentId: string, designId: string) {
   CLOSED_TOPICS.forEach((topic, index) => {
     topicCoverage[topic] = localTopic(REQUIRED_SECTIONS[index]);
   });
-  const isContracts = componentId === "@sothoth/contracts";
+  const isContracts = componentId === "@project-sothoth/contracts";
   return {
     designId,
     componentId,
@@ -156,8 +156,8 @@ function validRegistration(componentId: string, designId: string) {
     status: "proposed",
     documentRef: { documentId: FIXTURE_DOSSIER_ID, documentRevision: 1 },
     topicCoverage,
-    providedContractRefs: isContracts ? ["@sothoth/contracts@1"] : [],
-    requiredContractRefs: isContracts ? [] : ["@sothoth/contracts@1"],
+    providedContractRefs: isContracts ? ["@project-sothoth/contracts@1"] : [],
+    requiredContractRefs: isContracts ? [] : ["@project-sothoth/contracts@1"],
     producedStateRefs: [`${componentId}:state@1`],
     consumedStateRefs: [],
     issuedAuthorityRefs: [],
@@ -275,7 +275,7 @@ async function scopePhaseFacts(): Promise<any> {
         },
         completionGates: [
           {
-            gateId: `${candidate.componentId.slice("@sothoth/".length)}-dossier-criteria`,
+            gateId: `${candidate.componentId.slice("@project-sothoth/".length)}-dossier-criteria`,
             criterionIds: ["criterion-1"],
           },
         ],
@@ -295,11 +295,11 @@ describe("bootstrap dossier contract artifacts", () => {
     expect(contract.topics.inheritanceApplicability).toEqual(["adopts", "narrows", "specializes"]);
   });
 
-  test("document registry pins the local design capsule at revision 2 with Task 1 section IDs", async () => {
+  test("document registry pins the local design capsule at revision 3 with Task 1 section IDs", async () => {
     const registry = await readJson(REGISTRY_PATH);
     const capsule = registry.documents.find((document: any) => document.documentId === DESIGN_CAPSULE_ID);
     expect(capsule).toBeDefined();
-    expect(capsule.documentRevision).toBe(2);
+    expect(capsule.documentRevision).toBe(3);
     expect(capsule.sectionIds).toEqual(CAPSULE_SECTION_IDS);
   });
 
@@ -307,7 +307,7 @@ describe("bootstrap dossier contract artifacts", () => {
     const registrations = await readJson(REGISTRATIONS_PATH);
     expect(registrations.schema).toBe("sothoth.artifact-design-registrations/v1");
     expect(registrations.collectionId).toBe("SOTHOTH-ARTIFACT-DESIGN-REGISTRATIONS");
-    expect(registrations.collectionRevision).toBe(3);
+    expect(registrations.collectionRevision).toBe(4);
     expect(Array.isArray(registrations.registrations)).toBe(true);
     const registrationFields = [
       "acceptanceCriteria",
@@ -413,46 +413,46 @@ describe("checkPreDesign phased validation", () => {
 
   test("rejects an unknown topic outside the closed set", async () => {
     const facts = await baseFacts();
-    registrationOf(facts, "@sothoth/core").topicCoverage["surprise-topic"] = localTopic("identity");
+    registrationOf(facts, "@project-sothoth/core").topicCoverage["surprise-topic"] = localTopic("identity");
     expect(checkPreDesign(facts).issues).toContainEqual({
       code: "sothoth.pre-design/topic-unknown",
-      subject: "@sothoth/core:surprise-topic",
+      subject: "@project-sothoth/core:surprise-topic",
     });
   });
 
   test("rejects a missing topic from the closed set", async () => {
     const facts = await baseFacts();
-    delete registrationOf(facts, "@sothoth/core").topicCoverage["verification"];
+    delete registrationOf(facts, "@project-sothoth/core").topicCoverage["verification"];
     expect(checkPreDesign(facts).issues).toContainEqual({
       code: "sothoth.pre-design/topic-missing",
-      subject: "@sothoth/core:verification",
+      subject: "@project-sothoth/core:verification",
     });
   });
 
   test("rejects two registrations for one component", async () => {
     const facts = await baseFacts();
-    const core = registrationOf(facts, "@sothoth/core");
+    const core = registrationOf(facts, "@project-sothoth/core");
     facts.registrations.registrations.push(structuredClone(core));
     expect(checkPreDesign(facts).issues).toContainEqual({
       code: "sothoth.pre-design/registration-duplicate",
-      subject: "@sothoth/core",
+      subject: "@project-sothoth/core",
     });
   });
 
   test("rejects an orphan registration for an unknown component", async () => {
     const facts = await baseFacts();
-    const orphan = structuredClone(registrationOf(facts, "@sothoth/core"));
-    orphan.componentId = "@sothoth/orphan-example";
+    const orphan = structuredClone(registrationOf(facts, "@project-sothoth/core"));
+    orphan.componentId = "@project-sothoth/orphan-example";
     facts.registrations.registrations.push(orphan);
     expect(checkPreDesign(facts).issues).toContainEqual({
       code: "sothoth.pre-design/registration-orphan",
-      subject: "@sothoth/orphan-example",
+      subject: "@project-sothoth/orphan-example",
     });
   });
 
   test("rejects the forbidden overrides applicability", async () => {
     const facts = await baseFacts();
-    registrationOf(facts, "@sothoth/core").topicCoverage["truth-ownership"] = {
+    registrationOf(facts, "@project-sothoth/core").topicCoverage["truth-ownership"] = {
       resolution: "inherited",
       sectionId: null,
       refs: [
@@ -467,13 +467,13 @@ describe("checkPreDesign phased validation", () => {
     };
     expect(checkPreDesign(facts).issues).toContainEqual({
       code: "sothoth.pre-design/inheritance-overrides-forbidden",
-      subject: "@sothoth/core:truth-ownership",
+      subject: "@project-sothoth/core:truth-ownership",
     });
   });
 
   test("rejects bare path inheritance that is not an exact reference", async () => {
     const facts = await baseFacts();
-    registrationOf(facts, "@sothoth/core").topicCoverage["truth-ownership"] = {
+    registrationOf(facts, "@project-sothoth/core").topicCoverage["truth-ownership"] = {
       resolution: "inherited",
       sectionId: null,
       refs: [{ path: "docs/design/governance-control-plane.md", applicability: "adopts" }],
@@ -481,7 +481,7 @@ describe("checkPreDesign phased validation", () => {
     };
     expect(checkPreDesign(facts).issues).toContainEqual({
       code: "sothoth.pre-design/reference-not-exact",
-      subject: "@sothoth/core:truth-ownership",
+      subject: "@project-sothoth/core:truth-ownership",
     });
   });
 
@@ -513,17 +513,17 @@ describe("checkPreDesign phased validation", () => {
 
   test("closure phase rejects a registration without acceptance criteria", async () => {
     const facts = await baseFacts();
-    registrationOf(facts, "@sothoth/core").acceptanceCriteria = [];
+    registrationOf(facts, "@project-sothoth/core").acceptanceCriteria = [];
     expect(checkPreDesign(facts).issues).toContainEqual({
       code: "sothoth.pre-design/criterion-missing",
-      subject: "@sothoth/core",
+      subject: "@project-sothoth/core",
     });
   });
 
   test("dossiers phase tolerates empty criteria before closure is demanded", async () => {
     const facts = await baseFacts();
     facts.phase = "dossiers";
-    registrationOf(facts, "@sothoth/core").acceptanceCriteria = [];
+    registrationOf(facts, "@project-sothoth/core").acceptanceCriteria = [];
     const result = checkPreDesign(facts);
     expect(result.issues).toEqual([]);
     expect(result.outcome).toBe("valid");
@@ -531,27 +531,27 @@ describe("checkPreDesign phased validation", () => {
 
   test("rejects a Producer/Consumer contract revision mismatch", async () => {
     const facts = await baseFacts();
-    registrationOf(facts, "@sothoth/core").requiredContractRefs = ["@sothoth/contracts@2"];
+    registrationOf(facts, "@project-sothoth/core").requiredContractRefs = ["@project-sothoth/contracts@2"];
     expect(checkPreDesign(facts).issues).toContainEqual({
       code: "sothoth.pre-design/contract-revision-mismatch",
-      subject: "@sothoth/contracts",
+      subject: "@project-sothoth/contracts",
     });
   });
 
   test("rejects two registrations claiming the same truth", async () => {
     const facts = await baseFacts();
-    registrationOf(facts, "@sothoth/sdk").producedStateRefs.push("@sothoth/core:state@1");
+    registrationOf(facts, "@project-sothoth/sdk").producedStateRefs.push("@project-sothoth/core:state@1");
     expect(checkPreDesign(facts).issues).toContainEqual({
       code: "sothoth.pre-design/truth-owner-duplicate",
-      subject: "@sothoth/core:state@1",
+      subject: "@project-sothoth/core:state@1",
     });
   });
 
   test("accepts exact inheritance resolved into the registered design capsule", async () => {
     const facts = await baseFacts();
-    registrationOf(facts, "@sothoth/core").topicCoverage["truth-ownership"] = inheritedTopic(
+    registrationOf(facts, "@project-sothoth/core").topicCoverage["truth-ownership"] = inheritedTopic(
       DESIGN_CAPSULE_ID,
-      2,
+      3,
       "authority-boundary",
     );
     const result = checkPreDesign(facts);
@@ -561,7 +561,7 @@ describe("checkPreDesign phased validation", () => {
 
   test("rejects a resolution whose refs field is not an array, without crashing", async () => {
     const facts = await baseFacts();
-    registrationOf(facts, "@sothoth/core").topicCoverage["truth-ownership"] = {
+    registrationOf(facts, "@project-sothoth/core").topicCoverage["truth-ownership"] = {
       resolution: "inherited",
       sectionId: null,
       refs: 42,
@@ -569,7 +569,7 @@ describe("checkPreDesign phased validation", () => {
     };
     expect(checkPreDesign(facts).issues).toContainEqual({
       code: "sothoth.pre-design/topic-resolution-invalid",
-      subject: "@sothoth/core:truth-ownership",
+      subject: "@project-sothoth/core:truth-ownership",
     });
   });
 
@@ -583,16 +583,16 @@ describe("checkPreDesign phased validation", () => {
       sectionIds: [...REQUIRED_SECTIONS],
     });
     facts.documents[FIXTURE_DOSSIER_B_ID] = dossierMarkdown();
-    registrationOf(facts, "@sothoth/sdk").documentRef = {
+    registrationOf(facts, "@project-sothoth/sdk").documentRef = {
       documentId: FIXTURE_DOSSIER_B_ID,
       documentRevision: 1,
     };
-    registrationOf(facts, "@sothoth/core").topicCoverage["identity"] = inheritedTopic(
+    registrationOf(facts, "@project-sothoth/core").topicCoverage["identity"] = inheritedTopic(
       FIXTURE_DOSSIER_B_ID,
       1,
       "decision-summary",
     );
-    registrationOf(facts, "@sothoth/sdk").topicCoverage["identity"] = inheritedTopic(
+    registrationOf(facts, "@project-sothoth/sdk").topicCoverage["identity"] = inheritedTopic(
       FIXTURE_DOSSIER_ID,
       1,
       "decision-summary",
@@ -637,10 +637,10 @@ describe("checkPreDesign phased validation", () => {
 
   test("scope phase rejects a proposed Dossier referenced by a Scope BOM", async () => {
     const facts = await scopePhaseFacts();
-    registrationOf(facts, "@sothoth/core").status = "proposed";
+    registrationOf(facts, "@project-sothoth/core").status = "proposed";
     expect(checkPreDesign(facts).issues).toContainEqual({
       code: "sothoth.pre-design/registration-not-accepted",
-      subject: "@sothoth/core",
+      subject: "@project-sothoth/core",
     });
   });
 
@@ -683,25 +683,25 @@ describe("fix round 1: exact bootstrap references", () => {
     ["deploymentDependencyRefs"],
   ])("rejects a bare reference in %s", async (field: string) => {
     const facts = await baseFacts();
-    registrationOf(facts, "@sothoth/core")[field] = ["core-state-latest"];
+    registrationOf(facts, "@project-sothoth/core")[field] = ["core-state-latest"];
     expect(checkPreDesign(facts).issues).toContainEqual({
       code: "sothoth.pre-design/reference-not-exact",
-      subject: `@sothoth/core:${field}:core-state-latest`,
+      subject: `@project-sothoth/core:${field}:core-state-latest`,
     });
   });
 
   test("rejects a zero revision in an exact state reference", async () => {
     const facts = await baseFacts();
-    registrationOf(facts, "@sothoth/core").producedStateRefs = ["@sothoth/core:state@0"];
+    registrationOf(facts, "@project-sothoth/core").producedStateRefs = ["@project-sothoth/core:state@0"];
     expect(checkPreDesign(facts).issues).toContainEqual({
       code: "sothoth.pre-design/reference-not-exact",
-      subject: "@sothoth/core:producedStateRefs:@sothoth/core:state@0",
+      subject: "@project-sothoth/core:producedStateRefs:@project-sothoth/core:state@0",
     });
   });
 
   test("accepts scoped identities carrying a positive revision", async () => {
     const facts = await baseFacts();
-    registrationOf(facts, "@sothoth/core").producedStateRefs = ["@sothoth/core:state@2"];
+    registrationOf(facts, "@project-sothoth/core").producedStateRefs = ["@project-sothoth/core:state@2"];
     const result = checkPreDesign(facts);
     expect(result.outcome).toBe("valid");
     expect(result.issues).toEqual([]);
@@ -712,45 +712,45 @@ describe("fix round 1: Scope BOM membership and designRef binding", () => {
   test("scope phase rejects a Scope BOM that drops a candidate member", async () => {
     const facts = await scopePhaseFacts();
     facts.scopeBom.members = facts.scopeBom.members.filter(
-      (member: any) => member.id !== "@sothoth/sdk",
+      (member: any) => member.id !== "@project-sothoth/sdk",
     );
     const result = checkPreDesign(facts);
     expect(result.outcome).toBe("invalid");
     expect(result.issues).toContainEqual({
       code: "sothoth.pre-design/scope-bom-member-missing",
-      subject: "@sothoth/sdk",
+      subject: "@project-sothoth/sdk",
     });
     expect(result.projection.admissible).toBe(false);
   });
 
   test("scope phase rejects a non-candidate member even when it copies a valid designRef", async () => {
     const facts = await scopePhaseFacts();
-    const core = facts.scopeBom.members.find((member: any) => member.id === "@sothoth/core");
+    const core = facts.scopeBom.members.find((member: any) => member.id === "@project-sothoth/core");
     facts.scopeBom.members.push({
       ...structuredClone(core),
-      id: "@sothoth/extra-widget",
+      id: "@project-sothoth/extra-widget",
     });
     const result = checkPreDesign(facts);
     expect(result.outcome).toBe("invalid");
     expect(result.issues).toContainEqual({
       code: "sothoth.pre-design/scope-bom-member-unknown",
-      subject: "@sothoth/extra-widget",
+      subject: "@project-sothoth/extra-widget",
     });
   });
 
   test("scope phase rejects a member whose designRef belongs to another component", async () => {
     const facts = await scopePhaseFacts();
-    const core = facts.scopeBom.members.find((member: any) => member.id === "@sothoth/core");
-    const sdk = facts.scopeBom.members.find((member: any) => member.id === "@sothoth/sdk");
+    const core = facts.scopeBom.members.find((member: any) => member.id === "@project-sothoth/core");
+    const sdk = facts.scopeBom.members.find((member: any) => member.id === "@project-sothoth/sdk");
     sdk.designRef = structuredClone(core.designRef);
     const result = checkPreDesign(facts);
     expect(result.outcome).toBe("invalid");
     expect(result.issues).toContainEqual({
       code: "sothoth.pre-design/design-ref-component-mismatch",
-      subject: "@sothoth/sdk",
+      subject: "@project-sothoth/sdk",
     });
     const projected = result.projection.members.find(
-      (member: any) => member.componentId === "@sothoth/sdk",
+      (member: any) => member.componentId === "@project-sothoth/sdk",
     );
     expect(projected.designRefResolved).toBe(false);
   });
@@ -788,15 +788,15 @@ describe("fix round 1: Source Facts digest and deterministic projections", () =>
     const facts = await baseFacts();
     const first = checkPreDesign(facts);
     const edited = structuredClone(facts);
-    const coverage = registrationOf(edited, "@sothoth/core").topicCoverage;
+    const coverage = registrationOf(edited, "@project-sothoth/core").topicCoverage;
     const identity = coverage["identity"];
     coverage["identity"] = coverage["intent-and-non-goals"];
     coverage["intent-and-non-goals"] = identity;
     const second = checkPreDesign(edited);
     expect(second.outcome).toBe("valid");
-    const firstCore = first.projection.members.find((member: any) => member.componentId === "@sothoth/core");
+    const firstCore = first.projection.members.find((member: any) => member.componentId === "@project-sothoth/core");
     const secondCore = second.projection.members.find(
-      (member: any) => member.componentId === "@sothoth/core",
+      (member: any) => member.componentId === "@project-sothoth/core",
     );
     expect(secondCore.localTopics).toBe(firstCore.localTopics);
     expect(secondCore.inheritedTopics).toBe(firstCore.inheritedTopics);

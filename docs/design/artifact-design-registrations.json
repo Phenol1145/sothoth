@@ -1,17 +1,17 @@
 {
   "schema": "sothoth.artifact-design-registrations/v1",
   "collectionId": "SOTHOTH-ARTIFACT-DESIGN-REGISTRATIONS",
-  "collectionRevision": 3,
+  "collectionRevision": 4,
   "registrations": [
     {
       "designId": "SOTHOTH-CLI-DOSSIER",
-      "componentId": "@sothoth/cli",
-      "designRevision": 1,
+      "componentId": "@project-sothoth/cli",
+      "designRevision": 2,
       "designRequirement": "full",
       "status": "accepted",
       "documentRef": {
         "documentId": "DOC-SOTHOTH-CLI-DOSSIER",
-        "documentRevision": 1
+        "documentRevision": 2
       },
       "topicCoverage": {
         "identity": { "resolution": "local", "sectionId": "artifact-identity-and-classification", "refs": [], "reason": null },
@@ -29,7 +29,7 @@
           "refs": [
             {
               "documentId": "DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN",
-              "documentRevision": 2,
+              "documentRevision": 3,
               "sectionId": "authority-boundary",
               "applicability": "specializes"
             }
@@ -60,17 +60,17 @@
         { "criterionId": "cli-sdk-only-import-boundary", "sectionId": "verification-and-acceptance-criteria" },
         { "criterionId": "cli-stdout-single-document", "sectionId": "verification-and-acceptance-criteria" }
       ],
-      "supersedes": null
+      "supersedes": "SOTHOTH-CLI-DOSSIER@1"
     },
     {
       "designId": "SOTHOTH-CONTRACTS-DOSSIER",
-      "componentId": "@sothoth/contracts",
-      "designRevision": 1,
+      "componentId": "@project-sothoth/contracts",
+      "designRevision": 2,
       "designRequirement": "full",
       "status": "accepted",
       "documentRef": {
         "documentId": "DOC-SOTHOTH-CONTRACTS-DOSSIER",
-        "documentRevision": 1
+        "documentRevision": 2
       },
       "topicCoverage": {
         "identity": { "resolution": "local", "sectionId": "artifact-identity-and-classification", "refs": [], "reason": null },
@@ -88,7 +88,7 @@
           "refs": [
             {
               "documentId": "DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN",
-              "documentRevision": 2,
+              "documentRevision": 3,
               "sectionId": "authority-boundary",
               "applicability": "narrows"
             }
@@ -117,17 +117,17 @@
         { "criterionId": "contracts-zero-dependency-floor", "sectionId": "verification-and-acceptance-criteria" },
         { "criterionId": "contracts-identity-code-point-order", "sectionId": "verification-and-acceptance-criteria" }
       ],
-      "supersedes": null
+      "supersedes": "SOTHOTH-CONTRACTS-DOSSIER@1"
     },
     {
       "designId": "SOTHOTH-CORE-DOSSIER",
-      "componentId": "@sothoth/core",
-      "designRevision": 1,
+      "componentId": "@project-sothoth/core",
+      "designRevision": 2,
       "designRequirement": "full",
       "status": "accepted",
       "documentRef": {
         "documentId": "DOC-SOTHOTH-CORE-DOSSIER",
-        "documentRevision": 1
+        "documentRevision": 2
       },
       "topicCoverage": {
         "identity": { "resolution": "local", "sectionId": "artifact-identity-and-classification", "refs": [], "reason": null },
@@ -145,7 +145,7 @@
           "refs": [
             {
               "documentId": "DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN",
-              "documentRevision": 2,
+              "documentRevision": 3,
               "sectionId": "authority-boundary",
               "applicability": "adopts"
             }
@@ -174,17 +174,17 @@
         { "criterionId": "core-canonical-byte-stability", "sectionId": "verification-and-acceptance-criteria" },
         { "criterionId": "core-outcome-aggregation-closure", "sectionId": "verification-and-acceptance-criteria" }
       ],
-      "supersedes": null
+      "supersedes": "SOTHOTH-CORE-DOSSIER@1"
     },
     {
       "designId": "SOTHOTH-DOCUMENT-INDEX-DOSSIER",
-      "componentId": "@sothoth/document-index",
-      "designRevision": 2,
+      "componentId": "@project-sothoth/document-index",
+      "designRevision": 3,
       "designRequirement": "full",
       "status": "accepted",
       "documentRef": {
         "documentId": "DOC-SOTHOTH-DOCUMENT-INDEX-DOSSIER",
-        "documentRevision": 2
+        "documentRevision": 3
       },
       "topicCoverage": {
         "identity": { "resolution": "local", "sectionId": "artifact-identity-and-classification", "refs": [], "reason": null },
@@ -202,7 +202,7 @@
           "refs": [
             {
               "documentId": "DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN",
-              "documentRevision": 2,
+              "documentRevision": 3,
               "sectionId": "authority-boundary",
               "applicability": "adopts"
             }
@@ -235,17 +235,17 @@
         { "criterionId": "document-index-deterministic-index-projection", "sectionId": "verification-and-acceptance-criteria" },
         { "criterionId": "document-index-cache-byte-neutrality", "sectionId": "verification-and-acceptance-criteria" }
       ],
-      "supersedes": "SOTHOTH-DOCUMENT-INDEX-DOSSIER@1"
+      "supersedes": "SOTHOTH-DOCUMENT-INDEX-DOSSIER@2"
     },
     {
       "designId": "SOTHOTH-GIT-DOSSIER",
-      "componentId": "@sothoth/git",
-      "designRevision": 1,
+      "componentId": "@project-sothoth/git",
+      "designRevision": 2,
       "designRequirement": "full",
       "status": "accepted",
       "documentRef": {
         "documentId": "DOC-SOTHOTH-GIT-DOSSIER",
-        "documentRevision": 1
+        "documentRevision": 2
       },
       "topicCoverage": {
         "identity": { "resolution": "local", "sectionId": "artifact-identity-and-classification", "refs": [], "reason": null },
@@ -263,7 +263,7 @@
           "refs": [
             {
               "documentId": "DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN",
-              "documentRevision": 2,
+              "documentRevision": 3,
               "sectionId": "authority-boundary",
               "applicability": "adopts"
             }
@@ -301,17 +301,17 @@
         { "criterionId": "git-provenance-separation", "sectionId": "verification-and-acceptance-criteria" },
         { "criterionId": "git-snapshot-budget-fail-closed", "sectionId": "verification-and-acceptance-criteria" }
       ],
-      "supersedes": null
+      "supersedes": "SOTHOTH-GIT-DOSSIER@1"
     },
     {
       "designId": "SOTHOTH-GOVERNANCE-DOSSIER",
-      "componentId": "@sothoth/governance",
-      "designRevision": 1,
+      "componentId": "@project-sothoth/governance",
+      "designRevision": 2,
       "designRequirement": "full",
       "status": "accepted",
       "documentRef": {
         "documentId": "DOC-SOTHOTH-GOVERNANCE-DOSSIER",
-        "documentRevision": 1
+        "documentRevision": 2
       },
       "topicCoverage": {
         "identity": { "resolution": "local", "sectionId": "artifact-identity-and-classification", "refs": [], "reason": null },
@@ -329,7 +329,7 @@
           "refs": [
             {
               "documentId": "DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN",
-              "documentRevision": 2,
+              "documentRevision": 3,
               "sectionId": "authority-boundary",
               "applicability": "narrows"
             }
@@ -378,17 +378,17 @@
         { "criterionId": "governance-projection-rebuild-determinism", "sectionId": "verification-and-acceptance-criteria" },
         { "criterionId": "governance-gate-macro-static-expansion", "sectionId": "verification-and-acceptance-criteria" }
       ],
-      "supersedes": null
+      "supersedes": "SOTHOTH-GOVERNANCE-DOSSIER@1"
     },
     {
       "designId": "SOTHOTH-GRAPH-DOSSIER",
-      "componentId": "@sothoth/graph",
-      "designRevision": 2,
+      "componentId": "@project-sothoth/graph",
+      "designRevision": 3,
       "designRequirement": "full",
       "status": "accepted",
       "documentRef": {
         "documentId": "DOC-SOTHOTH-GRAPH-DOSSIER",
-        "documentRevision": 2
+        "documentRevision": 3
       },
       "topicCoverage": {
         "identity": { "resolution": "local", "sectionId": "artifact-identity-and-classification", "refs": [], "reason": null },
@@ -406,7 +406,7 @@
           "refs": [
             {
               "documentId": "DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN",
-              "documentRevision": 2,
+              "documentRevision": 3,
               "sectionId": "authority-boundary",
               "applicability": "adopts"
             }
@@ -419,7 +419,7 @@
           "resolution": "not-applicable",
           "sectionId": null,
           "refs": [],
-          "reason": "@sothoth/graph computes pure results over caller-provided nodes, edges, weights, and sort keys; every diagnostic, audit trail, and observation identity is declared by @sothoth/contracts and aggregated by @sothoth/core or the consuming domain compiler, so the graph package owns no observation or audit surface of its own."
+          "reason": "@project-sothoth/graph computes pure results over caller-provided nodes, edges, weights, and sort keys; every diagnostic, audit trail, and observation identity is declared by @project-sothoth/contracts and aggregated by @project-sothoth/core or the consuming domain compiler, so the graph package owns no observation or audit surface of its own."
         },
         "deployment-and-configuration": { "resolution": "local", "sectionId": "deployment-configuration-and-operations", "refs": [], "reason": null },
         "compatibility-and-migration": { "resolution": "local", "sectionId": "compatibility-and-migration", "refs": [], "reason": null },
@@ -440,17 +440,17 @@
         { "criterionId": "graph-zero-domain-semantics", "sectionId": "verification-and-acceptance-criteria" },
         { "criterionId": "graph-deterministic-waves", "sectionId": "verification-and-acceptance-criteria" }
       ],
-      "supersedes": "SOTHOTH-GRAPH-DOSSIER@1"
+      "supersedes": "SOTHOTH-GRAPH-DOSSIER@2"
     },
     {
       "designId": "SOTHOTH-PLANNING-DOSSIER",
-      "componentId": "@sothoth/planning",
-      "designRevision": 1,
+      "componentId": "@project-sothoth/planning",
+      "designRevision": 2,
       "designRequirement": "full",
       "status": "accepted",
       "documentRef": {
         "documentId": "DOC-SOTHOTH-PLANNING-DOSSIER",
-        "documentRevision": 1
+        "documentRevision": 2
       },
       "topicCoverage": {
         "identity": { "resolution": "local", "sectionId": "artifact-identity-and-classification", "refs": [], "reason": null },
@@ -468,7 +468,7 @@
           "refs": [
             {
               "documentId": "DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN",
-              "documentRevision": 2,
+              "documentRevision": 3,
               "sectionId": "authority-boundary",
               "applicability": "narrows"
             }
@@ -503,17 +503,17 @@
         { "criterionId": "planning-single-schedule-solution", "sectionId": "verification-and-acceptance-criteria" },
         { "criterionId": "planning-source-fact-read-only", "sectionId": "verification-and-acceptance-criteria" }
       ],
-      "supersedes": null
+      "supersedes": "SOTHOTH-PLANNING-DOSSIER@1"
     },
     {
       "designId": "SOTHOTH-PROFILE-SDK-DOSSIER",
-      "componentId": "@sothoth/profile-sdk",
-      "designRevision": 1,
+      "componentId": "@project-sothoth/profile-sdk",
+      "designRevision": 2,
       "designRequirement": "full",
       "status": "accepted",
       "documentRef": {
         "documentId": "DOC-SOTHOTH-PROFILE-SDK-DOSSIER",
-        "documentRevision": 1
+        "documentRevision": 2
       },
       "topicCoverage": {
         "identity": { "resolution": "local", "sectionId": "artifact-identity-and-classification", "refs": [], "reason": null },
@@ -531,7 +531,7 @@
           "refs": [
             {
               "documentId": "DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN",
-              "documentRevision": 2,
+              "documentRevision": 3,
               "sectionId": "authority-boundary",
               "applicability": "specializes"
             }
@@ -564,17 +564,17 @@
         { "criterionId": "profile-impact-no-ordering", "sectionId": "verification-and-acceptance-criteria" },
         { "criterionId": "profile-skills-curated-exact-only", "sectionId": "verification-and-acceptance-criteria" }
       ],
-      "supersedes": null
+      "supersedes": "SOTHOTH-PROFILE-SDK-DOSSIER@1"
     },
     {
       "designId": "SOTHOTH-SDK-DOSSIER",
-      "componentId": "@sothoth/sdk",
-      "designRevision": 1,
+      "componentId": "@project-sothoth/sdk",
+      "designRevision": 2,
       "designRequirement": "full",
       "status": "accepted",
       "documentRef": {
         "documentId": "DOC-SOTHOTH-SDK-DOSSIER",
-        "documentRevision": 1
+        "documentRevision": 2
       },
       "topicCoverage": {
         "identity": { "resolution": "local", "sectionId": "artifact-identity-and-classification", "refs": [], "reason": null },
@@ -592,7 +592,7 @@
           "refs": [
             {
               "documentId": "DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN",
-              "documentRevision": 2,
+              "documentRevision": 3,
               "sectionId": "authority-boundary",
               "applicability": "narrows"
             }
@@ -634,17 +634,17 @@
         { "criterionId": "sdk-no-exit-code-authority", "sectionId": "verification-and-acceptance-criteria" },
         { "criterionId": "sdk-no-generic-graph-wrap", "sectionId": "verification-and-acceptance-criteria" }
       ],
-      "supersedes": null
+      "supersedes": "SOTHOTH-SDK-DOSSIER@1"
     },
     {
       "designId": "SOTHOTH-SELECTORS-DOSSIER",
-      "componentId": "@sothoth/selectors",
-      "designRevision": 1,
+      "componentId": "@project-sothoth/selectors",
+      "designRevision": 2,
       "designRequirement": "full",
       "status": "accepted",
       "documentRef": {
         "documentId": "DOC-SOTHOTH-SELECTORS-DOSSIER",
-        "documentRevision": 1
+        "documentRevision": 2
       },
       "topicCoverage": {
         "identity": { "resolution": "local", "sectionId": "artifact-identity-and-classification", "refs": [], "reason": null },
@@ -662,7 +662,7 @@
           "refs": [
             {
               "documentId": "DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN",
-              "documentRevision": 2,
+              "documentRevision": 3,
               "sectionId": "authority-boundary",
               "applicability": "adopts"
             }
@@ -699,7 +699,7 @@
         { "criterionId": "selectors-hostile-input-budgets", "sectionId": "verification-and-acceptance-criteria" },
         { "criterionId": "selectors-order-independence", "sectionId": "verification-and-acceptance-criteria" }
       ],
-      "supersedes": null
+      "supersedes": "SOTHOTH-SELECTORS-DOSSIER@1"
     }
   ]
 }

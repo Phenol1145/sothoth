@@ -12,7 +12,7 @@ const REGISTRY_PATH = `${root}/docs/design/document-registry.json`;
 const REGISTRATIONS_PATH = `${root}/docs/design/artifact-design-registrations.json`;
 
 const CAPSULE_ID = "DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN";
-const CAPSULE_REVISION = 2;
+const CAPSULE_REVISION = 3;
 const CAPSULE_AUTHORITY_SECTION = "authority-boundary";
 const FIXTURE_DOSSIER_ID = "DOC-FIXTURE-INTEGRATION-PACKAGE-DOSSIER";
 
@@ -196,20 +196,20 @@ const GIT_WORKSPACE_BYTE_CLASSES = ["head", "index", "unstaged", "untracked"];
 
 const INTEGRATION: IntegrationSpec[] = [
   {
-    packageId: "@sothoth/git",
+    packageId: "@project-sothoth/git",
     designId: "SOTHOTH-GIT-DOSSIER",
     documentId: "DOC-SOTHOTH-GIT-DOSSIER",
     path: "docs/design/dossiers/git.md",
     dependency: {
       kind: DEPENDENCY_KIND,
-      packageId: "@sothoth/git",
-      runtimeImportAllowlist: ["@sothoth/contracts", "@sothoth/core"],
+      packageId: "@project-sothoth/git",
+      runtimeImportAllowlist: ["@project-sothoth/contracts", "@project-sothoth/core"],
       providedContracts: ["CONTRACT/SOTHOTH/GIT-SOURCE-SNAPSHOT@1"],
       requiredContracts: ["CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1", "CONTRACT/SOTHOTH/SCHEMAS@1"],
     },
     forbidden: {
       kind: FORBIDDEN_KIND,
-      packageId: "@sothoth/git",
+      packageId: "@project-sothoth/git",
       capabilityClasses: {
         "ambiguous-ref-acceptance": "forbidden",
         "environment-variable-semantics": "forbidden",
@@ -223,7 +223,7 @@ const INTEGRATION: IntegrationSpec[] = [
     },
     truth: {
       kind: TRUTH_KIND,
-      packageId: "@sothoth/git",
+      packageId: "@project-sothoth/git",
       producedStateRefs: [
         "sothoth.git/commit-snapshot@1",
         "sothoth.git/compare-snapshot@1",
@@ -235,27 +235,27 @@ const INTEGRATION: IntegrationSpec[] = [
     },
     surface: {
       kind: SURFACE_KIND,
-      packageId: "@sothoth/git",
+      packageId: "@project-sothoth/git",
       publicModules: [
-        "@sothoth/git/commit",
-        "@sothoth/git/compare",
-        "@sothoth/git/path",
-        "@sothoth/git/process",
-        "@sothoth/git/snapshot",
-        "@sothoth/git/workspace",
+        "@project-sothoth/git/commit",
+        "@project-sothoth/git/compare",
+        "@project-sothoth/git/path",
+        "@project-sothoth/git/process",
+        "@project-sothoth/git/snapshot",
+        "@project-sothoth/git/workspace",
       ],
       surfaceKind: "pure-functions-only",
     },
     determinism: {
       kind: DETERMINISM_KIND,
-      packageId: "@sothoth/git",
+      packageId: "@project-sothoth/git",
       byteStableOutputs: true,
       stringOrdering: "unicode-code-point",
       tieBreaking: "canonical-identity-then-diagnostic-code",
     },
     criteria: {
       kind: CRITERIA_KIND,
-      packageId: "@sothoth/git",
+      packageId: "@project-sothoth/git",
       criteria: [
         { criterionId: "git-command-allowlist-closure", sectionId: "authority-security-and-effects" },
         { criterionId: "git-no-mutation-boundary", sectionId: "authority-security-and-effects" },
@@ -267,7 +267,7 @@ const INTEGRATION: IntegrationSpec[] = [
     extra: {
       [GIT_PROVENANCE_KIND]: {
         kind: GIT_PROVENANCE_KIND,
-        packageId: "@sothoth/git",
+        packageId: "@project-sothoth/git",
         workspaceMasqueradesAsCommit: false,
         provenanceIdentitySeparation: "strict",
         modes: [
@@ -291,7 +291,7 @@ const INTEGRATION: IntegrationSpec[] = [
       },
       [GIT_PROCESS_KIND]: {
         kind: GIT_PROCESS_KIND,
-        packageId: "@sothoth/git",
+        packageId: "@project-sothoth/git",
         executableSubcommands: GIT_EXECUTABLE_SUBCOMMANDS,
         argumentStyle: "fixed-argument-array",
         shellInvocation: "forbidden",
@@ -301,14 +301,14 @@ const INTEGRATION: IntegrationSpec[] = [
       },
       [GIT_PATH_KIND]: {
         kind: GIT_PATH_KIND,
-        packageId: "@sothoth/git",
+        packageId: "@project-sothoth/git",
         normalization: "repository-relative-posix",
         ambiguousRefPolicy: "reject",
         rejectedPathClasses: GIT_REJECTED_PATH_CLASSES,
       },
       [GIT_BUDGET_KIND]: {
         kind: GIT_BUDGET_KIND,
-        packageId: "@sothoth/git",
+        packageId: "@project-sothoth/git",
         enforcedBudgets: GIT_ENFORCED_BUDGETS,
         exhaustionPolicy: "fail-closed",
         truncationPolicy: "forbidden",
@@ -316,29 +316,29 @@ const INTEGRATION: IntegrationSpec[] = [
     },
     inheritedApplicability: "adopts",
     forbiddenImports: [
-      "@sothoth/cli",
-      "@sothoth/document-index",
-      "@sothoth/governance",
-      "@sothoth/graph",
-      "@sothoth/planning",
-      "@sothoth/profile-sdk",
-      "@sothoth/sdk",
-      "@sothoth/selectors",
+      "@project-sothoth/cli",
+      "@project-sothoth/document-index",
+      "@project-sothoth/governance",
+      "@project-sothoth/graph",
+      "@project-sothoth/planning",
+      "@project-sothoth/profile-sdk",
+      "@project-sothoth/sdk",
+      "@project-sothoth/selectors",
     ],
   },
   {
-    packageId: "@sothoth/planning",
+    packageId: "@project-sothoth/planning",
     designId: "SOTHOTH-PLANNING-DOSSIER",
     documentId: "DOC-SOTHOTH-PLANNING-DOSSIER",
     path: "docs/design/dossiers/planning.md",
     dependency: {
       kind: DEPENDENCY_KIND,
-      packageId: "@sothoth/planning",
+      packageId: "@project-sothoth/planning",
       runtimeImportAllowlist: [
-        "@sothoth/contracts",
-        "@sothoth/core",
-        "@sothoth/graph",
-        "@sothoth/selectors",
+        "@project-sothoth/contracts",
+        "@project-sothoth/core",
+        "@project-sothoth/graph",
+        "@project-sothoth/selectors",
       ],
       providedContracts: ["CONTRACT/SOTHOTH/PLANNING@1"],
       requiredContracts: [
@@ -350,7 +350,7 @@ const INTEGRATION: IntegrationSpec[] = [
     },
     forbidden: {
       kind: FORBIDDEN_KIND,
-      packageId: "@sothoth/planning",
+      packageId: "@project-sothoth/planning",
       capabilityClasses: {
         "acceptance-authority": "forbidden",
         "calendar-placement-solver": "forbidden",
@@ -375,7 +375,7 @@ const INTEGRATION: IntegrationSpec[] = [
     },
     truth: {
       kind: TRUTH_KIND,
-      packageId: "@sothoth/planning",
+      packageId: "@project-sothoth/planning",
       producedStateRefs: ["sothoth.planning/schedule-solution@1"],
       issuedAuthorityRefs: [],
       emittedObservationRefs: ["sothoth.planning/schedule-diagnostic@1"],
@@ -383,25 +383,25 @@ const INTEGRATION: IntegrationSpec[] = [
     },
     surface: {
       kind: SURFACE_KIND,
-      packageId: "@sothoth/planning",
+      packageId: "@project-sothoth/planning",
       publicModules: [
-        "@sothoth/planning/constraints",
-        "@sothoth/planning/schedule",
-        "@sothoth/planning/solution",
-        "@sothoth/planning/waves",
+        "@project-sothoth/planning/constraints",
+        "@project-sothoth/planning/schedule",
+        "@project-sothoth/planning/solution",
+        "@project-sothoth/planning/waves",
       ],
       surfaceKind: "pure-functions-only",
     },
     determinism: {
       kind: DETERMINISM_KIND,
-      packageId: "@sothoth/planning",
+      packageId: "@project-sothoth/planning",
       byteStableOutputs: true,
       stringOrdering: "unicode-code-point",
       tieBreaking: "canonical-identity-then-diagnostic-code",
     },
     criteria: {
       kind: CRITERIA_KIND,
-      packageId: "@sothoth/planning",
+      packageId: "@project-sothoth/planning",
       criteria: [
         { criterionId: "planning-dependency-wave-only", sectionId: "core-sdk-protocol-boundary" },
         { criterionId: "planning-deterministic-projection", sectionId: "failure-recovery-and-consistency" },
@@ -412,7 +412,7 @@ const INTEGRATION: IntegrationSpec[] = [
     extra: {
       [SCHEDULE_KIND]: {
         kind: SCHEDULE_KIND,
-        packageId: "@sothoth/planning",
+        packageId: "@project-sothoth/planning",
         solutionIdentity: "sothoth.planning/schedule-solution@1",
         authority: "non-authoritative-projection",
         implementedCapabilities: PLANNING_IMPLEMENTED_CAPABILITIES,
@@ -422,29 +422,29 @@ const INTEGRATION: IntegrationSpec[] = [
     },
     inheritedApplicability: "narrows",
     forbiddenImports: [
-      "@sothoth/cli",
-      "@sothoth/document-index",
-      "@sothoth/git",
-      "@sothoth/governance",
-      "@sothoth/profile-sdk",
-      "@sothoth/sdk",
+      "@project-sothoth/cli",
+      "@project-sothoth/document-index",
+      "@project-sothoth/git",
+      "@project-sothoth/governance",
+      "@project-sothoth/profile-sdk",
+      "@project-sothoth/sdk",
     ],
   },
   {
-    packageId: "@sothoth/profile-sdk",
+    packageId: "@project-sothoth/profile-sdk",
     designId: "SOTHOTH-PROFILE-SDK-DOSSIER",
     documentId: "DOC-SOTHOTH-PROFILE-SDK-DOSSIER",
     path: "docs/design/dossiers/profile-sdk.md",
     dependency: {
       kind: DEPENDENCY_KIND,
-      packageId: "@sothoth/profile-sdk",
-      runtimeImportAllowlist: ["@sothoth/contracts", "@sothoth/core"],
+      packageId: "@project-sothoth/profile-sdk",
+      runtimeImportAllowlist: ["@project-sothoth/contracts", "@project-sothoth/core"],
       providedContracts: ["CONTRACT/SOTHOTH/CONSUMER-PROFILE@1"],
       requiredContracts: ["CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1", "CONTRACT/SOTHOTH/SCHEMAS@1"],
     },
     forbidden: {
       kind: FORBIDDEN_KIND,
-      packageId: "@sothoth/profile-sdk",
+      packageId: "@project-sothoth/profile-sdk",
       capabilityClasses: {
         "automatic-default-policy": "forbidden",
         "automatic-skill-discovery": "forbidden",
@@ -471,7 +471,7 @@ const INTEGRATION: IntegrationSpec[] = [
     },
     truth: {
       kind: TRUTH_KIND,
-      packageId: "@sothoth/profile-sdk",
+      packageId: "@project-sothoth/profile-sdk",
       producedStateRefs: ["sothoth.profile-sdk/conformance-result@1"],
       issuedAuthorityRefs: [],
       emittedObservationRefs: ["sothoth.profile-sdk/profile-diagnostic@1"],
@@ -479,26 +479,26 @@ const INTEGRATION: IntegrationSpec[] = [
     },
     surface: {
       kind: SURFACE_KIND,
-      packageId: "@sothoth/profile-sdk",
+      packageId: "@project-sothoth/profile-sdk",
       publicModules: [
-        "@sothoth/profile-sdk/conformance",
-        "@sothoth/profile-sdk/contract-composition",
-        "@sothoth/profile-sdk/load",
-        "@sothoth/profile-sdk/recommendations",
-        "@sothoth/profile-sdk/relation-roles",
+        "@project-sothoth/profile-sdk/conformance",
+        "@project-sothoth/profile-sdk/contract-composition",
+        "@project-sothoth/profile-sdk/load",
+        "@project-sothoth/profile-sdk/recommendations",
+        "@project-sothoth/profile-sdk/relation-roles",
       ],
       surfaceKind: "pure-functions-only",
     },
     determinism: {
       kind: DETERMINISM_KIND,
-      packageId: "@sothoth/profile-sdk",
+      packageId: "@project-sothoth/profile-sdk",
       byteStableOutputs: true,
       stringOrdering: "unicode-code-point",
       tieBreaking: "canonical-identity-then-diagnostic-code",
     },
     criteria: {
       kind: CRITERIA_KIND,
-      packageId: "@sothoth/profile-sdk",
+      packageId: "@project-sothoth/profile-sdk",
       criteria: [
         { criterionId: "profile-consumer-neutral-boundary", sectionId: "responsibility-and-truth-ownership" },
         { criterionId: "profile-fail-closed-conformance", sectionId: "failure-recovery-and-consistency" },
@@ -509,7 +509,7 @@ const INTEGRATION: IntegrationSpec[] = [
     extra: {
       [PROFILE_BOUNDARY_KIND]: {
         kind: PROFILE_BOUNDARY_KIND,
-        packageId: "@sothoth/profile-sdk",
+        packageId: "@project-sothoth/profile-sdk",
         compositionMode: "caller-owned-exact-reference-data",
         ownsConsumerIdentity: false,
         ownsConsumerPolicy: false,
@@ -527,7 +527,7 @@ const INTEGRATION: IntegrationSpec[] = [
       },
       [SKILL_KIND]: {
         kind: SKILL_KIND,
-        packageId: "@sothoth/profile-sdk",
+        packageId: "@project-sothoth/profile-sdk",
         sourceKind: "caller-supplied-curated-versioned-catalog",
         automaticDiscovery: false,
         revisionLocking: "exact-only",
@@ -542,7 +542,7 @@ const INTEGRATION: IntegrationSpec[] = [
       },
       [PROFILE_FAILURE_KIND]: {
         kind: PROFILE_FAILURE_KIND,
-        packageId: "@sothoth/profile-sdk",
+        packageId: "@project-sothoth/profile-sdk",
         conformanceResult: "non-authoritative-projection-or-diagnostic",
         failClosedConditions: PROFILE_FAIL_CLOSED_CONDITIONS,
         profileMutation: "forbidden",
@@ -550,14 +550,14 @@ const INTEGRATION: IntegrationSpec[] = [
     },
     inheritedApplicability: "specializes",
     forbiddenImports: [
-      "@sothoth/cli",
-      "@sothoth/document-index",
-      "@sothoth/git",
-      "@sothoth/governance",
-      "@sothoth/graph",
-      "@sothoth/planning",
-      "@sothoth/sdk",
-      "@sothoth/selectors",
+      "@project-sothoth/cli",
+      "@project-sothoth/document-index",
+      "@project-sothoth/git",
+      "@project-sothoth/governance",
+      "@project-sothoth/graph",
+      "@project-sothoth/planning",
+      "@project-sothoth/sdk",
+      "@project-sothoth/selectors",
     ],
   },
 ];
@@ -941,7 +941,7 @@ function validateIntegrationDesign(facts: {
     if (!registryEntry) {
       push("registry-entry-missing", spec.documentId);
     } else {
-      if (registryEntry.documentRevision !== 1 || registryEntry.status !== "proposed") {
+      if (registryEntry.documentRevision !== 2 || registryEntry.status !== "proposed") {
         push("registry-entry-invalid", spec.documentId);
       }
       if (registryEntry.path !== spec.path) {
@@ -959,16 +959,16 @@ function validateIntegrationDesign(facts: {
     }
     if (
       registration.designId !== spec.designId ||
-      registration.designRevision !== 1 ||
+      registration.designRevision !== 2 ||
       registration.designRequirement !== "full" ||
       registration.status !== "accepted" ||
-      registration.supersedes !== null
+      registration.supersedes !== `${spec.designId}@1`
     ) {
       push("registration-identity-invalid", spec.packageId);
     }
     if (
       registration.documentRef?.documentId !== spec.documentId ||
-      registration.documentRef?.documentRevision !== 1
+      registration.documentRef?.documentRevision !== 2
     ) {
       push("registration-document-ref-unresolved", spec.packageId);
     }
@@ -1088,7 +1088,7 @@ function validateIntegrationDesign(facts: {
   }
 
   // Planning: one Schedule Solution, dependency/Wave only, explicit unsupported dimensions.
-  const planningSpec = INTEGRATION.find((spec) => spec.packageId === "@sothoth/planning");
+  const planningSpec = INTEGRATION.find((spec) => spec.packageId === "@project-sothoth/planning");
   if (planningSpec) {
     const planningSite = extractDeclarations(facts.documents[planningSpec.packageId] ?? "").declarations.find(
       (site) => site.kind === SCHEDULE_KIND,
@@ -1141,7 +1141,7 @@ function validateIntegrationDesign(facts: {
   }
 
   // Profile SDK: consumer-neutral boundary, curated exact-only recommendations, fail-closed loading.
-  const profileSpec = INTEGRATION.find((spec) => spec.packageId === "@sothoth/profile-sdk");
+  const profileSpec = INTEGRATION.find((spec) => spec.packageId === "@project-sothoth/profile-sdk");
   if (profileSpec) {
     const profileDeclarations = extractDeclarations(facts.documents[profileSpec.packageId] ?? "").declarations;
     const boundary = profileDeclarations.find((site) => site.kind === PROFILE_BOUNDARY_KIND)?.value;
@@ -1223,7 +1223,7 @@ function validateIntegrationDesign(facts: {
   }
 
   // Git: provenance separation, closed process allowlist, path/ref fail-closed, enforced budgets.
-  const gitSpec = INTEGRATION.find((spec) => spec.packageId === "@sothoth/git");
+  const gitSpec = INTEGRATION.find((spec) => spec.packageId === "@project-sothoth/git");
   if (gitSpec) {
     const gitDeclarations = extractDeclarations(facts.documents[gitSpec.packageId] ?? "").declarations;
     const provenance = gitDeclarations.find((site) => site.kind === GIT_PROVENANCE_KIND)?.value;
@@ -1588,7 +1588,7 @@ describe("integration dossier structured design facts", () => {
 
   test("planning freezes one non-authoritative Schedule Solution with dependency and Wave only", async () => {
     const facts = await repositoryFacts();
-    const markdown = facts.documents["@sothoth/planning"];
+    const markdown = facts.documents["@project-sothoth/planning"];
     const schedule = extractDeclarations(markdown).declarations.find(
       (site) => site.kind === SCHEDULE_KIND,
     )?.value;
@@ -1599,14 +1599,14 @@ describe("integration dossier structured design facts", () => {
     expect(schedule.implementedCapabilities.filter((entry: string) =>
       PLANNING_UNSUPPORTED_DIMENSIONS.includes(entry),
     )).toEqual([]);
-    const planning = INTEGRATION.find((spec) => spec.packageId === "@sothoth/planning")!;
+    const planning = INTEGRATION.find((spec) => spec.packageId === "@project-sothoth/planning")!;
     expect(planning.truth.producedStateRefs).toEqual([schedule.solutionIdentity]);
     expect(validateIntegrationDesign(facts)).toEqual([]);
   });
 
   test("profile SDK owns neither consumer identity/policy nor FRACTA policy, and impact never becomes order", async () => {
     const facts = await repositoryFacts();
-    const boundary = extractDeclarations(facts.documents["@sothoth/profile-sdk"]).declarations.find(
+    const boundary = extractDeclarations(facts.documents["@project-sothoth/profile-sdk"]).declarations.find(
       (site) => site.kind === PROFILE_BOUNDARY_KIND,
     )?.value;
     expect(boundary.ownsConsumerIdentity).toBe(false);
@@ -1618,7 +1618,7 @@ describe("integration dossier structured design facts", () => {
 
   test("skill recommendations are caller-supplied curated exact references only", async () => {
     const facts = await repositoryFacts();
-    const skill = extractDeclarations(facts.documents["@sothoth/profile-sdk"]).declarations.find(
+    const skill = extractDeclarations(facts.documents["@project-sothoth/profile-sdk"]).declarations.find(
       (site) => site.kind === SKILL_KIND,
     )?.value;
     expect(skill.sourceKind).toBe("caller-supplied-curated-versioned-catalog");
@@ -1634,7 +1634,7 @@ describe("integration dossier structured design facts", () => {
 
   test("git provenance modes cannot masquerade, the command allowlist is closed, and mutation is forbidden", async () => {
     const facts = await repositoryFacts();
-    const declarations = extractDeclarations(facts.documents["@sothoth/git"]).declarations;
+    const declarations = extractDeclarations(facts.documents["@project-sothoth/git"]).declarations;
     const provenance = declarations.find((site) => site.kind === GIT_PROVENANCE_KIND)?.value;
     const process = declarations.find((site) => site.kind === GIT_PROCESS_KIND)?.value;
     expect(provenance.workspaceMasqueradesAsCommit).toBe(false);
@@ -1649,7 +1649,7 @@ describe("integration dossier structured design facts", () => {
 
   test("git path escape and ambiguous refs fail closed under enforced byte budgets", async () => {
     const facts = await repositoryFacts();
-    const declarations = extractDeclarations(facts.documents["@sothoth/git"]).declarations;
+    const declarations = extractDeclarations(facts.documents["@project-sothoth/git"]).declarations;
     const path = declarations.find((site) => site.kind === GIT_PATH_KIND)?.value;
     const budget = declarations.find((site) => site.kind === GIT_BUDGET_KIND)?.value;
     expect(path.normalization).toBe("repository-relative-posix");
@@ -1687,15 +1687,15 @@ describe("integration dossier structured design facts", () => {
         (site) => site.kind === DEPENDENCY_KIND,
       )?.value;
       expect(dependency.requiredContracts).toContain("CONTRACT/SOTHOTH/SCHEMAS@1");
-      expect(dependency.runtimeImportAllowlist).toContain("@sothoth/contracts");
+      expect(dependency.runtimeImportAllowlist).toContain("@project-sothoth/contracts");
       expect(dependency.requiredContracts).toContain("CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1");
-      expect(dependency.runtimeImportAllowlist).toContain("@sothoth/core");
+      expect(dependency.runtimeImportAllowlist).toContain("@project-sothoth/core");
       const registration = facts.registrations.registrations.find(
         (entry: any) => entry.componentId === spec.packageId,
       );
       expect(registration.requiredContractRefs).toEqual(dependency.requiredContracts);
     }
-    const planning = INTEGRATION.find((spec) => spec.packageId === "@sothoth/planning")!;
+    const planning = INTEGRATION.find((spec) => spec.packageId === "@project-sothoth/planning")!;
     expect(planning.dependency.requiredContracts).toEqual([
       "CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1",
       "CONTRACT/SOTHOTH/GENERIC-GRAPH@1",
@@ -1703,10 +1703,10 @@ describe("integration dossier structured design facts", () => {
       "CONTRACT/SOTHOTH/SELECTOR@1",
     ]);
     expect(planning.dependency.runtimeImportAllowlist).toEqual([
-      "@sothoth/contracts",
-      "@sothoth/core",
-      "@sothoth/graph",
-      "@sothoth/selectors",
+      "@project-sothoth/contracts",
+      "@project-sothoth/core",
+      "@project-sothoth/graph",
+      "@project-sothoth/selectors",
     ]);
   });
 
@@ -1729,7 +1729,7 @@ describe("integration dossier structured design facts", () => {
 describe("integration dossier mutation tests", () => {
   test("rejects creating an independent Wave truth next to the Schedule Solution", async () => {
     expect(validateIntegrationDesign(await repositoryFacts())).toEqual([]);
-    const facts = await mutatedFacts("@sothoth/planning", (markdown) =>
+    const facts = await mutatedFacts("@project-sothoth/planning", (markdown) =>
       mutateDeclaration(markdown, SCHEDULE_KIND, (value) => {
         value.waveTruthIdentities = ["sothoth.planning/wave-truth@1"];
       }),
@@ -1737,14 +1737,14 @@ describe("integration dossier mutation tests", () => {
     expect(validateIntegrationDesign(facts)).toEqual([
       {
         code: "sothoth.integration/planning-independent-wave-truth",
-        subject: "@sothoth/planning:sothoth.planning/wave-truth@1",
+        subject: "@project-sothoth/planning:sothoth.planning/wave-truth@1",
       },
     ]);
   });
 
   test("rejects silently ignoring an unsupported scheduling dimension", async () => {
     expect(validateIntegrationDesign(await repositoryFacts())).toEqual([]);
-    const facts = await mutatedFacts("@sothoth/planning", (markdown) =>
+    const facts = await mutatedFacts("@project-sothoth/planning", (markdown) =>
       mutateDeclaration(markdown, SCHEDULE_KIND, (value) => {
         value.unsupportedDimensions = value.unsupportedDimensions.filter(
           (dimension: string) => dimension !== "time",
@@ -1754,14 +1754,14 @@ describe("integration dossier mutation tests", () => {
     expect(validateIntegrationDesign(facts)).toEqual([
       {
         code: "sothoth.integration/planning-unsupported-dimension-ignored",
-        subject: "@sothoth/planning:time",
+        subject: "@project-sothoth/planning:time",
       },
     ]);
   });
 
   test("rejects profile SDK owning FRACTA policy", async () => {
     expect(validateIntegrationDesign(await repositoryFacts())).toEqual([]);
-    const facts = await mutatedFacts("@sothoth/profile-sdk", (markdown) =>
+    const facts = await mutatedFacts("@project-sothoth/profile-sdk", (markdown) =>
       mutateDeclaration(markdown, PROFILE_BOUNDARY_KIND, (value) => {
         value.ownsFractaPolicy = true;
       }),
@@ -1769,14 +1769,14 @@ describe("integration dossier mutation tests", () => {
     expect(validateIntegrationDesign(facts)).toEqual([
       {
         code: "sothoth.integration/profile-fracta-policy-owned",
-        subject: "@sothoth/profile-sdk:ownsFractaPolicy",
+        subject: "@project-sothoth/profile-sdk:ownsFractaPolicy",
       },
     ]);
   });
 
   test("rejects automatic skill discovery", async () => {
     expect(validateIntegrationDesign(await repositoryFacts())).toEqual([]);
-    const facts = await mutatedFacts("@sothoth/profile-sdk", (markdown) =>
+    const facts = await mutatedFacts("@project-sothoth/profile-sdk", (markdown) =>
       mutateDeclaration(markdown, SKILL_KIND, (value) => {
         value.automaticDiscovery = true;
       }),
@@ -1784,14 +1784,14 @@ describe("integration dossier mutation tests", () => {
     expect(validateIntegrationDesign(facts)).toEqual([
       {
         code: "sothoth.integration/profile-automatic-skill-discovery",
-        subject: "@sothoth/profile-sdk",
+        subject: "@project-sothoth/profile-sdk",
       },
     ]);
   });
 
   test("rejects enabling any Git mutation capability", async () => {
     expect(validateIntegrationDesign(await repositoryFacts())).toEqual([]);
-    const facts = await mutatedFacts("@sothoth/git", (markdown) =>
+    const facts = await mutatedFacts("@project-sothoth/git", (markdown) =>
       mutateDeclaration(markdown, GIT_PROCESS_KIND, (value) => {
         value.mutationCapability = "permitted";
       }),
@@ -1799,14 +1799,14 @@ describe("integration dossier mutation tests", () => {
     expect(validateIntegrationDesign(facts)).toEqual([
       {
         code: "sothoth.integration/git-mutation-enabled",
-        subject: "@sothoth/git",
+        subject: "@project-sothoth/git",
       },
     ]);
   });
 
   test("rejects accepting ambiguous refs", async () => {
     expect(validateIntegrationDesign(await repositoryFacts())).toEqual([]);
-    const facts = await mutatedFacts("@sothoth/git", (markdown) =>
+    const facts = await mutatedFacts("@project-sothoth/git", (markdown) =>
       mutateDeclaration(markdown, GIT_PATH_KIND, (value) => {
         value.ambiguousRefPolicy = "accept";
       }),
@@ -1814,14 +1814,14 @@ describe("integration dossier mutation tests", () => {
     expect(validateIntegrationDesign(facts)).toEqual([
       {
         code: "sothoth.integration/git-ambiguous-refs-accepted",
-        subject: "@sothoth/git",
+        subject: "@project-sothoth/git",
       },
     ]);
   });
 
   test("rejects workspace evidence masquerading as commit evidence", async () => {
     expect(validateIntegrationDesign(await repositoryFacts())).toEqual([]);
-    const facts = await mutatedFacts("@sothoth/git", (markdown) =>
+    const facts = await mutatedFacts("@project-sothoth/git", (markdown) =>
       mutateDeclaration(markdown, GIT_PROVENANCE_KIND, (value) => {
         value.workspaceMasqueradesAsCommit = true;
       }),
@@ -1829,7 +1829,7 @@ describe("integration dossier mutation tests", () => {
     expect(validateIntegrationDesign(facts)).toEqual([
       {
         code: "sothoth.integration/git-workspace-provenance-masquerade",
-        subject: "@sothoth/git",
+        subject: "@project-sothoth/git",
       },
     ]);
   });

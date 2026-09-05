@@ -1,12 +1,12 @@
-# @sothoth/document-index Artifact Design Dossier
+# @project-sothoth/document-index Artifact Design Dossier
 
 Status: proposed design fact, pending external acceptance
 
-Document identity: `DOC-SOTHOTH-DOCUMENT-INDEX-DOSSIER` revision `2`
+Document identity: `DOC-SOTHOTH-DOCUMENT-INDEX-DOSSIER` revision `3`
 
-Design identity: `SOTHOTH-DOCUMENT-INDEX-DOSSIER` revision `2`
+Design identity: `SOTHOTH-DOCUMENT-INDEX-DOSSIER` revision `3`
 
-Component: `@sothoth/document-index`, candidate of `SOTHOTH-DESIGN-SCOPE-0.1` with `designRequirement: full`
+Component: `@project-sothoth/document-index`, candidate of `SOTHOTH-DESIGN-SCOPE-0.1` with `designRequirement: full`
 
 This Dossier closes the pre-design facts for the structural document indexing package of Sothoth
 `0.1.0` under the Dossier Document Contract `sothoth.design-dossier/full/v1`. It authorizes no
@@ -22,7 +22,7 @@ reference, public module, capability class, criterion, or section identity.
 
 ## Decision summary
 
-`@sothoth/document-index` owns the single place where Markdown stops being text and becomes
+`@project-sothoth/document-index` owns the single place where Markdown stops being text and becomes
 structure. It receives exact document content — bytes already acquired and identity-bound by the
 caller — parses it with a CommonMark parser into an AST, and derives the deterministic
 Document/Artifact Index Projection every downstream consumer reasons over: headings, anchors,
@@ -32,7 +32,7 @@ and provenance.
 The defining decision is that indexing is structural and only structural. Whatever a document
 means, whether it conforms to its Document Contract, which of its revisions is current — none of
 that is decided here. The package turns parsed structure into identity-addressed facts and stops.
-Conformance evaluation belongs to `@sothoth/governance`, contract schemas to `@sothoth/contracts`,
+Conformance evaluation belongs to `@project-sothoth/governance`, contract schemas to `@project-sothoth/contracts`,
 and current-pointer selection to the external Registry owner. This is the boundary that lets one
 index feed governance, planning, and Consumer Profiles without any of them capturing it.
 
@@ -52,10 +52,10 @@ neutral. Budgets are five deterministic dimensions with no clock anywhere. Revis
 
 ## Artifact identity and classification
 
-The artifact is the npm package `@sothoth/document-index`, classified as a document-governance
+The artifact is the npm package `@project-sothoth/document-index`, classified as a document-governance
 domain library: pure functions over caller-supplied document content and identities. Its design
-identity is `SOTHOTH-DOCUMENT-INDEX-DOSSIER@2`, its document identity is
-`DOC-SOTHOTH-DOCUMENT-INDEX-DOSSIER@2`, and it sits in the domain layer of the accepted package
+identity is `SOTHOTH-DOCUMENT-INDEX-DOSSIER@3`, its document identity is
+`DOC-SOTHOTH-DOCUMENT-INDEX-DOSSIER@3`, and it sits in the domain layer of the accepted package
 direction, above the pinned foundation `graph -> core -> contracts`. Revision 2 supersedes
 `SOTHOTH-DOCUMENT-INDEX-DOSSIER@1`, which closed the module surface, boundary declarations, and
 determinism posture; revision 2 adds the closed public contract — the export matrix, the exact
@@ -83,7 +83,7 @@ The non-goals close the boundary from the other side:
 ```json
 {
   "kind": "sothoth-dossier/forbidden-capability-declaration@1",
-  "packageId": "@sothoth/document-index",
+  "packageId": "@project-sothoth/document-index",
   "capabilityClasses": {
     "external-executable": "forbidden",
     "filesystem": "forbidden",
@@ -120,7 +120,7 @@ index projection over the exact content it was given, and nothing else:
 ```json
 {
   "kind": "sothoth-dossier/truth-ownership-declaration@1",
-  "packageId": "@sothoth/document-index",
+  "packageId": "@project-sothoth/document-index",
   "producedStateRefs": [
     "sothoth.document-index/document-index@1",
     "sothoth.document-index/blob-cache-entry@1"
@@ -137,7 +137,7 @@ explicitly and deferred:
 ```json
 {
   "kind": "sothoth-dossier/domain-semantics-declaration@1",
-  "packageId": "@sothoth/document-index",
+  "packageId": "@project-sothoth/document-index",
   "ownedDomainSemantics": [
     "commonmark-structure",
     "stable-section-identity",
@@ -169,14 +169,14 @@ of marker and section handling carry exact artifact-and-span locations.
 ```json
 {
   "kind": "sothoth-dossier/public-surface-declaration@1",
-  "packageId": "@sothoth/document-index",
+  "packageId": "@project-sothoth/document-index",
   "publicModules": [
-    "@sothoth/document-index/parse",
-    "@sothoth/document-index/sections",
-    "@sothoth/document-index/anchors",
-    "@sothoth/document-index/references",
-    "@sothoth/document-index/index",
-    "@sothoth/document-index/cache"
+    "@project-sothoth/document-index/parse",
+    "@project-sothoth/document-index/sections",
+    "@project-sothoth/document-index/anchors",
+    "@project-sothoth/document-index/references",
+    "@project-sothoth/document-index/index",
+    "@project-sothoth/document-index/cache"
   ],
   "surfaceKind": "pure-functions-only"
 }
@@ -188,8 +188,8 @@ identities under the frozen grammar; `anchors` derives heading identities and an
 `references` resolves declared relations against the supplied identity universe and assembles the
 canonical relation graph snapshot; `index` assembles the deterministic Document/Artifact Index
 Projection with provenance; `cache` produces the optional blob-addressed derivation witness
-entries. Primary consumers are `@sothoth/selectors`, which selects over the index,
-`@sothoth/governance`, which compiles conformance and closure over it, and `@sothoth/planning`,
+entries. Primary consumers are `@project-sothoth/selectors`, which selects over the index,
+`@project-sothoth/governance`, which compiles conformance and closure over it, and `@project-sothoth/planning`,
 which uses the same structural facts. The SDK exposes index construction through its compilation
 facade; the CLI reaches it through `sothoth index`.
 
@@ -198,20 +198,20 @@ nothing else:
 
 | Public module | Runtime exports | Type exports |
 | --- | --- | --- |
-| `@sothoth/document-index/parse` | `parseDocumentV1`, `DEFAULT_DOCUMENT_INDEX_BUDGETS_V1` | `SourceSpanV1`, `StructuralIssueCodeV1`, `LocatedStructuralIssueCodeV1`, `StructuralIssueLocationV1`, `StructuralIssueV1`, `DocumentIndexFailureV1`, `DocumentIndexBudgetsV1`, `HeadingDepthV1`, `ParsedBlockNodeV1`, `ParsedDocumentV1`, `NormalizedSourceSnapshotV1`, `RelationTargetV1`, `DeclaredRelationV1`, `DocumentSourceV1`, `ParseDocumentSuccessV1`, `ParseDocumentResultV1` |
-| `@sothoth/document-index/sections` | `bindStableSectionsV1` | `StableSectionRecordV1`, `SectionsSuccessV1`, `SectionsResultV1` |
-| `@sothoth/document-index/anchors` | `deriveHeadingAnchorsV1` | `HeadingRecordV1`, `AnchorsSuccessV1`, `AnchorsResultV1` |
-| `@sothoth/document-index/references` | `resolveDocumentRelationsV1` | `ResolvedRelationRecordV1`, `RelationGraphSnapshotV1`, `ReferencesSuccessV1`, `ReferencesResultV1` |
-| `@sothoth/document-index/index` | `buildDocumentIndexV1` | `CompilerIdentityV1`, `DocumentIndexInputV1`, `DocumentEntryV1`, `IndexProvenanceV1`, `DocumentIndexProjectionV1`, `DocumentIndexSuccessV1`, `DocumentIndexResultV1` |
-| `@sothoth/document-index/cache` | `buildBlobCacheEntryV1` | `BlobCacheKeyV1`, `CachedHeadingDerivationV1`, `CachedSectionDerivationV1`, `CachedDocumentDerivationV1`, `BlobCacheEntryV1`, `BlobCacheEntrySuccessV1`, `BlobCacheEntryResultV1` |
+| `@project-sothoth/document-index/parse` | `parseDocumentV1`, `DEFAULT_DOCUMENT_INDEX_BUDGETS_V1` | `SourceSpanV1`, `StructuralIssueCodeV1`, `LocatedStructuralIssueCodeV1`, `StructuralIssueLocationV1`, `StructuralIssueV1`, `DocumentIndexFailureV1`, `DocumentIndexBudgetsV1`, `HeadingDepthV1`, `ParsedBlockNodeV1`, `ParsedDocumentV1`, `NormalizedSourceSnapshotV1`, `RelationTargetV1`, `DeclaredRelationV1`, `DocumentSourceV1`, `ParseDocumentSuccessV1`, `ParseDocumentResultV1` |
+| `@project-sothoth/document-index/sections` | `bindStableSectionsV1` | `StableSectionRecordV1`, `SectionsSuccessV1`, `SectionsResultV1` |
+| `@project-sothoth/document-index/anchors` | `deriveHeadingAnchorsV1` | `HeadingRecordV1`, `AnchorsSuccessV1`, `AnchorsResultV1` |
+| `@project-sothoth/document-index/references` | `resolveDocumentRelationsV1` | `ResolvedRelationRecordV1`, `RelationGraphSnapshotV1`, `ReferencesSuccessV1`, `ReferencesResultV1` |
+| `@project-sothoth/document-index/index` | `buildDocumentIndexV1` | `CompilerIdentityV1`, `DocumentIndexInputV1`, `DocumentEntryV1`, `IndexProvenanceV1`, `DocumentIndexProjectionV1`, `DocumentIndexSuccessV1`, `DocumentIndexResultV1` |
+| `@project-sothoth/document-index/cache` | `buildBlobCacheEntryV1` | `BlobCacheKeyV1`, `CachedHeadingDerivationV1`, `CachedSectionDerivationV1`, `CachedDocumentDerivationV1`, `BlobCacheEntryV1`, `BlobCacheEntrySuccessV1`, `BlobCacheEntryResultV1` |
 
 Shared vocabulary (`SourceSpanV1`, the issue union and its code/location types,
 `DocumentIndexFailureV1`, budgets, source/relation input types) is owned by `/parse`;
 `/sections`, `/anchors`, `/references`, `/index`, `/cache` import it type-only from `/parse` —
 the Graph-revision-2 pattern that adds no seventh public module. `SECTION_ID_PATTERN` and
-`SECTION_MARKER_PATTERN` are consumed from `@sothoth/contracts` inside the internal modules and
+`SECTION_MARKER_PATTERN` are consumed from `@project-sothoth/contracts` inside the internal modules and
 are never re-exported: no convenience alias, no second truth source. The package root is
-deliberately absent: importing the bare specifier `@sothoth/document-index` fails with
+deliberately absent: importing the bare specifier `@project-sothoth/document-index` fails with
 `ERR_PACKAGE_PATH_NOT_EXPORTED`, and no accepted fact names a root export.
 
 The exact public declarations are closed as follows; nothing in them is left to the implementer.
@@ -219,7 +219,7 @@ Every value returned by any function below is runtime-frozen and descriptor-safe
 `readonly` is compile-time documentation only and is not the runtime guarantee.
 
 ```ts
-// @sothoth/document-index/parse
+// @project-sothoth/document-index/parse
 
 /** UTF-16-code-unit range into the exact content string. Lines/columns 1-based; end exclusive. */
 export interface SourceSpanV1 {
@@ -385,7 +385,7 @@ export function parseDocumentV1(
   budgets: DocumentIndexBudgetsV1,
 ): ParseDocumentResultV1;
 
-// @sothoth/document-index/sections
+// @project-sothoth/document-index/sections
 import type {
   DocumentIndexFailureV1,
   ParseDocumentResultV1,
@@ -409,7 +409,7 @@ export type SectionsResultV1 = SectionsSuccessV1 | DocumentIndexFailureV1;
 /** Binds root-level exact markers to their next-sibling headings; forwards failures canonically. */
 export function bindStableSectionsV1(parsed: ParseDocumentResultV1): SectionsResultV1;
 
-// @sothoth/document-index/anchors
+// @project-sothoth/document-index/anchors
 import type {
   DocumentIndexFailureV1,
   HeadingDepthV1,
@@ -435,7 +435,7 @@ export type AnchorsResultV1 = AnchorsSuccessV1 | DocumentIndexFailureV1;
 /** Derives heading records and anchors; forwards failures canonically. */
 export function deriveHeadingAnchorsV1(parsed: ParseDocumentResultV1): AnchorsResultV1;
 
-// @sothoth/document-index/references
+// @project-sothoth/document-index/references
 import type {
   DocumentIndexFailureV1,
   ParseDocumentResultV1,
@@ -468,7 +468,7 @@ export function resolveDocumentRelationsV1(
   parsed: readonly ParseDocumentResultV1[],
 ): ReferencesResultV1;
 
-// @sothoth/document-index/index
+// @project-sothoth/document-index/index
 import type { BlobCacheEntryV1 } from "./cache.js";
 import type {
   DocumentIndexBudgetsV1,
@@ -538,7 +538,7 @@ export type DocumentIndexResultV1 = DocumentIndexSuccessV1 | DocumentIndexFailur
  */
 export function buildDocumentIndexV1(input: DocumentIndexInputV1): DocumentIndexResultV1;
 
-// @sothoth/document-index/cache
+// @project-sothoth/document-index/cache
 import type { CompilerIdentityV1 } from "./index.js";
 import type {
   DocumentIndexBudgetsV1,
@@ -619,19 +619,19 @@ export function buildBlobCacheEntryV1(
 The protocol is a value protocol on both sides. Inputs are exact document content strings plus
 declared identity inputs; nothing is fetched, nothing is ambient. Outputs are plain deterministic
 structures whose canonical identities and bytes come from `canonicalJson` of
-`@sothoth/core/canonical-json` and `sha256Digest` of `@sothoth/core/digest` under
+`@project-sothoth/core/canonical-json` and `sha256Digest` of `@project-sothoth/core/digest` under
 `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1`, and whose resolved relation order is the canonical
 order produced by `createCanonicalGraphV1` of `CONTRACT/SOTHOTH/GENERIC-GRAPH@1` — the package
 never re-implements traversal, canonicalization, or a second ordering, and never calls back into a
 compilation driver. The Graph consumption is exactly one runtime import of `createCanonicalGraphV1`
-through `@sothoth/graph/digraph` plus `import type` declaration imports, inside the accepted
+through `@project-sothoth/graph/digraph` plus `import type` declaration imports, inside the accepted
 `runtimeImportAllowlist`; every other cross-subpath dependency in the public declarations is
 type-only.
 
 The SDK boundary is likewise structural: callers construct an index from exact inputs and receive
 an immutable projection. There is no registration hook, no mutation surface, and no ambient
 document discovery to drift from the contract. `SECTION_ID_PATTERN` and
-`SECTION_MARKER_PATTERN` are consumed directly from `@sothoth/contracts` under
+`SECTION_MARKER_PATTERN` are consumed directly from `@project-sothoth/contracts` under
 `CONTRACT/SOTHOTH/SCHEMAS@1` — never via a transitive re-export or an undeclared type-only path.
 The closed fifteen-code issue vocabulary is package-local wrapper vocabulary: every literal
 happens to conform to the Contracts diagnostic-code grammar as a compatibility fact only, the
@@ -644,18 +644,18 @@ converter, so no second diagnostic authority is manufactured.
 
 ## Dependency and topology
 
-`@sothoth/document-index` completes its layer of the accepted direction and may depend only on
+`@project-sothoth/document-index` completes its layer of the accepted direction and may depend only on
 the pure foundation packages whose contracts it requires, plus the pinned external CommonMark
 parser its parsing stage requires:
 
 ```json
 {
   "kind": "sothoth-dossier/dependency-declaration@1",
-  "packageId": "@sothoth/document-index",
+  "packageId": "@project-sothoth/document-index",
   "runtimeImportAllowlist": [
-    "@sothoth/contracts",
-    "@sothoth/core",
-    "@sothoth/graph",
+    "@project-sothoth/contracts",
+    "@project-sothoth/core",
+    "@project-sothoth/graph",
     "mdast-util-from-markdown"
   ],
   "providedContracts": [
@@ -670,7 +670,7 @@ parser its parsing stage requires:
 ```
 
 The package publishes exactly four runtime dependencies: the three foundation workspace packages
-`@sothoth/contracts`, `@sothoth/core`, and `@sothoth/graph`, plus the pinned external CommonMark
+`@project-sothoth/contracts`, `@project-sothoth/core`, and `@project-sothoth/graph`, plus the pinned external CommonMark
 parser `mdast-util-from-markdown` at the exact version `mdast-util-from-markdown@2.0.2` — no
 range. TypeScript compilation does not bundle the parser, so an honest dependency statement
 requires the fourth entry; the parser is imported only inside the internal parsing module, and the
@@ -680,7 +680,7 @@ registration's `deploymentDependencyRefs` stays empty because the exact-referenc
 only `<identity>@<positive integer revision>` and cannot express `@2.0.2`, and a weaker `@2`
 entry would be a second, less exact truth beside the manifest's pin.
 
-`CONTRACT/SOTHOTH/SCHEMAS@1` is required directly from `@sothoth/contracts` because the index's
+`CONTRACT/SOTHOTH/SCHEMAS@1` is required directly from `@project-sothoth/contracts` because the index's
 typed inputs and findings are expressed in the shared schema, identity, and diagnostic vocabulary.
 The allowlist is the closed import boundary for runtime and type-level internal imports alike, so
 no vocabulary and no capability may arrive through a transitive dependency. Importing any adapter,
@@ -728,7 +728,7 @@ a normalized `path` yield one issue per duplicated identity beyond the first and
 those sources' participation in the resolution universe.
 
 The one derived state the package owns is the optional cache entry, produced by
-`@sothoth/document-index/cache`: a witness bound to exactly one blob identity (the verified
+`@project-sothoth/document-index/cache`: a witness bound to exactly one blob identity (the verified
 `contentDigest` of the source content) and one compiler identity. Addressing a cache entry by
 anything less exact — a path, a timestamp, a "similar" digest — is forbidden, and a cache is
 consumed only by presenting the same exact identities again. The cache is a caller-held array in
@@ -921,7 +921,7 @@ are artifact ids, `role` is the reference role or `null`, and `revision` is the 
 ### Exact Graph projection
 
 `src/references.ts` consumes Graph through exactly one runtime function:
-`createCanonicalGraphV1` from `@sothoth/graph/digraph`, plus type-only imports for the declaration
+`createCanonicalGraphV1` from `@project-sothoth/graph/digraph`, plus type-only imports for the declaration
 types. Nodes are one `{node:{id:artifactId}, sortKey:artifactId}` per universe artifact with no
 facets, plus one per distinct declared-external target id with the same sort key and
 `facets:{"external":true}`; the contradiction rule makes those sets disjoint. Each relation maps
@@ -1034,7 +1034,7 @@ This topic is inherited exactly from the accepted governance control plane desig
 narrowing: an index projection can inform validation and review but grants no authority, and
 nothing the package computes becomes a Source Fact or modifies one.
 
-Inherited from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2`, section `authority-boundary`,
+Inherited from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3`, section `authority-boundary`,
 applicability `adopts`.
 
 Security posture follows from the value protocol: no filesystem, Git, process, network, or
@@ -1089,7 +1089,7 @@ indistinguishable from package-produced failures.
 ### Exact digest formulas
 
 Canonical bytes and digests come only from `canonicalJson` of
-`@sothoth/core/canonical-json` and `sha256Digest` of `@sothoth/core/digest`. Each digest input
+`@project-sothoth/core/canonical-json` and `sha256Digest` of `@project-sothoth/core/digest`. Each digest input
 includes its schema literal and excludes its own digest field by construction:
 
 - `entryDigest = sha256Digest(canonicalJson(<DocumentEntryV1 minus entryDigest>))`; the complete
@@ -1114,7 +1114,7 @@ Consistency is the product, under the closed determinism contract:
 ```json
 {
   "kind": "sothoth-dossier/determinism-declaration@1",
-  "packageId": "@sothoth/document-index",
+  "packageId": "@project-sothoth/document-index",
   "byteStableOutputs": true,
   "stringOrdering": "unicode-code-point",
   "tieBreaking": "canonical-identity-then-source-span"
@@ -1162,7 +1162,7 @@ records cache-hit state, cache bytes, or any witness metadata.
 
 What the package does not do is decide what deserves observation. Structural findings become
 Structured Diagnostics only when the calling compiler emits them under the identity vocabulary of
-`@sothoth/contracts`; the index merely guarantees the finding is exact, located, and reproducible.
+`@project-sothoth/contracts`; the index merely guarantees the finding is exact, located, and reproducible.
 
 <!-- sothoth:section id="deployment-configuration-and-operations" -->
 
@@ -1170,7 +1170,7 @@ Structured Diagnostics only when the calling compiler emits them under the ident
 
 Deployment is one reproducible npm package — compiled ESM, declarations, explicit exports map,
 Apache-2.0 inclusion, clean CI publication — with runtime dependencies exactly the four declared
-above: the three foundation packages `@sothoth/contracts`, `@sothoth/core`, and `@sothoth/graph`
+above: the three foundation packages `@project-sothoth/contracts`, `@project-sothoth/core`, and `@project-sothoth/graph`
 beneath it, plus the external parser `mdast-util-from-markdown` at the exact pin
 `mdast-util-from-markdown@2.0.2`. The manifest declares the four dependencies; the repository
 lockfile pins the full parser closure with integrity values; the release SBOM records the
@@ -1237,7 +1237,7 @@ while each criterion declared below points at the subject section it constrains.
 ```json
 {
   "kind": "sothoth-dossier/verification-criteria@1",
-  "packageId": "@sothoth/document-index",
+  "packageId": "@project-sothoth/document-index",
   "criteria": [
     {
       "criterionId": "document-index-structural-parse-boundary",
@@ -1293,15 +1293,15 @@ second diagnostic authority.
 
 ## Traceability and exact references
 
-This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` sections `decision`,
+This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3` sections `decision`,
 `authority-boundary`, `package-architecture`, `documents-and-selectors`, and
 `pre-design-boundary`; to `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1`,
 `CONTRACT/SOTHOTH/GENERIC-GRAPH@1`, and `CONTRACT/SOTHOTH/SCHEMAS@1` consumed directly from the
-foundation packages beneath it; and to the catalog candidate `@sothoth/document-index` in
+foundation packages beneath it; and to the catalog candidate `@project-sothoth/document-index` in
 `SOTHOTH-DESIGN-SCOPE-0.1@1`.
 
-The registration for this component is `SOTHOTH-DOCUMENT-INDEX-DOSSIER@2`, superseding
-`SOTHOTH-DOCUMENT-INDEX-DOSSIER@1` and bound to `DOC-SOTHOTH-DOCUMENT-INDEX-DOSSIER@2`,
+The registration for this component is `SOTHOTH-DOCUMENT-INDEX-DOSSIER@3`, superseding
+`SOTHOTH-DOCUMENT-INDEX-DOSSIER@2` and bound to `DOC-SOTHOTH-DOCUMENT-INDEX-DOSSIER@3`,
 providing `CONTRACT/SOTHOTH/DOCUMENT-INDEX@1` and requiring
 `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1`, `CONTRACT/SOTHOTH/GENERIC-GRAPH@1`, and
 `CONTRACT/SOTHOTH/SCHEMAS@1`. Every reference follows the exact grammar
@@ -1323,5 +1323,5 @@ Seventeen of the eighteen closed topics are resolved by this Dossier: `identity`
 `compatibility-and-migration`; `developer-and-operator-experience` by
 `developer-and-operator-experience`; `verification` by `verification-and-acceptance-criteria`;
 and `future-compatibility` by `future-capability-compatibility`. `authority-and-security` is
-inherited exactly from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` section
+inherited exactly from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3` section
 `authority-boundary` with applicability `adopts`.

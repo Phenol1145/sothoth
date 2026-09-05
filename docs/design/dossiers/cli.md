@@ -1,12 +1,12 @@
-# @sothoth/cli Artifact Design Dossier
+# @project-sothoth/cli Artifact Design Dossier
 
 Status: proposed design fact, pending external acceptance
 
-Document identity: `DOC-SOTHOTH-CLI-DOSSIER` revision `1`
+Document identity: `DOC-SOTHOTH-CLI-DOSSIER` revision `2`
 
-Design identity: `SOTHOTH-CLI-DOSSIER` revision `1`
+Design identity: `SOTHOTH-CLI-DOSSIER` revision `2`
 
-Component: `@sothoth/cli`, candidate of `SOTHOTH-DESIGN-SCOPE-0.1` with `designRequirement: full`
+Component: `@project-sothoth/cli`, candidate of `SOTHOTH-DESIGN-SCOPE-0.1` with `designRequirement: full`
 
 This Dossier closes the pre-design facts for the command-line interface of Sothoth `0.1.0` under
 the Dossier Document Contract `sothoth.design-dossier/full/v1`. It authorizes no implementation:
@@ -17,10 +17,10 @@ mechanically admissible Scope BOM admit implementation at all.
 
 ## Decision summary
 
-`@sothoth/cli` is the operator-facing composition and I/O adapter. It parses explicit CLI input,
+`@project-sothoth/cli` is the operator-facing composition and I/O adapter. It parses explicit CLI input,
 composes the public SDK facade, renders results, writes explicit output paths atomically, keeps
 machine output and operational narration on separate streams, and maps public outcomes to process
-exits `0`–`4`. It consumes only `@sothoth/sdk` and provides `CONTRACT/SOTHOTH/CLI-IO@1`.
+exits `0`–`4`. It consumes only `@project-sothoth/sdk` and provides `CONTRACT/SOTHOTH/CLI-IO@1`.
 
 The CLI owns no compilation semantics, no domain truth, and no acceptance. It performs no arbitrary
 process execution, runs no Evidence checks, scans no repository or filesystem implicitly, consults
@@ -31,10 +31,10 @@ domain package directly — the facade is its only internal dependency.
 
 ## Artifact identity and classification
 
-The artifact is the npm package `@sothoth/cli`, classified as a command-line composition and I/O
-adapter. Its design identity is `SOTHOTH-CLI-DOSSIER@1`, its document identity is
-`DOC-SOTHOTH-CLI-DOSSIER@1`, and it sits at the top of the internal dependency DAG with exactly one
-internal dependency: `@sothoth/sdk`.
+The artifact is the npm package `@project-sothoth/cli`, classified as a command-line composition and I/O
+adapter. Its design identity is `SOTHOTH-CLI-DOSSIER@2`, its document identity is
+`DOC-SOTHOTH-CLI-DOSSIER@2`, and it sits at the top of the internal dependency DAG with exactly one
+internal dependency: `@project-sothoth/sdk`.
 
 It ships a `sothoth` executable plus compiled ESM and declarations with an explicit exports map. It
 owns no release membership and no domain content; it only adapts the facade to a terminal process.
@@ -53,7 +53,7 @@ The non-goals are the adapter fence:
 ```json
 {
   "kind": "sothoth-dossier/forbidden-capability-declaration@1",
-  "packageId": "@sothoth/cli",
+  "packageId": "@project-sothoth/cli",
   "capabilityClasses": {
     "arbitrary-command-execution": "forbidden",
     "direct-domain-package-import": "forbidden",
@@ -91,7 +91,7 @@ atomic explicit writes, stream discipline, and exit mapping. It owns nothing the
 ```json
 {
   "kind": "sothoth-dossier/truth-ownership-declaration@1",
-  "packageId": "@sothoth/cli",
+  "packageId": "@project-sothoth/cli",
   "producedStateRefs": [
     "sothoth.cli/cli-invocation-result@1"
   ],
@@ -116,13 +116,13 @@ reinterprets, or accepts it, and it issues no authority of any kind.
 ```json
 {
   "kind": "sothoth-dossier/public-surface-declaration@1",
-  "packageId": "@sothoth/cli",
+  "packageId": "@project-sothoth/cli",
   "publicModules": [
-    "@sothoth/cli/commands",
-    "@sothoth/cli/exit",
-    "@sothoth/cli/input",
-    "@sothoth/cli/render",
-    "@sothoth/cli/write"
+    "@project-sothoth/cli/commands",
+    "@project-sothoth/cli/exit",
+    "@project-sothoth/cli/input",
+    "@project-sothoth/cli/render",
+    "@project-sothoth/cli/write"
   ],
   "surfaceKind": "explicit-command-surface"
 }
@@ -136,7 +136,7 @@ closed command set:
 ```json
 {
   "kind": "sothoth-dossier/cli-command-declaration@1",
-  "packageId": "@sothoth/cli",
+  "packageId": "@project-sothoth/cli",
   "surfaceKind": "explicit-command-surface",
   "commands": [
     "change-plan",
@@ -159,7 +159,7 @@ checks; `compile governance` and `compile planning` compile the respective proje
 selectors; `explain` explains selector evaluation; `verify-projection` verifies a projection.
 `hiddenCommands` is empty — an undocumented or hidden command is a defect — and an unknown command
 fails closed as `invalid-input`. Consumers are human operators and automation driving the
-executable; programmatic consumers use `@sothoth/sdk` instead.
+executable; programmatic consumers use `@project-sothoth/sdk` instead.
 
 <!-- sothoth:section id="core-sdk-protocol-boundary" -->
 
@@ -172,7 +172,7 @@ separate `SCHEMAS@1` edge exists. Input is explicit and closed:
 ```json
 {
   "kind": "sothoth-dossier/cli-input-declaration@1",
-  "packageId": "@sothoth/cli",
+  "packageId": "@project-sothoth/cli",
   "explicitInputSources": [
     "argv-flags",
     "explicit-path-arguments"
@@ -192,7 +192,7 @@ The CLI is the sole owner of the outcome-to-exit mapping:
 ```json
 {
   "kind": "sothoth-dossier/cli-exit-declaration@1",
-  "packageId": "@sothoth/cli",
+  "packageId": "@project-sothoth/cli",
   "exitMap": {
     "0": "valid",
     "1": "invalid",
@@ -213,14 +213,14 @@ can override it, because the SDK never selects the exit and the CLI applies this
 
 ## Dependency and topology
 
-`@sothoth/cli` may import exactly one internal package:
+`@project-sothoth/cli` may import exactly one internal package:
 
 ```json
 {
   "kind": "sothoth-dossier/dependency-declaration@1",
-  "packageId": "@sothoth/cli",
+  "packageId": "@project-sothoth/cli",
   "runtimeImportAllowlist": [
-    "@sothoth/sdk"
+    "@project-sothoth/sdk"
   ],
   "providedContracts": [
     "CONTRACT/SOTHOTH/CLI-IO@1"
@@ -232,7 +232,7 @@ can override it, because the SDK never selects the exit and the CLI applies this
 ```
 
 `runtimeImportAllowlist` is the closed runtime and type-level internal import boundary. The CLI
-does not import `@sothoth/core`, `@sothoth/contracts`, or any domain package, and it obtains no
+does not import `@project-sothoth/core`, `@project-sothoth/contracts`, or any domain package, and it obtains no
 contract, type, or semantics through re-exports or transitive acquisition: everything flows through
 `CONTRACT/SOTHOTH/PUBLIC-SDK@1`.
 
@@ -250,7 +250,7 @@ Explicit output is written atomically, and generated bytes are never staged:
 ```json
 {
   "kind": "sothoth-dossier/cli-output-declaration@1",
-  "packageId": "@sothoth/cli",
+  "packageId": "@project-sothoth/cli",
   "defaultOutput": "stdout",
   "writeStrategy": "same-directory-temp-then-replace",
   "atomicExplicitWrites": true,
@@ -277,7 +277,7 @@ component: the diagnostics-and-process-outcome authority of the control plane is
 the concrete terminal contract — the frozen exit table, the single-document stdout discipline, and
 atomic explicit writes declared in this Dossier.
 
-Inherited from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2`, section `authority-boundary`,
+Inherited from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3`, section `authority-boundary`,
 applicability `specializes`.
 
 The specialization adds no authority: the CLI issues none, accepts nothing, executes no evidence,
@@ -297,7 +297,7 @@ editing the explicit input and re-running; the CLI never retries, repairs, defau
 ```json
 {
   "kind": "sothoth-dossier/determinism-declaration@1",
-  "packageId": "@sothoth/cli",
+  "packageId": "@project-sothoth/cli",
   "byteStableOutputs": true,
   "stringOrdering": "unicode-code-point",
   "tieBreaking": "canonical-identity-then-diagnostic-code"
@@ -318,7 +318,7 @@ The machine result of an invocation is observed as exactly one document on stdou
 ```json
 {
   "kind": "sothoth-dossier/cli-stream-declaration@1",
-  "packageId": "@sothoth/cli",
+  "packageId": "@project-sothoth/cli",
   "stdoutContract": "exactly-one-machine-document",
   "stdoutContamination": "forbidden",
   "operationalNarration": "stderr-only"
@@ -337,7 +337,7 @@ codes. The CLI keeps no logs, counters, or telemetry of its own.
 
 Deployment is one reproducible npm package shipping the `sothoth` executable — compiled ESM,
 declarations, explicit exports map, Apache-2.0 inclusion, clean CI publication — with the single
-runtime dependency `@sothoth/sdk`.
+runtime dependency `@project-sothoth/sdk`.
 
 Operation is the eight documented commands plus explicit flags and paths. No environment variable
 or configuration file is consulted, no daemon exists, and no implicit scan runs at startup.
@@ -367,7 +367,7 @@ The deliberate sharp edges are that nothing is guessed — no implicit scan, no 
 environment semantics — and that stdout must stay parseable, so operational detail is never mixed
 into the machine document.
 
-Automation authors consume `@sothoth/sdk` directly; the CLI is for terminals and shell
+Automation authors consume `@project-sothoth/sdk` directly; the CLI is for terminals and shell
 composition, and it refuses to become a scripting runtime, a shell, or a hidden-commands backdoor.
 
 <!-- sothoth:section id="verification-and-acceptance-criteria" -->
@@ -377,7 +377,7 @@ composition, and it refuses to become a scripting runtime, a shell, or a hidden-
 ```json
 {
   "kind": "sothoth-dossier/verification-criteria@1",
-  "packageId": "@sothoth/cli",
+  "packageId": "@project-sothoth/cli",
   "criteria": [
     {
       "criterionId": "cli-atomic-explicit-output",
@@ -411,7 +411,7 @@ requires stdout captures proving exactly one uncontaminated machine document wit
 stderr. `cli-atomic-explicit-output` requires write-failure fixtures proving same-directory
 temp-then-replace, no partial target, and the `invalid-input`/exit-2 unwritable-destination
 behavior with the established output-unwritable diagnostic. `cli-sdk-only-import-boundary` requires
-dependency scans proving the only internal import is `@sothoth/sdk`.
+dependency scans proving the only internal import is `@project-sothoth/sdk`.
 
 <!-- sothoth:section id="future-capability-compatibility" -->
 
@@ -428,13 +428,13 @@ generated files.
 
 ## Traceability and exact references
 
-This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` sections `decision`,
+This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3` sections `decision`,
 `authority-boundary`, `package-architecture`, `diagnostics-and-process-outcomes`, and
-`release-boundary`; to `CONTRACT/SOTHOTH/PUBLIC-SDK@1` consumed directly from `@sothoth/sdk`; and
-to the catalog candidate `@sothoth/cli` in `SOTHOTH-DESIGN-SCOPE-0.1@1`.
+`release-boundary`; to `CONTRACT/SOTHOTH/PUBLIC-SDK@1` consumed directly from `@project-sothoth/sdk`; and
+to the catalog candidate `@project-sothoth/cli` in `SOTHOTH-DESIGN-SCOPE-0.1@1`.
 
-The registration for this component is `SOTHOTH-CLI-DOSSIER@1` bound to
-`DOC-SOTHOTH-CLI-DOSSIER@1`, providing `CONTRACT/SOTHOTH/CLI-IO@1` and requiring only
+The registration for this component is `SOTHOTH-CLI-DOSSIER@2` bound to
+`DOC-SOTHOTH-CLI-DOSSIER@2`, providing `CONTRACT/SOTHOTH/CLI-IO@1` and requiring only
 `CONTRACT/SOTHOTH/PUBLIC-SDK@1`. Every reference uses the exact grammar
 `<identity>@<positive integer revision>`; paths, bare names, and `latest` are forbidden.
 
@@ -454,6 +454,6 @@ Seventeen of the eighteen closed topics are resolved locally by this Dossier: `i
 `compatibility-and-migration`; `developer-and-operator-experience` by
 `developer-and-operator-experience`; `verification` by `verification-and-acceptance-criteria`; and
 `future-compatibility` by `future-capability-compatibility`. `authority-and-security` is inherited
-exactly from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` section `authority-boundary` with
+exactly from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3` section `authority-boundary` with
 applicability `specializes`; the terminal I/O specialization of the control-plane outcome
 authority is declared in that section.

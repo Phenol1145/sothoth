@@ -1,12 +1,12 @@
-# @sothoth/contracts Artifact Design Dossier
+# @project-sothoth/contracts Artifact Design Dossier
 
 Status: proposed design fact, pending external acceptance
 
-Document identity: `DOC-SOTHOTH-CONTRACTS-DOSSIER` revision `1`
+Document identity: `DOC-SOTHOTH-CONTRACTS-DOSSIER` revision `2`
 
-Design identity: `SOTHOTH-CONTRACTS-DOSSIER` revision `1`
+Design identity: `SOTHOTH-CONTRACTS-DOSSIER` revision `2`
 
-Component: `@sothoth/contracts`, candidate of `SOTHOTH-DESIGN-SCOPE-0.1` with `designRequirement: full`
+Component: `@project-sothoth/contracts`, candidate of `SOTHOTH-DESIGN-SCOPE-0.1` with `designRequirement: full`
 
 This Dossier is the closed pre-design fact for the contract-owning foundation package of Sothoth
 `0.1.0`. It binds the component to the Dossier Document Contract `sothoth.design-dossier/full/v1`
@@ -17,7 +17,7 @@ before the retained catalog candidates hold accepted Dossiers and an accepted Ar
 
 ## Decision summary
 
-`@sothoth/contracts` is the single normative owner of every closed schema, TypeScript type,
+`@project-sothoth/contracts` is the single normative owner of every closed schema, TypeScript type,
 canonical identity grammar, diagnostic contract, projection contract, pre-design contract, and
 extension protocol consumed by the Sothoth compilation stack. Everything the system treats as a
 closed fact — the shape of a Diagnostic, the envelope of a Projection, the topic set of a Dossier,
@@ -25,8 +25,8 @@ the protocol of a Trusted Rule Module — is declared here and nowhere else.
 
 The package is deliberately inert. It declares what is true and what is rejected; it does not
 compile, parse, traverse, digest, or execute anything. Compilation algorithms live in
-`@sothoth/core`, generic graph algorithms live in `@sothoth/graph`, CommonMark parsing and source
-spans live in `@sothoth/document-index`, and every I/O concern lives in an adapter. A declaration in
+`@project-sothoth/core`, generic graph algorithms live in `@project-sothoth/graph`, CommonMark parsing and source
+spans live in `@project-sothoth/document-index`, and every I/O concern lives in an adapter. A declaration in
 this package is authoritative for identity and shape only; accepting a Source Fact, admitting a
 release, or writing any byte remains outside Sothoth entirely.
 
@@ -34,10 +34,10 @@ release, or writing any byte remains outside Sothoth entirely.
 
 ## Artifact identity and classification
 
-The artifact is one npm package `@sothoth/contracts`, classified as a declarative type-and-schema
+The artifact is one npm package `@project-sothoth/contracts`, classified as a declarative type-and-schema
 library with zero runtime dependencies. Its artifact identity is bound by this Dossier's design
-identity `SOTHOTH-CONTRACTS-DOSSIER@1`; its document identity is
-`DOC-SOTHOTH-CONTRACTS-DOSSIER@1`; and its release membership is only ever expressed by a future
+identity `SOTHOTH-CONTRACTS-DOSSIER@2`; its document identity is
+`DOC-SOTHOTH-CONTRACTS-DOSSIER@2`; and its release membership is only ever expressed by a future
 formal Scope BOM, never by this catalog candidate record.
 
 The package publishes compiled ESM modules plus TypeScript declarations. It is consumed at both
@@ -49,7 +49,7 @@ about declared shapes.
 
 ## Purpose and non-goals
 
-The purpose of `@sothoth/contracts` is to make the vocabulary of the control plane closed and
+The purpose of `@project-sothoth/contracts` is to make the vocabulary of the control plane closed and
 checkable: one place defines what a Structured Diagnostic, a Change Plan Projection, a Design Scope
 Catalog entry, an Artifact Design Registration, a Selector AST node, a Gate Macro, or an Evidence
 Check Reference may contain. Closing the vocabulary here is what allows every other package to stay
@@ -61,7 +61,7 @@ capability beyond shape validation, as declared below:
 ```json
 {
   "kind": "sothoth-dossier/forbidden-capability-declaration@1",
-  "packageId": "@sothoth/contracts",
+  "packageId": "@project-sothoth/contracts",
   "capabilityClasses": {
     "business-authority": "forbidden",
     "canonical-json-implementation": "forbidden",
@@ -79,9 +79,9 @@ capability beyond shape validation, as declared below:
 ```
 
 Concretely: canonical JSON serialization is defined here as a contract but implemented in
-`@sothoth/core`; SCC and wave algorithms over contract-declared graph shapes are implemented in
-`@sothoth/graph`; CommonMark structure is parsed by `@sothoth/document-index`; and consumer or
-FRACTA-specific semantics belong to `@sothoth/profile-sdk` and `@fracta/sothoth-profile`. The
+`@project-sothoth/core`; SCC and wave algorithms over contract-declared graph shapes are implemented in
+`@project-sothoth/graph`; CommonMark structure is parsed by `@project-sothoth/document-index`; and consumer or
+FRACTA-specific semantics belong to `@project-sothoth/profile-sdk` and `@fracta/sothoth-profile`. The
 package also never writes Source Facts and never grants business acceptance.
 
 <!-- sothoth:section id="responsibility-and-truth-ownership" -->
@@ -95,7 +95,7 @@ closed enumerations exist at that revision.
 ```json
 {
   "kind": "sothoth-dossier/truth-ownership-declaration@1",
-  "packageId": "@sothoth/contracts",
+  "packageId": "@project-sothoth/contracts",
   "producedStateRefs": [
     "sothoth.contracts/schema-identity@1"
   ],
@@ -105,9 +105,9 @@ closed enumerations exist at that revision.
 ```
 
 Responsibilities that look nearby but are explicitly not owned here: diagnostic aggregation and
-digest computation (`@sothoth/core`), diagnostic emission policy for a compiled domain
-(`@sothoth/governance` and `@sothoth/planning`), document conformance evaluation
-(`@sothoth/governance`), and the projection bytes themselves (always compiled, never authored
+digest computation (`@project-sothoth/core`), diagnostic emission policy for a compiled domain
+(`@project-sothoth/governance` and `@project-sothoth/planning`), document conformance evaluation
+(`@project-sothoth/governance`), and the projection bytes themselves (always compiled, never authored
 here). Because the package only declares, its effects are limited to import-time type information
 and pure validation predicates; it has no side effects to reconcile.
 
@@ -121,14 +121,14 @@ narrow vocabulary it actually uses:
 ```json
 {
   "kind": "sothoth-dossier/public-surface-declaration@1",
-  "packageId": "@sothoth/contracts",
+  "packageId": "@project-sothoth/contracts",
   "publicModules": [
-    "@sothoth/contracts/identity",
-    "@sothoth/contracts/schema",
-    "@sothoth/contracts/diagnostic",
-    "@sothoth/contracts/projection",
-    "@sothoth/contracts/pre-design",
-    "@sothoth/contracts/extension"
+    "@project-sothoth/contracts/identity",
+    "@project-sothoth/contracts/schema",
+    "@project-sothoth/contracts/diagnostic",
+    "@project-sothoth/contracts/projection",
+    "@project-sothoth/contracts/pre-design",
+    "@project-sothoth/contracts/extension"
   ],
   "surfaceKind": "types-and-validation-only"
 }
@@ -139,7 +139,7 @@ closed envelope schemas for catalog, registry, and registration facts; `diagnost
 Structured Diagnostic shape and the code grammar `<owner>.<domain>/<condition>`; `projection` holds
 the projection envelopes and their digest fields; `pre-design` holds the Dossier topic sets,
 resolution kinds, and applicability kinds; `extension` holds the Gate Macro, Trusted Rule Module,
-and Evidence Check contracts. Every other `@sothoth/*` package is a consumer; the public SDK
+and Evidence Check contracts. Every other `@project-sothoth/*` package is a consumer; the public SDK
 re-exports nothing from here privately, and the CLI never reaches around the SDK.
 
 <!-- sothoth:section id="core-sdk-protocol-boundary" -->
@@ -147,7 +147,7 @@ re-exports nothing from here privately, and the CLI never reaches around the SDK
 ## Core, SDK, and protocol boundary
 
 The protocol this package defines is data-shaped, not behavioral: types and closed enumerations
-that the kernel, domain compilers, adapters, SDK, and CLI agree on. `@sothoth/core` consumes these
+that the kernel, domain compilers, adapters, SDK, and CLI agree on. `@project-sothoth/core` consumes these
 types as the input and output vocabulary of the compilation kernel; the SDK exposes them to library
 consumers unchanged; the CLI renders them. No participant may extend a closed set locally — an
 unknown diagnostic verdict, topic, applicability, or reference field is a schema violation, not a
@@ -162,13 +162,13 @@ behavior; the dependency and the discipline point the same way.
 
 ## Dependency and topology
 
-`@sothoth/contracts` is the base of the pinned dependency direction
+`@project-sothoth/contracts` is the base of the pinned dependency direction
 `graph -> core -> contracts`. It imports nothing at runtime:
 
 ```json
 {
   "kind": "sothoth-dossier/dependency-declaration@1",
-  "packageId": "@sothoth/contracts",
+  "packageId": "@project-sothoth/contracts",
   "runtimeImportAllowlist": [],
   "providedContracts": [
     "CONTRACT/SOTHOTH/SCHEMAS@1"
@@ -179,7 +179,7 @@ behavior; the dependency and the discipline point the same way.
 
 The provided contract `CONTRACT/SOTHOTH/SCHEMAS@1` is the closed schema, identity, diagnostic,
 projection, pre-design, and extension vocabulary at revision 1. Because the allowlist is empty, any
-runtime import — including `@sothoth/core`, `@sothoth/graph`, a domain package, an adapter, an SDK,
+runtime import — including `@project-sothoth/core`, `@project-sothoth/graph`, a domain package, an adapter, an SDK,
 or a CLI — would invert the pinned direction and is a design violation even before a cycle forms.
 Type-level and test-time dependencies follow the same allowlist.
 
@@ -204,7 +204,7 @@ This topic is inherited exactly from the accepted governance control plane desig
 schema facts: the package may read and reject declared shapes, never create, accept, or write back
 any Source Fact.
 
-Inherited from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2`, section `authority-boundary`,
+Inherited from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3`, section `authority-boundary`,
 applicability `narrows`.
 
 Security posture follows from closed sets: unknown fields, unknown enumeration members, and
@@ -228,7 +228,7 @@ agree byte-for-byte:
 ```json
 {
   "kind": "sothoth-dossier/determinism-declaration@1",
-  "packageId": "@sothoth/contracts",
+  "packageId": "@project-sothoth/contracts",
   "byteStableOutputs": true,
   "stringOrdering": "unicode-code-point",
   "tieBreaking": "declared-enumeration-order"
@@ -301,7 +301,7 @@ working across Sothoth versions.
 ```json
 {
   "kind": "sothoth-dossier/verification-criteria@1",
-  "packageId": "@sothoth/contracts",
+  "packageId": "@project-sothoth/contracts",
   "criteria": [
     {
       "criterionId": "contracts-schema-closure",
@@ -344,16 +344,16 @@ regardless of later revisions.
 
 ## Traceability and exact references
 
-This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` sections `decision`,
+This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3` sections `decision`,
 `authority-boundary`, `package-architecture`, `documents-and-selectors`, and
 `diagnostics-and-process-outcomes`; to the Dossier Document Contract
 `sothoth.design-dossier/full/v1` at `docs/design/contracts/artifact-design-dossier.v1.json`; and to
-the catalog candidate `@sothoth/contracts` in `SOTHOTH-DESIGN-SCOPE-0.1@1`.
+the catalog candidate `@project-sothoth/contracts` in `SOTHOTH-DESIGN-SCOPE-0.1@1`.
 
 Every cross-artifact reference in this Dossier and its registration uses the exact grammar
 `<identity>@<positive integer revision>`, with the last `@` separating the revision. The
-registration for this component is `SOTHOTH-CONTRACTS-DOSSIER@1` bound to
-`DOC-SOTHOTH-CONTRACTS-DOSSIER@1`; its provided contract is `CONTRACT/SOTHOTH/SCHEMAS@1`.
+registration for this component is `SOTHOTH-CONTRACTS-DOSSIER@2` bound to
+`DOC-SOTHOTH-CONTRACTS-DOSSIER@2`; its provided contract is `CONTRACT/SOTHOTH/SCHEMAS@1`.
 
 <!-- sothoth:section id="topic-coverage-declaration" -->
 
@@ -372,5 +372,5 @@ by `purpose-and-non-goals`; `responsibility` and `truth-ownership` by
 `developer-and-operator-experience` by `developer-and-operator-experience`; `verification` by
 `verification-and-acceptance-criteria`; and `future-compatibility` by
 `future-capability-compatibility` — plus `authority-and-security`, which is inherited exactly from
-`DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` section `authority-boundary` with applicability
+`DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3` section `authority-boundary` with applicability
 `narrows`. No topic is resolved as not-applicable.

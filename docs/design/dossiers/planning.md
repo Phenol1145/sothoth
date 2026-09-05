@@ -1,12 +1,12 @@
-# @sothoth/planning Artifact Design Dossier
+# @project-sothoth/planning Artifact Design Dossier
 
 Status: proposed design fact, pending external acceptance
 
-Document identity: `DOC-SOTHOTH-PLANNING-DOSSIER` revision `1`
+Document identity: `DOC-SOTHOTH-PLANNING-DOSSIER` revision `2`
 
-Design identity: `SOTHOTH-PLANNING-DOSSIER` revision `1`
+Design identity: `SOTHOTH-PLANNING-DOSSIER` revision `2`
 
-Component: `@sothoth/planning`, candidate of `SOTHOTH-DESIGN-SCOPE-0.1` with `designRequirement: full`
+Component: `@project-sothoth/planning`, candidate of `SOTHOTH-DESIGN-SCOPE-0.1` with `designRequirement: full`
 
 This Dossier closes the pre-design facts for the scheduling compilation package of Sothoth
 `0.1.0` under the Dossier Document Contract `sothoth.design-dossier/full/v1`. It authorizes no
@@ -18,7 +18,7 @@ implementation at all.
 
 ## Decision summary
 
-`@sothoth/planning` is the pure scheduling domain compiler. It validates dependency constraints
+`@project-sothoth/planning` is the pure scheduling domain compiler. It validates dependency constraints
 over caller-supplied planning facts, assigns deterministic topological Waves through the generic
 graph package, and exposes exactly one non-authoritative Schedule Solution whose axes are all
 projections of that same solution. It is not an executor, a task scheduler, or an authoritative
@@ -33,10 +33,10 @@ extend this same Schedule Solution identity rather than create a parallel schedu
 
 ## Artifact identity and classification
 
-The artifact is the npm package `@sothoth/planning`, classified as a pure-function domain compiler
+The artifact is the npm package `@project-sothoth/planning`, classified as a pure-function domain compiler
 over caller-supplied Plan Graph and constraint values. Its design identity is
-`SOTHOTH-PLANNING-DOSSIER@1`, its document identity is `DOC-SOTHOTH-PLANNING-DOSSIER@1`, and it
-is an independent sibling of `@sothoth/governance` in the accepted package direction.
+`SOTHOTH-PLANNING-DOSSIER@2`, its document identity is `DOC-SOTHOTH-PLANNING-DOSSIER@2`, and it
+is an independent sibling of `@project-sothoth/governance` in the accepted package direction.
 
 It ships compiled ESM plus TypeScript declarations with an explicit exports map. It produces
 derived scheduling views only; release membership remains a future formal Scope BOM fact, never a
@@ -57,7 +57,7 @@ The non-goals are the scheduler authority fence:
 ```json
 {
   "kind": "sothoth-dossier/forbidden-capability-declaration@1",
-  "packageId": "@sothoth/planning",
+  "packageId": "@project-sothoth/planning",
   "capabilityClasses": {
     "acceptance-authority": "forbidden",
     "calendar-placement-solver": "forbidden",
@@ -87,7 +87,7 @@ The closed `0.1.0` capability and the explicit unsupported axes are declared as 
 ```json
 {
   "kind": "sothoth-dossier/schedule-solution-declaration@1",
-  "packageId": "@sothoth/planning",
+  "packageId": "@project-sothoth/planning",
   "solutionIdentity": "sothoth.planning/schedule-solution@1",
   "authority": "non-authoritative-projection",
   "implementedCapabilities": [
@@ -121,7 +121,7 @@ it was given:
 ```json
 {
   "kind": "sothoth-dossier/truth-ownership-declaration@1",
-  "packageId": "@sothoth/planning",
+  "packageId": "@project-sothoth/planning",
   "producedStateRefs": [
     "sothoth.planning/schedule-solution@1"
   ],
@@ -146,12 +146,12 @@ Solution.
 ```json
 {
   "kind": "sothoth-dossier/public-surface-declaration@1",
-  "packageId": "@sothoth/planning",
+  "packageId": "@project-sothoth/planning",
   "publicModules": [
-    "@sothoth/planning/constraints",
-    "@sothoth/planning/schedule",
-    "@sothoth/planning/solution",
-    "@sothoth/planning/waves"
+    "@project-sothoth/planning/constraints",
+    "@project-sothoth/planning/schedule",
+    "@project-sothoth/planning/solution",
+    "@project-sothoth/planning/waves"
   ],
   "surfaceKind": "pure-functions-only"
 }
@@ -160,7 +160,7 @@ Solution.
 `constraints` validates dependency constraints and returns exact satisfied constraint identities;
 `schedule` drives the closed scheduling compilation; `solution` constructs and exposes the single
 Schedule Solution; `waves` assigns deterministic topological Waves over the generic graph surface.
-Primary consumers are `@sothoth/sdk` and `@sothoth/cli` through the SDK. Governance and Git are
+Primary consumers are `@project-sothoth/sdk` and `@project-sothoth/cli` through the SDK. Governance and Git are
 not consumers and cannot be imported.
 
 <!-- sothoth:section id="core-sdk-protocol-boundary" -->
@@ -185,18 +185,18 @@ semantics.
 
 ## Dependency and topology
 
-`@sothoth/planning` may import only the four pure packages whose contracts it directly requires,
+`@project-sothoth/planning` may import only the four pure packages whose contracts it directly requires,
 and it provides the planning surface to outward layers:
 
 ```json
 {
   "kind": "sothoth-dossier/dependency-declaration@1",
-  "packageId": "@sothoth/planning",
+  "packageId": "@project-sothoth/planning",
   "runtimeImportAllowlist": [
-    "@sothoth/contracts",
-    "@sothoth/core",
-    "@sothoth/graph",
-    "@sothoth/selectors"
+    "@project-sothoth/contracts",
+    "@project-sothoth/core",
+    "@project-sothoth/graph",
+    "@project-sothoth/selectors"
   ],
   "providedContracts": [
     "CONTRACT/SOTHOTH/PLANNING@1"
@@ -211,7 +211,7 @@ and it provides the planning surface to outward layers:
 ```
 
 `runtimeImportAllowlist` is the closed runtime and type-level internal import boundary. Planning
-must not depend on Governance, Git, Profile SDK, SDK, CLI, FRACTA, or `@sothoth/document-index`;
+must not depend on Governance, Git, Profile SDK, SDK, CLI, FRACTA, or `@project-sothoth/document-index`;
 the latter is deliberately excluded even though Selectors consumes it internally, because this
 package obtains Selector capability only through `CONTRACT/SOTHOTH/SELECTOR@1`.
 
@@ -237,7 +237,7 @@ This topic is inherited from the accepted governance control plane design and na
 component: the Schedule Solution is a non-authoritative Projection, unsupported scheduling axes
 fail closed, and Planning acquires no Registry or admission policy from Governance.
 
-Inherited from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2`, section `authority-boundary`,
+Inherited from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3`, section `authority-boundary`,
 applicability `narrows`.
 
 The component-specific narrowing is explicit: every axis answer is a projection of one Schedule
@@ -262,7 +262,7 @@ and concurrent scheduling:
 ```json
 {
   "kind": "sothoth-dossier/determinism-declaration@1",
-  "packageId": "@sothoth/planning",
+  "packageId": "@project-sothoth/planning",
   "byteStableOutputs": true,
   "stringOrdering": "unicode-code-point",
   "tieBreaking": "canonical-identity-then-diagnostic-code"
@@ -278,8 +278,8 @@ construction: pure compilation shares no mutable state.
 ## Observation and audit
 
 The package emits exactly one observation identity, `sothoth.planning/schedule-diagnostic@1`,
-under the Structured Diagnostic vocabulary of `@sothoth/contracts` and the aggregation contract of
-`@sothoth/core`. It keeps no logs, counters, or telemetry of its own.
+under the Structured Diagnostic vocabulary of `@project-sothoth/contracts` and the aggregation contract of
+`@project-sothoth/core`. It keeps no logs, counters, or telemetry of its own.
 
 Every Schedule Solution records the exact constraint identities it satisfied and the compilation
 facts it derived from, so an auditor can re-run the same pure compilation and compare bytes
@@ -291,8 +291,8 @@ instead of trusting retained state. Observations never mutate the failing input.
 
 Deployment is one reproducible npm package — compiled ESM, declarations, explicit exports map,
 Apache-2.0 inclusion, clean CI publication — with runtime dependencies exactly the four pure
-packages declared beneath it: `@sothoth/contracts`, `@sothoth/core`, `@sothoth/graph`, and
-`@sothoth/selectors`.
+packages declared beneath it: `@project-sothoth/contracts`, `@project-sothoth/core`, `@project-sothoth/graph`, and
+`@project-sothoth/selectors`.
 
 There is nothing to configure or operate in the package itself: facts and budgets arrive as
 explicit versioned arguments, no environment variable or config file is consulted, and the
@@ -331,7 +331,7 @@ authoritative schedule and never modify Plan Graph, Task State, or Capacity Poli
 ```json
 {
   "kind": "sothoth-dossier/verification-criteria@1",
-  "packageId": "@sothoth/planning",
+  "packageId": "@project-sothoth/planning",
   "criteria": [
     {
       "criterionId": "planning-dependency-wave-only",
@@ -374,15 +374,15 @@ unsupported axes, mutate Source Facts, or absorb Registry/admission policy from 
 
 ## Traceability and exact references
 
-This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` sections `decision`,
+This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3` sections `decision`,
 `authority-boundary`, `package-architecture`, and `graphs-change-order-and-scheduling`; to
 `CONTRACT/SOTHOTH/GENERIC-GRAPH@1`, `CONTRACT/SOTHOTH/SELECTOR@1`, and
 `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` consumed directly from their owning packages; to
-`CONTRACT/SOTHOTH/SCHEMAS@1` consumed directly from `@sothoth/contracts`; and to the catalog
-candidate `@sothoth/planning` in `SOTHOTH-DESIGN-SCOPE-0.1@1`.
+`CONTRACT/SOTHOTH/SCHEMAS@1` consumed directly from `@project-sothoth/contracts`; and to the catalog
+candidate `@project-sothoth/planning` in `SOTHOTH-DESIGN-SCOPE-0.1@1`.
 
-The registration for this component is `SOTHOTH-PLANNING-DOSSIER@1` bound to
-`DOC-SOTHOTH-PLANNING-DOSSIER@1`, providing `CONTRACT/SOTHOTH/PLANNING@1` and requiring
+The registration for this component is `SOTHOTH-PLANNING-DOSSIER@2` bound to
+`DOC-SOTHOTH-PLANNING-DOSSIER@2`, providing `CONTRACT/SOTHOTH/PLANNING@1` and requiring
 `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1`, `CONTRACT/SOTHOTH/GENERIC-GRAPH@1`,
 `CONTRACT/SOTHOTH/SCHEMAS@1`, and `CONTRACT/SOTHOTH/SELECTOR@1`. Every reference uses the exact
 grammar `<identity>@<positive integer revision>`; paths, bare names, and `latest` are forbidden.
@@ -403,6 +403,6 @@ by `public-surface-and-consumers`; `core-sdk-boundary` and `protocol-and-data-fl
 `compatibility-and-migration`; `developer-and-operator-experience` by
 `developer-and-operator-experience`; `verification` by `verification-and-acceptance-criteria`;
 and `future-compatibility` by `future-capability-compatibility`. `authority-and-security` is
-inherited exactly from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` section
+inherited exactly from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3` section
 `authority-boundary` with applicability `narrows`; the Schedule Solution non-authority is the
 component-specific narrowing declared in that section.

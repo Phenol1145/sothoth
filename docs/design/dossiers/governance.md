@@ -1,12 +1,12 @@
-# @sothoth/governance Artifact Design Dossier
+# @project-sothoth/governance Artifact Design Dossier
 
 Status: proposed design fact, pending external acceptance
 
-Document identity: `DOC-SOTHOTH-GOVERNANCE-DOSSIER` revision `1`
+Document identity: `DOC-SOTHOTH-GOVERNANCE-DOSSIER` revision `2`
 
-Design identity: `SOTHOTH-GOVERNANCE-DOSSIER` revision `1`
+Design identity: `SOTHOTH-GOVERNANCE-DOSSIER` revision `2`
 
-Component: `@sothoth/governance`, candidate of `SOTHOTH-DESIGN-SCOPE-0.1` with `designRequirement: full`
+Component: `@project-sothoth/governance`, candidate of `SOTHOTH-DESIGN-SCOPE-0.1` with `designRequirement: full`
 
 This Dossier closes the pre-design facts for the document governance compilation package of
 Sothoth `0.1.0` under the Dossier Document Contract `sothoth.design-dossier/full/v1`. It
@@ -18,7 +18,7 @@ all.
 
 ## Decision summary
 
-`@sothoth/governance` owns the compilation of document governance: it reads Registry, Ledger,
+`@project-sothoth/governance` owns the compilation of document governance: it reads Registry, Ledger,
 Traceability, and Manifest facts, verifies append-only history, compiles pre-design closure and
 change impact, and produces the non-authoritative projections the method runs on — Design Closure
 and Scope BOM Admissibility above all. It hosts the closed relation-role vocabulary and its
@@ -37,10 +37,10 @@ evidence for an owner, never an act of acceptance by the tool.
 
 ## Artifact identity and classification
 
-The artifact is the npm package `@sothoth/governance`, classified as the document-governance
+The artifact is the npm package `@project-sothoth/governance`, classified as the document-governance
 domain compiler: pure compilation functions over caller-supplied Source Fact values. Its design
-identity is `SOTHOTH-GOVERNANCE-DOSSIER@1`, its document identity is
-`DOC-SOTHOTH-GOVERNANCE-DOSSIER@1`, and it is the top layer of the document-governance half of
+identity is `SOTHOTH-GOVERNANCE-DOSSIER@2`, its document identity is
+`DOC-SOTHOTH-GOVERNANCE-DOSSIER@2`, and it is the top layer of the document-governance half of
 the accepted package direction, above `document-index`, `selectors`, and the pinned foundation
 `graph -> core -> contracts`.
 
@@ -65,7 +65,7 @@ The non-goals are the authority fence:
 ```json
 {
   "kind": "sothoth-dossier/forbidden-capability-declaration@1",
-  "packageId": "@sothoth/governance",
+  "packageId": "@project-sothoth/governance",
   "capabilityClasses": {
     "acceptance-state-marking": "forbidden",
     "authoritative-scope-bom-write": "forbidden",
@@ -88,7 +88,7 @@ The non-goals are the authority fence:
 In practice: the package never creates, rewrites, or writes back any Source Fact; it never flips a
 `proposed` Dossier, registration, or Architecture Baseline to `accepted`; it never creates,
 writes, or substitutes an authoritative Scope BOM; it never evaluates Document Contract
-conformance by prose substring — structure comes from `@sothoth/document-index`; it never
+conformance by prose substring — structure comes from `@project-sothoth/document-index`; it never
 executes a Gate Macro's content, an Evidence Check, or any shell, JavaScript, or network call; it
 never discovers, downloads, or auto-installs a Trusted Rule Module; and it owns no top-level
 outcome, process exit, or business authorization — callers and Core aggregate outcomes.
@@ -103,7 +103,7 @@ it was given, and of nothing it was not given:
 ```json
 {
   "kind": "sothoth-dossier/truth-ownership-declaration@1",
-  "packageId": "@sothoth/governance",
+  "packageId": "@project-sothoth/governance",
   "producedStateRefs": [
     "sothoth.governance/design-closure-projection@1",
     "sothoth.governance/scope-bom-admissibility-projection@1",
@@ -124,7 +124,7 @@ not among its truths. The domain knowledge it does own is closed and declared:
 ```json
 {
   "kind": "sothoth-dossier/domain-semantics-declaration@1",
-  "packageId": "@sothoth/governance",
+  "packageId": "@project-sothoth/governance",
   "ownedDomainSemantics": [
     "registry-lifecycle-compilation",
     "ledger-append-only-verification",
@@ -159,15 +159,15 @@ own those mappings' content. What no mapping says, no compilation invents.
 ```json
 {
   "kind": "sothoth-dossier/public-surface-declaration@1",
-  "packageId": "@sothoth/governance",
+  "packageId": "@project-sothoth/governance",
   "publicModules": [
-    "@sothoth/governance/registry",
-    "@sothoth/governance/ledger",
-    "@sothoth/governance/traceability",
-    "@sothoth/governance/manifest",
-    "@sothoth/governance/pre-design",
-    "@sothoth/governance/change-plan",
-    "@sothoth/governance/gate-macros"
+    "@project-sothoth/governance/registry",
+    "@project-sothoth/governance/ledger",
+    "@project-sothoth/governance/traceability",
+    "@project-sothoth/governance/manifest",
+    "@project-sothoth/governance/pre-design",
+    "@project-sothoth/governance/change-plan",
+    "@project-sothoth/governance/gate-macros"
   ],
   "surfaceKind": "pure-functions-only"
 }
@@ -179,7 +179,7 @@ compiles Dossier coverage, exact inheritance, producer/consumer edges, truth own
 criteria into the Design Closure Projection, and Baseline-bound member admissibility into the
 Scope BOM Admissibility Projection; `change-plan` compiles affected closure, dispositions, and
 Ordering Edges into the change-plan projection; `gate-macros` expands and validates versioned
-macros into acyclic check graphs. Primary consumers are `@sothoth/sdk` and `@sothoth/cli`
+macros into acyclic check graphs. Primary consumers are `@project-sothoth/sdk` and `@project-sothoth/cli`
 (`sothoth compile governance`, `sothoth check`, `sothoth change-plan`), plus Consumer Profiles
 through the SDK; planning compilation deliberately does not consume governance, keeping the two
 domains independent.
@@ -190,12 +190,12 @@ domains independent.
 
 The protocol is a value protocol over exact facts: Source Fact values in, typed compilations and
 projections out. Canonical identity, canonical bytes, digests, and outcome aggregation come from
-`@sothoth/core`'s `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` surface, required and imported
+`@project-sothoth/core`'s `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` surface, required and imported
 directly because this package emits canonical, digest-bearing projections; structural document
 facts come from `CONTRACT/SOTHOTH/DOCUMENT-INDEX@1`; scoping comes from
 `CONTRACT/SOTHOTH/SELECTOR@1`; graph assembly comes from `CONTRACT/SOTHOTH/GENERIC-GRAPH@1`; and
 the shared schema, identity, and diagnostic vocabulary that types every fact and finding is
-consumed directly as `CONTRACT/SOTHOTH/SCHEMAS@1` from `@sothoth/contracts`. The package never
+consumed directly as `CONTRACT/SOTHOTH/SCHEMAS@1` from `@project-sothoth/contracts`. The package never
 re-implements canonicalization or traversal, never calls back into a driver, and reaches none of
 these surfaces through a transitive re-export or an undeclared type-only path.
 
@@ -212,18 +212,18 @@ bindings, and never starts the process itself.
 
 ## Dependency and topology
 
-`@sothoth/governance` may depend only on the pure packages whose contracts it requires:
+`@project-sothoth/governance` may depend only on the pure packages whose contracts it requires:
 
 ```json
 {
   "kind": "sothoth-dossier/dependency-declaration@1",
-  "packageId": "@sothoth/governance",
+  "packageId": "@project-sothoth/governance",
   "runtimeImportAllowlist": [
-    "@sothoth/contracts",
-    "@sothoth/core",
-    "@sothoth/document-index",
-    "@sothoth/graph",
-    "@sothoth/selectors"
+    "@project-sothoth/contracts",
+    "@project-sothoth/core",
+    "@project-sothoth/document-index",
+    "@project-sothoth/graph",
+    "@project-sothoth/selectors"
   ],
   "providedContracts": [
     "CONTRACT/SOTHOTH/CHANGE-PLAN@1",
@@ -240,10 +240,10 @@ bindings, and never starts the process itself.
 }
 ```
 
-`CONTRACT/SOTHOTH/SCHEMAS@1` is required directly from `@sothoth/contracts` because every fact
+`CONTRACT/SOTHOTH/SCHEMAS@1` is required directly from `@project-sothoth/contracts` because every fact
 type, identity, and diagnostic this compiler consumes or emits is expressed in the shared schema,
 identity, and diagnostic vocabulary, and `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` is required
-directly from `@sothoth/core` because the Design Closure, Admissibility, and Change Plan
+directly from `@project-sothoth/core` because the Design Closure, Admissibility, and Change Plan
 projections are canonical and digest-bearing. The allowlist is the closed import boundary for
 runtime and type-level internal imports alike, so no vocabulary, canonicalization, or capability
 may arrive through a transitive dependency, and the package still never re-implements
@@ -282,7 +282,7 @@ This topic is inherited from the accepted governance control plane design and na
 component: the Source Fact ownership and Projection non-authority rules apply in full, and this
 package additionally declares that relation semantics cannot silently become modification order.
 
-Inherited from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2`, section `authority-boundary`,
+Inherited from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3`, section `authority-boundary`,
 applicability `narrows`.
 
 The narrowing has four edges. First, an `impact` relation expands review scope and creates no
@@ -312,7 +312,7 @@ Consistency is the product, under the closed determinism contract:
 ```json
 {
   "kind": "sothoth-dossier/determinism-declaration@1",
-  "packageId": "@sothoth/governance",
+  "packageId": "@project-sothoth/governance",
   "byteStableOutputs": true,
   "stringOrdering": "unicode-code-point",
   "tieBreaking": "canonical-identity-then-diagnostic-code"
@@ -333,8 +333,8 @@ inputs and pure compilation make parallel runs independent.
 The package's emissions are exactly its two declared diagnostic identities:
 `sothoth.governance/pre-design-diagnostic@1` for closure and admissibility findings, and
 `sothoth.governance/document-governance-diagnostic@1` for Registry, Ledger, Traceability, and
-Manifest findings — all under the Structured Diagnostic vocabulary of `@sothoth/contracts`,
-aggregated by `@sothoth/core`. Nothing else is emitted, and no emission mutates the failing
+Manifest findings — all under the Structured Diagnostic vocabulary of `@project-sothoth/contracts`,
+aggregated by `@project-sothoth/core`. Nothing else is emitted, and no emission mutates the failing
 source.
 
 Auditability is otherwise carried by the projections themselves: every closure and admissibility
@@ -349,8 +349,8 @@ bytes; the package keeps no logs, counters, or telemetry of its own.
 
 Deployment is one reproducible npm package — compiled ESM, declarations, explicit exports map,
 Apache-2.0 inclusion, clean CI publication — with runtime dependencies exactly the five declared
-pure packages beneath it: `@sothoth/contracts`, `@sothoth/core`, `@sothoth/document-index`,
-`@sothoth/graph`, and `@sothoth/selectors`. Conformance fixtures published alongside the compiler
+pure packages beneath it: `@project-sothoth/contracts`, `@project-sothoth/core`, `@project-sothoth/document-index`,
+`@project-sothoth/graph`, and `@project-sothoth/selectors`. Conformance fixtures published alongside the compiler
 let any consumer verify closure, admissibility, append-only, and determinism claims on its own
 machine.
 
@@ -405,7 +405,7 @@ while each criterion declared below points at the subject section it constrains.
 ```json
 {
   "kind": "sothoth-dossier/verification-criteria@1",
-  "packageId": "@sothoth/governance",
+  "packageId": "@project-sothoth/governance",
   "criteria": [
     {
       "criterionId": "governance-source-fact-non-authority",
@@ -458,18 +458,18 @@ compiler feature.
 
 ## Traceability and exact references
 
-This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` sections `decision`,
+This Dossier traces to `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3` sections `decision`,
 `authority-boundary`, `package-architecture`, `documents-and-selectors`,
 `graphs-change-order-and-scheduling`, `pre-design-boundary`, `extensions-and-evidence`,
 `diagnostics-and-process-outcomes`, and `release-boundary`; to
 `CONTRACT/SOTHOTH/DOCUMENT-INDEX@1`, `CONTRACT/SOTHOTH/GENERIC-GRAPH@1`, and
 `CONTRACT/SOTHOTH/SELECTOR@1` consumed from the domain packages beneath it, to
-`CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` consumed directly from `@sothoth/core`, and to
-`CONTRACT/SOTHOTH/SCHEMAS@1` consumed directly from `@sothoth/contracts`; and to the catalog
-candidate `@sothoth/governance` in `SOTHOTH-DESIGN-SCOPE-0.1@1`.
+`CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1` consumed directly from `@project-sothoth/core`, and to
+`CONTRACT/SOTHOTH/SCHEMAS@1` consumed directly from `@project-sothoth/contracts`; and to the catalog
+candidate `@project-sothoth/governance` in `SOTHOTH-DESIGN-SCOPE-0.1@1`.
 
-The registration for this component is `SOTHOTH-GOVERNANCE-DOSSIER@1` bound to
-`DOC-SOTHOTH-GOVERNANCE-DOSSIER@1`, providing `CONTRACT/SOTHOTH/CHANGE-PLAN@1`,
+The registration for this component is `SOTHOTH-GOVERNANCE-DOSSIER@2` bound to
+`DOC-SOTHOTH-GOVERNANCE-DOSSIER@2`, providing `CONTRACT/SOTHOTH/CHANGE-PLAN@1`,
 `CONTRACT/SOTHOTH/GOVERNANCE-COMPILATION@1`, and `CONTRACT/SOTHOTH/PRE-DESIGN@1`, and requiring
 `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1`, `CONTRACT/SOTHOTH/DOCUMENT-INDEX@1`,
 `CONTRACT/SOTHOTH/GENERIC-GRAPH@1`, `CONTRACT/SOTHOTH/SCHEMAS@1`, and
@@ -492,5 +492,5 @@ by `public-surface-and-consumers`; `core-sdk-boundary` and `protocol-and-data-fl
 `compatibility-and-migration`; `developer-and-operator-experience` by
 `developer-and-operator-experience`; `verification` by `verification-and-acceptance-criteria`;
 and `future-compatibility` by `future-capability-compatibility`. `authority-and-security` is
-inherited from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@2` section `authority-boundary` with
+inherited from `DOC-SOTHOTH-GOVERNANCE-CONTROL-PLANE-DESIGN@3` section `authority-boundary` with
 applicability `narrows`, the component-specific narrowing being declared in that section.
