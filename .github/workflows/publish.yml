@@ -58,13 +58,14 @@ jobs:
           git merge-base --is-ancestor "$GITHUB_SHA" origin/main
 
       - name: Set up Node
+        # No package-manager cache: the publish job builds from a clean
+        # `npm ci` (ruling PRE-3). The daily CI workflow keeps its own cache.
         uses: actions/setup-node@v4
         with:
           node-version: 24
-          cache: npm
           registry-url: https://registry.npmjs.org
 
-      - name: Install exact dependencies
+      - name: Install exact dependencies (clean, no cache)
         run: npm ci
 
       - name: Assert every workspace version is 0.1.0
@@ -81,17 +82,39 @@ jobs:
       - name: Full release verification before publishing
         run: npm run release:verify
 
-      - name: Publish all eleven packages in dependency order
+      - name: Generate the release lock from the verified artifacts
+        # Binds the exact source commit, this workflow file and run id/attempt
+        # (read from the real GitHub Actions environment), Scope BOM @3, the
+        # Candidate BOM and SBOM digests, and the eleven tarball digests.
+        run: node scripts/create-release-lock.mjs
+
+      - name: Publish all eleven packages in dependency order (fail-closed resumable)
         # Bootstrap token (protected, short-lived, granular). Migrate each
         # package to the OIDC trusted publisher and then remove this secret.
+        # A rerun after a partial failure resumes: a package is skipped only
+        # when its registry dist.integrity equals this round's Candidate BOM
+        # SRI exactly; any other existing state stops the run.
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           SOOTHOTH_PUBLISH_EXECUTE: "1"
           GITHUB_REF: ${{ github.ref }}
         run: node scripts/publish-all.mjs --execute
 
+      - name: Upload the sothoth-v0.1.0-release artifact
+        # The Task 12 release-evidence steps download exactly this artifact.
+        uses: actions/upload-artifact@v4
+        with:
+          name: sothoth-v0.1.0-release
+          path: |
+            dist/release/v0.1.0-candidate-bom.json
+            dist/release/v0.1.0-release-lock.json
+            dist/release/sbom.cdx.json
+            dist/release/v0.1.0-verification-report.md
+            dist/release/pack-1/*.tgz
+          if-no-files-found: error
+
       - name: Assert all eleven packages published (aggregate success gate)
         run: |
-          echo "publish-all.mjs exited 0 only if all eleven packages published;"
+          echo "publish-all.mjs exited 0 only if all eleven packages are published or integrity-matched;"
           echo "per-package registry evidence is recorded separately in Task 12."
           echo "No FRACTA notification is sent from this workflow."

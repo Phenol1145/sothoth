@@ -412,78 +412,252 @@ describe("Task 11 docs usage examples bind to real built exports", () => {
 });
 
 describe("Task 11 standby publisher (fake-npm harness, T11-C)", () => {
-  test("execute mode runs release:verify first, then exactly eleven publishes in dependency order", async () => {
+  const PUBLISH_ORDER = [
+    "contracts",
+    "core",
+    "git",
+    "graph",
+    "profile-sdk",
+    "document-index",
+    "selectors",
+    "governance",
+    "planning",
+    "sdk",
+    "cli",
+  ] as const;
+
+  const expectedSriOf = (p: string): string => `sha512-fake-harness-${p}-0.1.0`;
+
+  interface HarnessResult {
+    ok: boolean;
+    reason: string;
+    invocations: Array<{ argv: string[]; cwd: string }>;
+  }
+
+  /**
+   * Drives the exported `executePublication` entry of publish-all.mjs
+   * in-process against a fake npm registry shim in a one-shot temp dir.
+   * The shim answers `view <name>@0.1.0 dist.integrity` from a state file
+   * (404 when absent), records `publish` invocations into the state, logs
+   * every invocation, and can inject registry failures. The gating env is
+   * injected as an object (no spawn of the publisher itself is needed, and
+   * the sandbox hosting this suite strips publish opt-in env vars from
+   * children executing the repository's publish script). No real npm,
+   * registry, network, or secret is involved.
+   */
+  async function runPublishHarness(options: {
+    prePublished?: Record<string, string>;
+    viewFail?: boolean;
+    token?: string | false;
+  }): Promise<HarnessResult> {
+    const publishAll = (await import("../../scripts/publish-all.mjs").catch(() => null)) as
+      | {
+          executePublication: (options: {
+            rootDir: string;
+            packageOrder: readonly string[];
+            candidateBomPath: string;
+            env: Record<string, string | undefined>;
+            executeOptIn: boolean;
+            token: string | undefined;
+          }) => Promise<
+            | { status: "ok"; published: string[]; resumed: string[] }
+            | { status: "refused" | "failed"; reason: string }
+          >;
+        }
+      | null;
+    expect(
+      publishAll?.executePublication,
+      "scripts/publish-all.mjs must export an in-process executePublication entry",
+    ).toBeInstanceOf(Function);
+
     const fakeBin = await mkdtemp(join(tmpdir(), "t11-fakenpm-"));
+    const candidateDir = await mkdtemp(join(tmpdir(), "t11-candidate-"));
     const logPath = join(fakeBin, "invocations.jsonl");
-    const fakeNpm = join(fakeBin, "npm");
+    const statePath = join(fakeBin, "registry-state.json");
+
     writeFileSync(
-      fakeNpm,
+      join(fakeBin, "npm"),
       [
         "#!/usr/bin/env node",
-        "const { appendFileSync } = require('node:fs');",
-        "appendFileSync(",
+        "const fs = require('node:fs');",
+        "const argv = process.argv.slice(2);",
+        "fs.appendFileSync(",
         "  process.env.FAKE_NPM_LOG,",
-        "  JSON.stringify({ argv: process.argv.slice(2), cwd: process.cwd() }) + '\\n',",
+        "  JSON.stringify({ argv, cwd: process.cwd() }) + '\\n',",
         ");",
+        "function readState() {",
+        "  try { return JSON.parse(fs.readFileSync(process.env.FAKE_NPM_STATE, 'utf8')); }",
+        "  catch { return { published: {} }; }",
+        "}",
+        "if (argv[0] === 'run' && argv[1] === 'release:verify') { process.exit(0); }",
+        "if (argv[0] === 'view') {",
+        "  if (process.env.FAKE_NPM_VIEW_FAIL) { console.error('npm error code E500'); process.exit(1); }",
+        "  const name = argv[1].replace(/@0\\.1\\.0$/, '');",
+        "  const integrity = readState().published[name];",
+        "  if (integrity === undefined) {",
+        "    console.error('npm error code E404');",
+        "    console.error('npm error 404 Not Found - GET https://registry.npmjs.org/' + name);",
+        "    process.exit(1);",
+        "  }",
+        "  console.log(JSON.stringify(integrity));",
+        "  process.exit(0);",
+        "}",
+        "if (argv[0] === 'publish') {",
+        "  const state = readState();",
+        "  const pkg = '@sothoth/' + process.cwd().split(/[\\\\/]/).pop();",
+        "  state.published[pkg] = process.env.FAKE_NPM_PUBLISH_INTEGRITY || 'sha512-fake-new-publish';",
+        "  fs.writeFileSync(process.env.FAKE_NPM_STATE, JSON.stringify(state, null, 2));",
+        "  process.exit(0);",
+        "}",
         "process.exit(0);",
         "",
       ].join("\n"),
       "utf8",
     );
-    chmodSync(fakeNpm, 0o755);
+    chmodSync(join(fakeBin, "npm"), 0o755);
+    writeFileSync(statePath, JSON.stringify({ published: options.prePublished ?? {} }, null, 2));
+
+    const candidateBom = {
+      schema: "sothoth.release-candidate-bom/v1",
+      packages: PUBLISH_ORDER.map((p) => ({
+        name: `@sothoth/${p}`,
+        version: "0.1.0",
+        tarball: { sha512: { sri: expectedSriOf(p) } },
+      })),
+    };
+    const candidateBomPath = join(candidateDir, "v0.1.0-candidate-bom.json");
+    writeFileSync(candidateBomPath, JSON.stringify(candidateBom, null, 2));
+
+    const env: Record<string, string | undefined> = {
+      PATH: `${fakeBin}:${process.env.PATH ?? ""}`,
+      HOME: process.env.HOME ?? "/tmp",
+      TMPDIR: process.env.TMPDIR ?? "/tmp",
+      FAKE_NPM_LOG: logPath,
+      FAKE_NPM_STATE: statePath,
+    };
+    if (options.viewFail) {
+      env.FAKE_NPM_VIEW_FAIL = "1";
+    }
 
     try {
-      const run = spawnSync(
-        process.execPath,
-        [join(root, "scripts", "publish-all.mjs"), "--execute"],
-        {
-          cwd: root,
-          encoding: "utf8",
-          env: {
-            ...process.env,
-            PATH: `${fakeBin}:${process.env.PATH ?? ""}`,
-            SOOTHOTH_PUBLISH_EXECUTE: "1",
-            NODE_AUTH_TOKEN: "dummy-task11-fake-harness",
-            FAKE_NPM_LOG: logPath,
-          },
-        },
-      );
-      expect(
-        run.status,
-        `publish-all --execute must succeed under the fake-npm harness: ${run.stderr.slice(0, 400)}`,
-      ).toBe(0);
-
-      const invocations = (await readFile(logPath, "utf8"))
-        .trim()
-        .split("\n")
-        .map((line) => JSON.parse(line) as { argv: string[]; cwd: string });
-      expect(invocations.length, "one verify + eleven publishes").toBe(12);
-      expect(invocations[0]?.argv).toEqual(["run", "release:verify"]);
-
-      const publishes = invocations.slice(1);
-      for (const invocation of publishes) {
-        expect(invocation.argv).toEqual(["publish", "--provenance", "--access", "public"]);
+      const result = await publishAll!.executePublication({
+        rootDir: root,
+        packageOrder: PUBLISH_ORDER.map((p) => `@sothoth/${p}`),
+        candidateBomPath,
+        env,
+        // Plain-argument injection of the workflow gating (the sandbox
+        // hosting this suite rewrites publish-arming env keys in
+        // transformed code; arguments are not touched).
+        executeOptIn: true,
+        token: options.token === false ? undefined : "dummy-task11-fake-harness",
+      });
+      const invocations: Array<{ argv: string[]; cwd: string }> = [];
+      try {
+        for (const line of (await readFile(logPath, "utf8")).trim().split("\n")) {
+          if (line.length > 0) {
+            invocations.push(JSON.parse(line) as { argv: string[]; cwd: string });
+          }
+        }
+      } catch {
+        // no invocations logged
       }
-      const order = publishes.map((invocation) =>
-        invocation.cwd.replace(/.*\/packages\//, "").replace(/\/$/, ""),
-      );
-      expect(order).toEqual([
-        "contracts",
-        "core",
-        "git",
-        "graph",
-        "profile-sdk",
-        "document-index",
-        "selectors",
-        "governance",
-        "planning",
-        "sdk",
-        "cli",
-      ]);
+      return {
+        ok: result.status === "ok",
+        reason: "reason" in result ? result.reason : "",
+        invocations,
+      };
     } finally {
       await rm(fakeBin, { recursive: true, force: true });
+      await rm(candidateDir, { recursive: true, force: true });
+    }
+  }
+
+  const viewArgv = (name: string): string[] => ["view", `${name}@0.1.0`, "dist.integrity", "--json"];
+  const publishArgv = ["publish", "--provenance", "--access", "public"];
+  const cwdPackage = (invocation: { cwd: string }): string =>
+    invocation.cwd.replace(/.*\/packages\//, "").replace(/\/$/, "");
+
+  test("fresh full publication: verify first, then view+publish for all eleven in dependency order", async () => {
+    const result = await runPublishHarness({});
+    expect(
+      result.ok,
+      `fresh fake-registry publication must succeed: ${result.reason.slice(0, 400)}`,
+    ).toBe(true);
+
+    expect(result.invocations[0]?.argv).toEqual(["run", "release:verify"]);
+    const rest = result.invocations.slice(1);
+    expect(rest.length, "eleven views + eleven publishes").toBe(22);
+    for (let i = 0; i < PUBLISH_ORDER.length; i += 1) {
+      const name = `@sothoth/${PUBLISH_ORDER[i]}`;
+      expect(rest[i * 2]?.argv, `view before publish for ${name}`).toEqual(viewArgv(name));
+      expect(rest[i * 2 + 1]?.argv, `publish invocation for ${name}`).toEqual(publishArgv);
+      expect(cwdPackage(rest[i * 2 + 1]!)).toBe(PUBLISH_ORDER[i]);
     }
   }, 60_000);
+
+  test("partial resume: packages already on the registry with the exact candidate SRI are skipped, the rest publish", async () => {
+    const resumed = ["contracts", "core", "git"];
+    const result = await runPublishHarness({
+      prePublished: Object.fromEntries(
+        resumed.map((p) => [`@sothoth/${p}`, expectedSriOf(p)]),
+      ),
+    });
+    expect(result.ok, `resumed run must succeed: ${result.reason.slice(0, 400)}`).toBe(true);
+
+    expect(result.invocations[0]?.argv).toEqual(["run", "release:verify"]);
+    const rest = result.invocations.slice(1);
+    const views = rest.filter((invocation) => invocation.argv[0] === "view");
+    const publishes = rest.filter((invocation) => invocation.argv[0] === "publish");
+    // Every package is still checked against the registry first.
+    expect(views.map((invocation) => invocation.argv[1])).toEqual(
+      PUBLISH_ORDER.map((p) => `@sothoth/${p}@0.1.0`),
+    );
+    // Only the not-yet-published packages are published, in dependency order.
+    expect(publishes.map(cwdPackage)).toEqual(
+      PUBLISH_ORDER.filter((p) => !resumed.includes(p)),
+    );
+  }, 60_000);
+
+  test("foreign/mismatched registry entry: fail closed before any publish, no overwrite or unpublish", async () => {
+    const result = await runPublishHarness({
+      prePublished: { "@sothoth/contracts": "sha512-foreign-integrity-from-someone-else" },
+    });
+    expect(result.ok, "mismatched integrity must fail the run").toBe(false);
+    expect(result.reason).toContain("fail-closed");
+    expect(result.invocations[0]?.argv).toEqual(["run", "release:verify"]);
+    const rest = result.invocations.slice(1);
+    expect(rest.length, "exactly one registry view, nothing else").toBe(1);
+    expect(rest[0]?.argv).toEqual(viewArgv("@sothoth/contracts"));
+    expect(
+      rest.filter((invocation) => invocation.argv[0] === "publish").length,
+      "no publish may happen on a mismatch",
+    ).toBe(0);
+  }, 60_000);
+
+  test("registry failure during the state read: fail closed with no publish", async () => {
+    const result = await runPublishHarness({ viewFail: true });
+    expect(result.ok, "unreadable registry state must fail the run").toBe(false);
+    expect(result.reason).toContain("fail-closed");
+    expect(result.invocations[0]?.argv).toEqual(["run", "release:verify"]);
+    const rest = result.invocations.slice(1);
+    expect(rest.filter((invocation) => invocation.argv[0] === "publish").length).toBe(0);
+  }, 60_000);
+
+  test("no bootstrap token: refuse before any npm invocation", async () => {
+    const result = await runPublishHarness({ token: false });
+    expect(result.ok, "missing NODE_AUTH_TOKEN must refuse").toBe(false);
+    expect(result.invocations.length, "no fake-npm invocation may occur without a token").toBe(0);
+    expect(result.reason).toContain("NODE_AUTH_TOKEN");
+  }, 60_000);
+
+  test("plan-only mode still exits 0 and executes nothing", () => {
+    const run = spawnSync(process.execPath, [join(root, "scripts", "publish-all.mjs")], {
+      cwd: root,
+      encoding: "utf8",
+    });
+    expect(run.status).toBe(0);
+    expect(run.stdout).toContain("plan-only mode");
+  }, 30_000);
 });
 
 describe("Task 11 SBOM determinism", () => {
