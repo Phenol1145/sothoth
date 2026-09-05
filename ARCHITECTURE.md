@@ -1,6 +1,6 @@
 # Sothoth Architecture
 
-This document records the `0.1.0` architecture of the Sothoth governance control plane as implemented in this repository. It is derived from the workspace manifests, the accepted Architecture Baseline (`SOTHOTH-ARCHITECTURE-BASELINE-0.1@3`, `docs/design/v0.1.0-architecture-baseline.json`), the formal Scope BOM (`SOTHOTH-RELEASE-SCOPE-BOM-0.1@3`, `docs/release/v0.1.0-scope-bom.json`), and each package's accepted Dossier under `docs/design/dossiers/`. Where this document and an accepted design fact disagree, the design fact governs.
+This document records the `0.1.0` architecture of the Sothoth governance control plane as implemented in this repository. It is derived from the workspace manifests, the accepted Architecture Baseline (`SOTHOTH-ARCHITECTURE-BASELINE-0.1@4`, `docs/design/v0.1.0-architecture-baseline.json`), the formal Scope BOM (`SOTHOTH-RELEASE-SCOPE-BOM-0.1@4`, `docs/release/v0.1.0-scope-bom.json`), and each package's accepted Dossier under `docs/design/dossiers/`. Where this document and an accepted design fact disagree, the design fact governs.
 
 ## System boundary
 
@@ -58,6 +58,6 @@ Notes verified from the manifests:
 
 - Accepted Dossiers: `docs/design/dossiers/<package>.md` (one per package, each carrying its `public-surface-declaration@1`).
 - Governance control plane design: `docs/design/governance-control-plane.md`.
-- Formal release scope: `docs/release/v0.1.0-scope-bom.json` (`SOTHOTH-RELEASE-SCOPE-BOM-0.1@3`).
+- Formal release scope: `docs/release/v0.1.0-scope-bom.json` (`SOTHOTH-RELEASE-SCOPE-BOM-0.1@4`).
 - Release-candidate notes: `docs/release/v0.1.0-release-notes.md`.
 - Package references: `docs/packages/`.

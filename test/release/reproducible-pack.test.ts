@@ -241,7 +241,7 @@ describe("Task 11 release lock generation (PRE-1)", () => {
       scopeBom: {
         path: "docs/release/v0.1.0-scope-bom.json",
         bomId: "SOTHOTH-RELEASE-SCOPE-BOM-0.1",
-        revision: 3,
+        revision: 4,
         memberCount: 11,
       },
       sbom: { path: "dist/release/sbom.cdx.json", format: "cyclonedx-1.5", sha512: sbomSha512 },
@@ -311,7 +311,7 @@ describe("Task 11 release lock generation (PRE-1)", () => {
     expect(lock.workflow?.runAttempt).toBe("2");
     expect(lock.workflow?.insideGitHubActions).toBe(true);
     expect(lock.scopeBom?.bomId).toBe("SOTHOTH-RELEASE-SCOPE-BOM-0.1");
-    expect(lock.scopeBom?.revision).toBe(3);
+    expect(lock.scopeBom?.revision).toBe(4);
     expect(lock.candidateBom?.sha512).toEqual(fixture.candidateSha512);
     expect(lock.sbom?.sha512).toEqual(fixture.sbomSha512);
     expect(lock.packages?.map((entry) => entry.name)).toEqual(

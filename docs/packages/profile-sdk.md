@@ -8,7 +8,7 @@
 | License | Apache-2.0 |
 | Source | `packages/profile-sdk` |
 | Dossier | [`docs/design/dossiers/profile-sdk.md`](../design/dossiers/profile-sdk.md) |
-| Scope BOM | Member of `SOTHOTH-RELEASE-SCOPE-BOM-0.1@3` |
+| Scope BOM | Member of `SOTHOTH-RELEASE-SCOPE-BOM-0.1@4` |
 
 ## Responsibilities
 

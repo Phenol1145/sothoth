@@ -9,7 +9,7 @@
  *   - the workflow filename / run id / run attempt, taken verbatim from the
  *     real GitHub Actions environment — never fabricated (recorded as null
  *     with an explicit marker when absent);
- *   - Scope BOM `SOTHOTH-RELEASE-SCOPE-BOM-0.1@3`;
+ *   - Scope BOM `SOTHOTH-RELEASE-SCOPE-BOM-0.1@4`;
  *   - the Candidate BOM and SBOM SHA-512 digests (recomputed from bytes);
  *   - all eleven tarballs' name/version/filename/SHA-512, each recomputed
  *     from `pack-1/<filename>` and required to equal the Candidate BOM value.

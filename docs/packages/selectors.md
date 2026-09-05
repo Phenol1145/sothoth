@@ -8,7 +8,7 @@
 | License | Apache-2.0 |
 | Source | `packages/selectors` |
 | Dossier | [`docs/design/dossiers/selectors.md`](../design/dossiers/selectors.md) |
-| Scope BOM | Member of `SOTHOTH-RELEASE-SCOPE-BOM-0.1@3` |
+| Scope BOM | Member of `SOTHOTH-RELEASE-SCOPE-BOM-0.1@4` |
 
 ## Responsibilities
 

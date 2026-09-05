@@ -8,7 +8,7 @@
 | License | Apache-2.0 |
 | Source | `packages/sdk` |
 | Dossier | [`docs/design/dossiers/sdk.md`](../design/dossiers/sdk.md) |
-| Scope BOM | Member of `SOTHOTH-RELEASE-SCOPE-BOM-0.1@3` |
+| Scope BOM | Member of `SOTHOTH-RELEASE-SCOPE-BOM-0.1@4` |
 
 ## Responsibilities
 

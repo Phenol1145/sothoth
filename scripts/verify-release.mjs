@@ -342,7 +342,7 @@ async function main() {
   }
 
   // 9. Candidate BOM: deterministic pre-publication record bound to the
-  //    clean source commit and Scope BOM SOTHOTH-RELEASE-SCOPE-BOM-0.1@3.
+  //    clean source commit and Scope BOM SOTHOTH-RELEASE-SCOPE-BOM-0.1@4.
   const scopeBomPath = join(rootDir, "docs", "release", "v0.1.0-scope-bom.json");
   const scopeBom = JSON.parse(readFileSync(scopeBomPath, "utf8"));
   const scopeBomBindingOk =
@@ -504,7 +504,7 @@ function renderReport({ steps, packMatrix, sbomFacts, head, candidateBomPath, sb
     "- Publication state: no package is published. Per-package publication evidence is recorded from the live npm registry in Task 12 and remains pending.",
     `- Pending publication evidence: ${PENDING_PUBLICATION_EVIDENCE.join(", ")}.`,
     `- Clean source commit: ${head}.`,
-    "- Scope BOM binding: SOTHOTH-RELEASE-SCOPE-BOM-0.1@3 (docs/release/v0.1.0-scope-bom.json).",
+    "- Scope BOM binding: SOTHOTH-RELEASE-SCOPE-BOM-0.1@4 (docs/release/v0.1.0-scope-bom.json).",
     `- Candidate BOM: ${candidateBomPath.slice(rootDir.length + 1)}`,
     `- CycloneDX SBOM: ${sbomPath.slice(rootDir.length + 1)}`,
     "",

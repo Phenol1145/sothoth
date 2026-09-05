@@ -7,7 +7,7 @@
 | Status | `0.1.0` release candidate — **not yet published on npm** |
 | License | Apache-2.0 |
 | Node | `>=22.14.0` |
-| Scope | `@project-sothoth/*` — eleven packages, one release train (`SOTHOTH-RELEASE-SCOPE-BOM-0.1@3`) |
+| Scope | `@project-sothoth/*` — eleven packages, one release train (`SOTHOTH-RELEASE-SCOPE-BOM-0.1@4`) |
 | Repository | `github.com/Phenol1145/sothoth` |
 
 ## Quick Start
@@ -47,7 +47,7 @@ After publication (a later release step, not yet performed), installation is exp
 | [`@project-sothoth/sdk`](docs/packages/sdk.md) | Facade | The sole aggregate public library facade delegating to every owning package. |
 | [`@project-sothoth/cli`](docs/packages/cli.md) | Operator adapter | Eight explicit commands, atomic explicit output, frozen exit mapping. |
 
-All eleven are members of the formal release scope (`docs/release/v0.1.0-scope-bom.json`, `SOTHOTH-RELEASE-SCOPE-BOM-0.1@3`), version exactly `0.1.0`, Apache-2.0.
+All eleven are members of the formal release scope (`docs/release/v0.1.0-scope-bom.json`, `SOTHOTH-RELEASE-SCOPE-BOM-0.1@4`), version exactly `0.1.0`, Apache-2.0.
 
 ## Architecture
 
@@ -100,7 +100,7 @@ npm run release:verify                 # full release verification battery
 - [Package references](docs/packages/contracts.md) — one reference per package: `contracts`, `core`, `graph`, `document-index`, `selectors`, `governance`, `planning`, `profile-sdk`, `git`, `sdk`, `cli` (see `docs/packages/`).
 - [0.1.0 release notes](docs/release/v0.1.0-release-notes.md) — release-candidate notes (pre-publication).
 - `docs/design/` — accepted Dossiers, registrations, Architecture Baseline, and the governance control plane design.
-- `docs/release/v0.1.0-scope-bom.json` — the formal Scope BOM (`SOTHOTH-RELEASE-SCOPE-BOM-0.1@3`).
+- `docs/release/v0.1.0-scope-bom.json` — the formal Scope BOM (`SOTHOTH-RELEASE-SCOPE-BOM-0.1@4`).
 - [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md) — contribution and security policy.
 
 ## Roadmap and limitations
