@@ -46,7 +46,8 @@ import { createCanonicalGraphV1 } from "@sothoth/graph/digraph";
 import { topologicalWavesV1 } from "@sothoth/graph/waves";
 
 const graph = createCanonicalGraphV1({
-  /* DirectedMultigraphDeclarationV1: nodes, edges, weights, sort keys */
+  /* DirectedMultigraphDeclarationV1: explicit nodes and edges
+     (each entry carries its own sort key; weight is an optional per-edge field) */
 });
 const waves = topologicalWavesV1(graph);
 ```

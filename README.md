@@ -63,7 +63,7 @@ L6  governance           (→ contracts, core, document-index, graph, selectors)
 L6  planning             (→ contracts, core, graph, selectors)
 L6  profile-sdk          (→ contracts, core)
 L6  git                  (→ contracts, core)
-L7  sdk                  (→ all eight packages above)
+L7  sdk                  (→ the eight non-graph packages above)
 L8  cli                  (→ sdk)
 ```
 

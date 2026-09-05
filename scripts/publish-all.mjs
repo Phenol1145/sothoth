@@ -146,11 +146,13 @@ function main() {
 
   const published = [];
   for (const name of order) {
-    const manifest = manifests.find((m) => m.name === name);
+    // Workspace manifests carry no `directory` field; derive the package
+    // directory from the scoped name (packages/<p>), as pack-all.mjs does.
+    const packageDirectory = join(rootDir, "packages", name.replace("@sothoth/", ""));
     const run = spawnSync(
       "npm",
       ["publish", "--provenance", "--access", "public"],
-      { cwd: join(rootDir, manifest.directory), encoding: "utf8", stdio: "inherit" },
+      { cwd: packageDirectory, encoding: "utf8", stdio: "inherit" },
     );
     if (run.status !== 0) {
       // Single-package success never counts as overall success.

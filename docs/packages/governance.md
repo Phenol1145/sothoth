@@ -43,8 +43,10 @@ Inputs are Source Facts (registries, ledgers, dossiers, registrations, Architect
 ## Minimal usage
 
 ```ts
-import { compileDesignClosureV1 } from "@sothoth/governance/pre-design";
-import { compileScopeBomAdmissibilityV1 } from "@sothoth/governance/manifest";
+import {
+  compileDesignClosureV1,
+  compileScopeBomAdmissibilityV1,
+} from "@sothoth/governance/pre-design";
 import { compileChangePlanV1 } from "@sothoth/governance/change-plan";
 
 const closure = compileDesignClosureV1({ /* DesignClosureFactsV1 */ });

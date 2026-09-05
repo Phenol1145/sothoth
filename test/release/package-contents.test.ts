@@ -1,7 +1,9 @@
 import { spawnSync } from "node:child_process";
-import { existsSync } from "node:fs";
-import { readFile } from "node:fs/promises";
-import { fileURLToPath } from "node:url";
+import { chmodSync, existsSync, writeFileSync } from "node:fs";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { describe, expect, test } from "vitest";
 
 const root = fileURLToPath(new URL("../..", import.meta.url));
@@ -141,6 +143,7 @@ describe("Task 11 manifest identity", () => {
 
 describe("Task 11 exports binding (manifest + Dossier)", () => {
   test("exports maps equal the accepted Dossier public-surface-declaration@1 modules", async () => {
+    const rootExportPackages: string[] = [];
     for (const p of PACKAGES) {
       const manifest = await readManifest(p);
       const surface = await readDossierSurface(p);
@@ -160,14 +163,17 @@ describe("Task 11 exports binding (manifest + Dossier)", () => {
         `packages/${p} exports must bind exactly to the Dossier public modules`,
       ).toEqual(dossierModules);
 
-      const rootEntry = (manifest.exports ?? {})["."];
-      if (rootEntry !== undefined) {
-        expect(
-          dossierModules.length,
-          `${p} root export exists only when the Dossier declares the family union`,
-        ).toBeGreaterThan(0);
+      if ((manifest.exports ?? {})["."] !== undefined) {
+        rootExportPackages.push(p);
       }
     }
+    // The accepted Dossier public-surface-declaration@1 schema has no
+    // root-export field, so the two family-union roots cannot be bound by
+    // the declaration itself: they are grounded by the durable Task 2
+    // 13-specifier built-resolution smoke in this file (exact export counts
+    // for both roots). What IS bound here, explicitly: only `contracts` and
+    // `core` may declare a root export at all.
+    expect(rootExportPackages.sort()).toEqual(["contracts", "core"]);
   });
 
   test("every exports entry resolves to built runtime and .d.ts files under dist/", async () => {
@@ -344,5 +350,177 @@ describe("Task 11 tarball contents (npm pack dry run)", () => {
         ).toBe(false);
       }
     }
+  }, 120_000);
+});
+
+describe("Task 11 docs usage examples bind to real built exports", () => {
+  test("every @sothoth symbol imported in docs/packages/*.md examples is exported by the built subpath", async () => {
+    const moduleCache = new Map<string, Record<string, unknown>>();
+    const problems: string[] = [];
+    for (const p of PACKAGES) {
+      const doc = await readText(`${root}/docs/packages/${p}.md`);
+      if (doc === null) {
+        throw new Error(`missing Task 11 reference doc: docs/packages/${p}.md`);
+      }
+      const imports: Array<{ symbols: string[]; specifier: string; file: string }> = [];
+      for (const block of doc.matchAll(/```ts\s*([\s\S]*?)```/g)) {
+        for (const statement of (block[1] ?? "").matchAll(
+          /import\s+\{([^}]+)\}\s+from\s+"(@sothoth\/[a-z-]+(?:\/[a-z-]+)?)"/g,
+        )) {
+          const symbols = (statement[1] ?? "")
+            .split(",")
+            .map((name) => name.trim().split(/\s+as\s+/)[0]!.trim())
+            .filter((name) => name.length > 0);
+          if (statement[2]) {
+            imports.push({ symbols, specifier: statement[2], file: `docs/packages/${p}.md` });
+          }
+        }
+      }
+      expect(imports.length, `docs/packages/${p}.md usage imports`).toBeGreaterThan(0);
+
+      for (const { symbols, specifier, file } of imports) {
+        const match = specifier.match(/^@sothoth\/([a-z-]+)(?:\/([a-z-]+))?$/);
+        expect(match, `${file}: unparseable specifier ${specifier}`).toBeTruthy();
+        const pkg = match![1]!;
+        const exportKey = match![2] === undefined ? "." : `./${match![2]}`;
+        const manifest = await readManifest(pkg);
+        const entry = (manifest.exports ?? {})[exportKey];
+        if (entry?.import === undefined) {
+          problems.push(`${file}: ${specifier} is not an accepted export of @sothoth/${pkg}`);
+          continue;
+        }
+        const distPath = join(root, "packages", pkg, entry.import.replace(/^\.\//, ""));
+        if (!moduleCache.has(distPath)) {
+          moduleCache.set(
+            distPath,
+            (await import(pathToFileURL(distPath).href)) as Record<string, unknown>,
+          );
+        }
+        const moduleExports = moduleCache.get(distPath)!;
+        for (const symbol of symbols) {
+          if (!(symbol in moduleExports)) {
+            problems.push(
+              `${file}: ${specifier} does not export ${symbol} (${entry.import} exports: ${Object.keys(moduleExports).sort().join(", ")})`,
+            );
+          }
+        }
+      }
+    }
+    expect(problems.join("\n")).toBe("");
+    expect(problems.length, "docs usage examples must import only real symbols").toBe(0);
+  }, 60_000);
+});
+
+describe("Task 11 standby publisher (fake-npm harness, T11-C)", () => {
+  test("execute mode runs release:verify first, then exactly eleven publishes in dependency order", async () => {
+    const fakeBin = await mkdtemp(join(tmpdir(), "t11-fakenpm-"));
+    const logPath = join(fakeBin, "invocations.jsonl");
+    const fakeNpm = join(fakeBin, "npm");
+    writeFileSync(
+      fakeNpm,
+      [
+        "#!/usr/bin/env node",
+        "const { appendFileSync } = require('node:fs');",
+        "appendFileSync(",
+        "  process.env.FAKE_NPM_LOG,",
+        "  JSON.stringify({ argv: process.argv.slice(2), cwd: process.cwd() }) + '\\n',",
+        ");",
+        "process.exit(0);",
+        "",
+      ].join("\n"),
+      "utf8",
+    );
+    chmodSync(fakeNpm, 0o755);
+
+    try {
+      const run = spawnSync(
+        process.execPath,
+        [join(root, "scripts", "publish-all.mjs"), "--execute"],
+        {
+          cwd: root,
+          encoding: "utf8",
+          env: {
+            ...process.env,
+            PATH: `${fakeBin}:${process.env.PATH ?? ""}`,
+            SOOTHOTH_PUBLISH_EXECUTE: "1",
+            NODE_AUTH_TOKEN: "dummy-task11-fake-harness",
+            FAKE_NPM_LOG: logPath,
+          },
+        },
+      );
+      expect(
+        run.status,
+        `publish-all --execute must succeed under the fake-npm harness: ${run.stderr.slice(0, 400)}`,
+      ).toBe(0);
+
+      const invocations = (await readFile(logPath, "utf8"))
+        .trim()
+        .split("\n")
+        .map((line) => JSON.parse(line) as { argv: string[]; cwd: string });
+      expect(invocations.length, "one verify + eleven publishes").toBe(12);
+      expect(invocations[0]?.argv).toEqual(["run", "release:verify"]);
+
+      const publishes = invocations.slice(1);
+      for (const invocation of publishes) {
+        expect(invocation.argv).toEqual(["publish", "--provenance", "--access", "public"]);
+      }
+      const order = publishes.map((invocation) =>
+        invocation.cwd.replace(/.*\/packages\//, "").replace(/\/$/, ""),
+      );
+      expect(order).toEqual([
+        "contracts",
+        "core",
+        "git",
+        "graph",
+        "profile-sdk",
+        "document-index",
+        "selectors",
+        "governance",
+        "planning",
+        "sdk",
+        "cli",
+      ]);
+    } finally {
+      await rm(fakeBin, { recursive: true, force: true });
+    }
+  }, 60_000);
+});
+
+describe("Task 11 SBOM determinism", () => {
+  test("npm sbom output normalizes to a byte-stable SBOM with metadata.timestamp removed", async () => {
+    const verify = (await import("../../scripts/verify-release.mjs").catch(() => null)) as
+      | { normalizeSbom: (sbom: unknown) => unknown }
+      | null;
+    expect(
+      verify?.normalizeSbom,
+      "scripts/verify-release.mjs must export a side-effect-free normalizeSbom",
+    ).toBeInstanceOf(Function);
+
+    const runs: string[] = [];
+    for (let i = 0; i < 2; i += 1) {
+      const run = spawnSync("npm", ["sbom", "--sbom-format", "cyclonedx", "--workspaces"], {
+        cwd: root,
+        encoding: "utf8",
+      });
+      expect(run.status, `npm sbom run ${i + 1} failed: ${run.stderr.slice(0, 200)}`).toBe(0);
+      runs.push(run.stdout);
+    }
+    // npm stamps run-local values (metadata.timestamp, serialNumber); the
+    // normalization must remove exactly those, so the stored SBOM digest is
+    // cross-run stable.
+    for (const raw of runs) {
+      expect(JSON.parse(raw).metadata?.timestamp, "npm sbom must stamp a timestamp").toBeTruthy();
+      expect(JSON.parse(raw).serialNumber, "npm sbom must mint a serialNumber").toMatch(/^urn:uuid:/);
+    }
+    const normalized = runs.map((raw) =>
+      JSON.stringify(verify!.normalizeSbom(JSON.parse(raw))),
+    );
+    expect(normalized[1]).toBe(normalized[0]);
+    const parsed = JSON.parse(normalized[0]!) as {
+      metadata?: { timestamp?: unknown };
+      serialNumber?: unknown;
+    };
+    expect(parsed.metadata?.timestamp).toBeUndefined();
+    expect(parsed.serialNumber).toBeUndefined();
   }, 120_000);
 });

@@ -28,7 +28,7 @@ import {
   rmSync,
   writeFileSync,
 } from "node:fs";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { join } from "node:path";
 import { PACKAGE_ORDER, packAll, sha512Hex, sha512Sri } from "./pack-all.mjs";
 import { syncPackageAssets } from "./sync-package-assets.mjs";
@@ -42,6 +42,35 @@ const PENDING_PUBLICATION_EVIDENCE = [
   "@sothoth/profile-sdk@0.1.0",
   "@sothoth/sdk@0.1.0",
 ];
+
+/**
+ * Pure normalization of an `npm sbom` CycloneDX document: removes exactly the
+ * run-local fields npm injects per invocation — `metadata.timestamp` (clock
+ * stamp) and the top-level `serialNumber` (random UUID) — and nothing else.
+ * No content is added, changed, or invented, so the stored SBOM and its
+ * digest are deterministic for the same commit and inputs. Side-effect free
+ * and safe to import in tests.
+ */
+export function normalizeSbom(sbom) {
+  if (sbom === null || typeof sbom !== "object") {
+    return sbom;
+  }
+  const normalized = structuredClone(sbom);
+  if (Array.isArray(normalized) || normalized === null) {
+    return normalized;
+  }
+  delete normalized.serialNumber;
+  if (
+    "metadata" in normalized &&
+    normalized.metadata !== null &&
+    typeof normalized.metadata === "object"
+  ) {
+    const metadata = { ...normalized.metadata };
+    delete metadata.timestamp;
+    normalized.metadata = metadata;
+  }
+  return normalized;
+}
 
 /** Ordered verification ledger written into the report at the end. */
 const steps = [];
@@ -233,6 +262,11 @@ async function main() {
 
   // 8. CycloneDX SBOM over the workspace (dev dependencies included so the
   //    pinned CommonMark parser subtree is part of the release inventory).
+  //    npm injects run-local fields per invocation (metadata.timestamp and a
+  //    random serialNumber); the stored SBOM is npm's output with exactly
+  //    those two fields removed (pure normalization, no content invention),
+  //    so the stored bytes and digest are cross-run stable for the same
+  //    commit and inputs.
   const sbomPath = join(releaseDir, "sbom.cdx.json");
   const sbomRun = run("npm", ["sbom", "--sbom-format", "cyclonedx", "--workspaces"]);
   let sbomFacts = null;
@@ -240,8 +274,8 @@ async function main() {
     if (sbomRun.status !== 0) {
       throw new Error(`npm sbom exited ${sbomRun.status}: ${sbomRun.stderr.slice(0, 200)}`);
     }
-    writeFileSync(sbomPath, sbomRun.stdout, "utf8");
-    const sbom = JSON.parse(sbomRun.stdout);
+    const sbom = normalizeSbom(JSON.parse(sbomRun.stdout));
+    writeFileSync(sbomPath, `${JSON.stringify(sbom, null, 2)}\n`, "utf8");
     const components = sbom.components ?? [];
     const refs = new Set(components.map((c) => c["bom-ref"]));
     const workspaceComponents = components.filter((c) =>
@@ -500,6 +534,7 @@ function renderReport({ steps, packMatrix, sbomFacts, head, candidateBomPath, sb
       "## SBOM facts",
       "",
       `- CycloneDX spec ${sbomFacts.specVersion}; ${sbomFacts.componentCount} components.`,
+      "- Stored SBOM is npm's output with the run-local `metadata.timestamp` and random `serialNumber` removed (pure normalization, nothing invented); the digest below is therefore cross-run stable for the same commit and inputs.",
       `- ${sbomFacts.workspacePackages}/11 workspace components carry Apache-2.0 licenses.`,
       `- mdast-util-from-markdown@2.0.2 present: ${sbomFacts.mdastPresent}; micromark@4.0.2 present: ${sbomFacts.micromarkPresent}.`,
       `- Parser subtree: ${sbomFacts.parserSubtreeCount} mdast/micromark components, ${sbomFacts.parserSubtreeMitCount} MIT-licensed.`,
@@ -519,7 +554,13 @@ function renderReport({ steps, packMatrix, sbomFacts, head, candidateBomPath, sb
   return `${lines.join("\n")}\n`;
 }
 
-main().catch((error) => {
-  console.error(error instanceof Error ? error.stack : String(error));
-  process.exit(1);
-});
+function isMainModule() {
+  return import.meta.url === pathToFileURL(process.argv[1] ?? "").href;
+}
+
+if (isMainModule()) {
+  main().catch((error) => {
+    console.error(error instanceof Error ? error.stack : String(error));
+    process.exit(1);
+  });
+}
