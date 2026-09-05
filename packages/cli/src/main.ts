@@ -159,17 +159,34 @@ function emitV1(document: {
     writeSync(2, renderTerminalDiagnosticsV1(document.diagnostics));
     return exitCode;
   }
-  writeSync(
-    1,
-    renderMachineDocumentV1(
-      document.format,
-      document.command,
-      document.outcome,
-      exitCode,
-      document.diagnostics,
-      document.result,
-    ),
+  // The machine document is one contract-bearing emission: it is either
+  // delivered COMPLETELY or the invocation is an internal failure. writeSync
+  // reports how many bytes the descriptor actually accepted; a short count
+  // means stdout did not take the whole document (a vanished reader, or a
+  // non-delivering pipe whose buffer filled — platform-divergent POSIX
+  // write() behavior reports this as a partial success instead of an EPIPE
+  // throw, which is how a truncated document could previously escape with
+  // the success exit code). For a blocking stdout — an inherited terminal, a
+  // redirected file, or the CLI's own blocking spawn pipes — writeSync
+  // returns only after the kernel has accepted every byte, so a short return
+  // can never describe a healthy slow reader and the guard below cannot
+  // false-positive on ordinary sinks. No blind retry or continuation loop:
+  // against a stalled non-delivering pipe those would spin or hang, and a
+  // document the descriptor refused once cannot be assumed deliverable. The
+  // throw lands in the same guarded containment as any broken-pipe throw:
+  // one fixed stderr line and the frozen internal-error exit.
+  const documentBytes = renderMachineDocumentV1(
+    document.format,
+    document.command,
+    document.outcome,
+    exitCode,
+    document.diagnostics,
+    document.result,
   );
+  const writtenBytes = writeSync(1, documentBytes);
+  if (writtenBytes !== Buffer.byteLength(documentBytes)) {
+    throw new Error("sothoth: stdout machine document incompletely written");
+  }
   return exitCode;
 }
 
