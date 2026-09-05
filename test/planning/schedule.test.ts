@@ -7,13 +7,13 @@
 // and `planning-single-schedule-solution` (one digest-bearing Schedule
 // Solution identity; the wave view is a projection of that same solution, and
 // unsupported axes never mint an independent wave truth). Wave literals use
-// the shared `GraphNodeWaveV1` vocabulary owned by `@sothoth/contracts`.
+// the shared `GraphNodeWaveV1` vocabulary owned by `@project-sothoth/contracts`.
 
 import { describe, expect, test } from "vitest";
 import {
   SCHEDULE_SOLUTION_IDENTITY_V1,
   UNSUPPORTED_SCHEDULING_DIMENSIONS_V1,
-} from "@sothoth/contracts";
+} from "@project-sothoth/contracts";
 import {
   assignDependencyWavesV1,
   compileDependencyScheduleV1,

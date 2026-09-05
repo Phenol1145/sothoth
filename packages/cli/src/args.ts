@@ -1,5 +1,5 @@
 /**
- * Public module `@sothoth/cli/input`: strict, explicit argv parsing.
+ * Public module `@project-sothoth/cli/input`: strict, explicit argv parsing.
  *
  * Input is argv flags and explicitly named path arguments ONLY. There is no
  * implicit filesystem scanning, no environment-variable semantics, no

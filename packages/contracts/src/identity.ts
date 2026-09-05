@@ -1,7 +1,7 @@
 /**
  * Canonical identity grammars and exact reference forms for Sothoth.
  *
- * Public family `@sothoth/contracts/identity`. This module declares the
+ * Public family `@project-sothoth/contracts/identity`. This module declares the
  * JSON-value grammar, the exact reference grammar
  * `<identity>@<positive integer revision>`, and the digest form. It owns types
  * and constants only; it declares no executable behavior. Bare names, `latest`
@@ -9,7 +9,7 @@
  * under this grammar.
  */
 
-/** The closed JSON-compatible value grammar owned by `@sothoth/contracts`. */
+/** The closed JSON-compatible value grammar owned by `@project-sothoth/contracts`. */
 export type JsonValue =
   | null
   | boolean

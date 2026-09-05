@@ -1,5 +1,5 @@
 /**
- * Public module `@sothoth/profile-sdk/load` (also carrying the
+ * Public module `@project-sothoth/profile-sdk/load` (also carrying the
  * `/contract-composition` and `/relation-roles` surfaces, which map to this
  * same dist file): the closed `ConsumerProfileV1` contract
  * (`CONTRACT/SOTHOTH/CONSUMER-PROFILE@1`).
@@ -11,7 +11,7 @@
  * locks — and canonicalizes valid facts into one frozen, digested value. It
  * reads and rejects; it never repairs, defaults, writes back, or re-authors
  * a Profile. References use the shared exact-reference grammar
- * `<identity>@<positive integer revision>` of `@sothoth/contracts`; bare
+ * `<identity>@<positive integer revision>` of `@project-sothoth/contracts`; bare
  * names, `latest`, and floating refs are inexpressible.
  *
  * Neutrality fence: a profile may attach diagnostic help only to non-core
@@ -24,10 +24,10 @@ import {
   EXACT_REFERENCE_PATTERN,
   isDiagnosticCodeV1,
   validateExactRecordV1,
-} from "@sothoth/contracts";
-import type { ContractIssueV1, DiagnosticCodeV1, DigestV1 } from "@sothoth/contracts";
-import { canonicalJson } from "@sothoth/core/canonical-json";
-import { sha256Digest } from "@sothoth/core/digest";
+} from "@project-sothoth/contracts";
+import type { ContractIssueV1, DiagnosticCodeV1, DigestV1 } from "@project-sothoth/contracts";
+import { canonicalJson } from "@project-sothoth/core/canonical-json";
+import { sha256Digest } from "@project-sothoth/core/digest";
 import {
   canonicalizeProfileV1,
   deepFreezeInPlace,
@@ -344,7 +344,7 @@ function validateModuleLocks(value: unknown): readonly ContractIssueV1[] {
  * values, floating references, duplicate identities, unknown mappings, and
  * consumer terms inside core-owned diagnostic codes all fail closed as
  * sorted `{code, subject}` issues under the shared
- * `@sothoth/contracts` issue vocabulary plus the profile-owned semantic
+ * `@project-sothoth/contracts` issue vocabulary plus the profile-owned semantic
  * codes. The candidate is never mutated.
  */
 export function validateProfileV1(candidate: unknown): readonly ContractIssueV1[] {
@@ -395,7 +395,7 @@ export function validateProfileV1(candidate: unknown): readonly ContractIssueV1[
  * Loads one caller-supplied profile value: validates it fail-closed and, when
  * valid, canonicalizes it into one frozen `ConsumerProfileV1` whose arrays
  * sort in Unicode code-point order, and digests the canonical JSON bytes
- * through `@sothoth/core` so identical facts always load to identical
+ * through `@project-sothoth/core` so identical facts always load to identical
  * digest-bearing values regardless of input array order. When validation
  * fails, the profile and digest are `null` and the sorted issues say exactly
  * why; nothing is ever defaulted, repaired, or written back.

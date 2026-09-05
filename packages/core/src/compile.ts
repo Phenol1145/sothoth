@@ -1,7 +1,7 @@
 /**
  * The pure compilation primitives of the Sothoth kernel, assembled.
  *
- * Public module `@sothoth/core/compile`. This module organizes and re-exports
+ * Public module `@project-sothoth/core/compile`. This module organizes and re-exports
  * the authorized pure compilation primitives — canonical bytes, digests,
  * diagnostic finalization, and outcome aggregation — together with the
  * contract types they consume. It deliberately declares no new callable and
@@ -18,4 +18,4 @@ export type {
   DiagnosticDraftV1,
   JsonValue,
   StructuredDiagnosticV1,
-} from "@sothoth/contracts";
+} from "@project-sothoth/contracts";

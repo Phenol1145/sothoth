@@ -1,7 +1,7 @@
 /**
  * SHA-256 digesting over canonical bytes.
  *
- * Public module `@sothoth/core/digest`. Digests are `sha256:`-prefixed
+ * Public module `@project-sothoth/core/digest`. Digests are `sha256:`-prefixed
  * lowercase hex over the UTF-8 bytes of a raw string or of the canonical JSON
  * serialization of a JSON value. Deterministic Node standard-library
  * cryptography is the only capability used here; it is not an external
@@ -9,7 +9,7 @@
  */
 
 import { createHash } from "node:crypto";
-import type { JsonValue } from "@sothoth/contracts";
+import type { JsonValue } from "@project-sothoth/contracts";
 import { canonicalJson } from "./canonical-json.js";
 
 /**

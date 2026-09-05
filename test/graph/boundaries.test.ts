@@ -134,8 +134,8 @@ describe("zero-domain-semantics boundary (T32–T33) and surface pins", () => {
       types?: string;
     };
     expect(Object.keys(manifest.dependencies ?? {}).sort()).toEqual([
-      "@sothoth/contracts",
-      "@sothoth/core",
+      "@project-sothoth/contracts",
+      "@project-sothoth/core",
     ]);
     expect(manifest.devDependencies).toBeUndefined();
     expect(manifest.main).toBeUndefined();
@@ -154,10 +154,10 @@ describe("zero-domain-semantics boundary (T32–T33) and surface pins", () => {
     const probe = `
       const out = [];
       for (const sub of ["digraph", "traversal", "scc", "condensation", "waves", "longest-paths"]) {
-        out.push(import.meta.resolve("@sothoth/graph/" + sub));
+        out.push(import.meta.resolve("@project-sothoth/graph/" + sub));
       }
       let bare = "";
-      try { import.meta.resolve("@sothoth/graph"); } catch (error) { bare = error.code; }
+      try { import.meta.resolve("@project-sothoth/graph"); } catch (error) { bare = error.code; }
       console.log(JSON.stringify({ out, bare }));
     `;
     const stdout = execFileSync(process.execPath, ["--input-type=module", "-e", probe], {

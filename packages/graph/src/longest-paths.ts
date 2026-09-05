@@ -1,5 +1,5 @@
 /**
- * Public module `@sothoth/graph/longest-paths`: deterministic DAG longest
+ * Public module `@project-sothoth/graph/longest-paths`: deterministic DAG longest
  * paths with the conservative overflow taint. Cyclic input is rejected with
  * the deterministic cycle witness before any arithmetic runs; the DP then
  * walks the deterministic topological order over IEEE-754 doubles.

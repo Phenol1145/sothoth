@@ -1,5 +1,5 @@
 /**
- * Public module `@sothoth/governance/gate-macros`: static Gate Macro
+ * Public module `@project-sothoth/governance/gate-macros`: static Gate Macro
  * expansion and Evidence Report validation.
  *
  * A Gate Macro is a declarative template that expands to an acyclic set of
@@ -22,8 +22,8 @@ import type {
   EvidenceCheckReferenceV1,
   EvidenceCheckReportV1,
   StructuredDiagnosticV1,
-} from "@sothoth/contracts";
-import { CHECK_VERDICTS_V1 } from "@sothoth/contracts";
+} from "@project-sothoth/contracts";
+import { CHECK_VERDICTS_V1 } from "@project-sothoth/contracts";
 import {
   DOCUMENT_GOVERNANCE_DIAGNOSTIC_IDENTITY_V1,
   compareCodePointOrder,

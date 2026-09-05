@@ -1,7 +1,7 @@
 /**
  * The Structured Diagnostic contract and the diagnostic code grammar.
  *
- * Public family `@sothoth/contracts/diagnostic`. Diagnostic codes use
+ * Public family `@project-sothoth/contracts/diagnostic`. Diagnostic codes use
  * `<owner>.<domain>/<condition>`: at least two dot-separated lowercase
  * segments before the slash and one lowercase condition after it. Codes omit
  * severity, phase, path, task identity, and package version. The compilation

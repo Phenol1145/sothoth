@@ -1,5 +1,5 @@
 /**
- * Public module `@sothoth/git/path`: repository-relative POSIX path
+ * Public module `@project-sothoth/git/path`: repository-relative POSIX path
  * normalization and the closed rejection classes.
  *
  * Normalization is pure: no filesystem access, no process, no environment.

@@ -37,10 +37,10 @@ const rootDir = fileURLToPath(new URL("..", import.meta.url)).replace(/\/+$/, ""
 const releaseDir = join(rootDir, "dist", "release");
 
 const PENDING_PUBLICATION_EVIDENCE = [
-  "@sothoth/contracts@0.1.0",
-  "@sothoth/governance@0.1.0",
-  "@sothoth/profile-sdk@0.1.0",
-  "@sothoth/sdk@0.1.0",
+  "@project-sothoth/contracts@0.1.0",
+  "@project-sothoth/governance@0.1.0",
+  "@project-sothoth/profile-sdk@0.1.0",
+  "@project-sothoth/sdk@0.1.0",
 ];
 
 /**
@@ -279,7 +279,7 @@ async function main() {
     const components = sbom.components ?? [];
     const refs = new Set(components.map((c) => c["bom-ref"]));
     const workspaceComponents = components.filter((c) =>
-      String(c["bom-ref"]).startsWith("@sothoth/"),
+      String(c["bom-ref"]).startsWith("@project-sothoth/"),
     );
     const mdast = components.find(
       (c) => c.name === "mdast-util-from-markdown" && c.version === "2.0.2",
@@ -294,9 +294,9 @@ async function main() {
     const sothothApache = workspaceComponents.filter((c) =>
       (c.licenses ?? []).some((l) => l.license?.id === "Apache-2.0"),
     );
-    const workspaceRefsOk = PACKAGE_ORDER.every((p) => refs.has(`@sothoth/${p}@0.1.0`));
+    const workspaceRefsOk = PACKAGE_ORDER.every((p) => refs.has(`@project-sothoth/${p}@0.1.0`));
     const dependencies = sbom.dependencies ?? [];
-    const diEdge = dependencies.find((d) => d.ref === "@sothoth/document-index@0.1.0");
+    const diEdge = dependencies.find((d) => d.ref === "@project-sothoth/document-index@0.1.0");
     const diDependsOnParser =
       diEdge !== undefined && diEdge.dependsOn.includes("mdast-util-from-markdown@2.0.2");
     // The root monorepo component lives in metadata.component, not in the
@@ -420,7 +420,7 @@ async function main() {
       "utf8",
     );
     const tarballs = PACKAGE_ORDER.map((p) =>
-      join(releaseDir, "pack-1", `sothoth-${p}-0.1.0.tgz`),
+      join(releaseDir, "pack-1", `project-sothoth-${p}-0.1.0.tgz`),
     );
     for (const tarball of tarballs) {
       if (!existsSync(tarball)) {
@@ -435,7 +435,7 @@ async function main() {
     if (install.status !== 0) {
       throw new Error(`offline install failed:\n${install.stderr.slice(0, 400)}`);
     }
-    const installed = readdirSync(join(smokeDir, "node_modules", "@sothoth")).sort();
+    const installed = readdirSync(join(smokeDir, "node_modules", "@project-sothoth")).sort();
     const installedOk =
       installed.length === 11 && installed.join(",") === PACKAGE_ORDER.join(",");
     const binPath = join(smokeDir, "node_modules", ".bin", "sothoth");
@@ -455,7 +455,7 @@ async function main() {
       [
         "--input-type=module",
         "--eval",
-        "const m = await import('@sothoth/contracts'); console.log(JSON.stringify({ keys: Object.keys(m).length }));",
+        "const m = await import('@project-sothoth/contracts'); console.log(JSON.stringify({ keys: Object.keys(m).length }));",
       ],
       { cwd: smokeDir, encoding: "utf8" },
     );
@@ -538,7 +538,7 @@ function renderReport({ steps, packMatrix, sbomFacts, head, candidateBomPath, sb
       `- ${sbomFacts.workspacePackages}/11 workspace components carry Apache-2.0 licenses.`,
       `- mdast-util-from-markdown@2.0.2 present: ${sbomFacts.mdastPresent}; micromark@4.0.2 present: ${sbomFacts.micromarkPresent}.`,
       `- Parser subtree: ${sbomFacts.parserSubtreeCount} mdast/micromark components, ${sbomFacts.parserSubtreeMitCount} MIT-licensed.`,
-      `- @sothoth/document-index depends on mdast-util-from-markdown@2.0.2: ${sbomFacts.documentIndexDependsOnParser}.`,
+      `- @project-sothoth/document-index depends on mdast-util-from-markdown@2.0.2: ${sbomFacts.documentIndexDependsOnParser}.`,
       `- SBOM SHA-512 (hex): ${sbomFacts.sha512.hex}`,
       `- SBOM SHA-512 (SRI): ${sbomFacts.sha512.sri}`,
     );

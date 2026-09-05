@@ -1,9 +1,9 @@
 /**
- * Internal shared unit of `@sothoth/git` and the public home of the three
- * provenance modes (`@sothoth/git/commit`, `/compare`, and `/workspace`).
+ * Internal shared unit of `@project-sothoth/git` and the public home of the three
+ * provenance modes (`@project-sothoth/git/commit`, `/compare`, and `/workspace`).
  *
  * The accepted Dossier's public-surface declaration lists exactly six public
- * modules — `@sothoth/git/commit`, `/compare`, `/path`, `/process`,
+ * modules — `@project-sothoth/git/commit`, `/compare`, `/path`, `/process`,
  * `/snapshot`, and `/workspace` — and no root `.` or `./index` entry, so the
  * exports map routes the three mode subpaths here while `/path`, `/process`,
  * and `/snapshot` own their own modules. This unit builds
@@ -19,12 +19,12 @@
  * Ordering is Unicode code point throughout, tie-breaking by canonical
  * identity (path, then byte class); identical requests yield identical
  * bytes. Canonicalization, digesting, and outcome folding are owned by
- * `@sothoth/core` and `@sothoth/contracts` and are consumed directly.
+ * `@project-sothoth/core` and `@project-sothoth/contracts` and are consumed directly.
  */
 
-import { canonicalJson } from "@sothoth/core/canonical-json";
-import { sha256Digest } from "@sothoth/core/digest";
-import type { JsonValue } from "@sothoth/contracts";
+import { canonicalJson } from "@project-sothoth/core/canonical-json";
+import { sha256Digest } from "@project-sothoth/core/digest";
+import type { JsonValue } from "@project-sothoth/contracts";
 import { normalizeGitPathV1, symlinkTargetEscapesRepositoryV1 } from "./paths.js";
 import type { GitPathRejectionClassV1 } from "./paths.js";
 import { runGitReadV1 } from "./runner.js";

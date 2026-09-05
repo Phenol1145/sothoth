@@ -271,7 +271,7 @@ export async function executePublication({
       };
     }
 
-    const packageDirectory = join(rootDir, "packages", name.replace("@sothoth/", ""));
+    const packageDirectory = join(rootDir, "packages", name.replace("@project-sothoth/", ""));
     const run = spawnSync(
       "npm",
       ["publish", "--provenance", "--access", "public"],

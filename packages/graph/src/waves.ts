@@ -1,5 +1,5 @@
 /**
- * Public module `@sothoth/graph/waves`: deterministic topological waves with
+ * Public module `@project-sothoth/graph/waves`: deterministic topological waves with
  * canonical intra-wave order, plus the closed deterministic cycle-witness
  * rule that rejects cyclic input with exactly one `not-a-dag` issue.
  */

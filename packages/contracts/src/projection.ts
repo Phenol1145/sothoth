@@ -1,13 +1,13 @@
 /**
  * Projection envelopes and their digest fields.
  *
- * Public family `@sothoth/contracts/projection`. Projections are
+ * Public family `@project-sothoth/contracts/projection`. Projections are
  * non-authoritative, disposable, and rebuildable from exact input identities;
  * these types declare the envelope shapes the governance compiler emits and
  * the digest fields that make a projection exactly referenceable. The types
  * mirror the accepted pre-design bootstrap projections. The planning
  * contracts are an internal implementation file of this family, so
- * `@sothoth/contracts/projection` is their accepted public home.
+ * `@project-sothoth/contracts/projection` is their accepted public home.
  */
 
 import type { CompilationOutcomeKindV1 } from "./diagnostics.js";

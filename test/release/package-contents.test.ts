@@ -120,7 +120,7 @@ describe("Task 11 manifest identity", () => {
   test("manifests declare scoped identity, 0.1.0, Apache-2.0, repository, files allowlist, publishConfig", async () => {
     for (const p of PACKAGES) {
       const manifest = await readManifest(p);
-      expect(manifest.name, `${p} name`).toBe(`@sothoth/${p}`);
+      expect(manifest.name, `${p} name`).toBe(`@project-sothoth/${p}`);
       expect(manifest.version, `${p} version`).toBe("0.1.0");
       expect(manifest.license, `${p} license`).toBe("Apache-2.0");
       expect(manifest.repository?.type).toBe("git");
@@ -132,7 +132,7 @@ describe("Task 11 manifest identity", () => {
     }
   });
 
-  test("@sothoth/cli declares the sothoth bin over the built entry", async () => {
+  test("@project-sothoth/cli declares the sothoth bin over the built entry", async () => {
     const manifest = await readManifest("cli");
     expect(manifest.bin).toEqual({ sothoth: "./dist/main.js" });
     expect(existsSync(`${root}/packages/cli/dist/main.js`), "built bin target dist/main.js").toBe(
@@ -188,12 +188,12 @@ describe("Task 11 exports binding (manifest + Dossier)", () => {
         const typesPath = `${root}/packages/${p}/${entry!.types!.replace(/^\.\//, "")}`;
         if (!existsSync(runtimePath)) {
           throw new Error(
-            `missing built runtime file for @sothoth/${p}${subpath === "." ? "" : subpath}: ${entry!.import} (run npm run build)`,
+            `missing built runtime file for @project-sothoth/${p}${subpath === "." ? "" : subpath}: ${entry!.import} (run npm run build)`,
           );
         }
         if (!existsSync(typesPath)) {
           throw new Error(
-            `missing built type declaration for @sothoth/${p}${subpath === "." ? "" : subpath}: ${entry!.types} (run npm run build)`,
+            `missing built type declaration for @project-sothoth/${p}${subpath === "." ? "" : subpath}: ${entry!.types} (run npm run build)`,
           );
         }
       }
@@ -203,19 +203,19 @@ describe("Task 11 exports binding (manifest + Dossier)", () => {
 
 describe("Task 11 built package-resolution smoke (Task 2 Minor M-3)", () => {
   const ACCEPTED_COUNTS: Record<string, number> = {
-    "@sothoth/contracts": 36,
-    "@sothoth/contracts/identity": 3,
-    "@sothoth/contracts/schema": 10,
-    "@sothoth/contracts/diagnostic": 9,
-    "@sothoth/contracts/projection": 4,
-    "@sothoth/contracts/pre-design": 9,
-    "@sothoth/contracts/extension": 1,
-    "@sothoth/core": 5,
-    "@sothoth/core/canonical-json": 2,
-    "@sothoth/core/digest": 1,
-    "@sothoth/core/compile": 5,
-    "@sothoth/core/diagnostics": 1,
-    "@sothoth/core/outcome": 1,
+    "@project-sothoth/contracts": 36,
+    "@project-sothoth/contracts/identity": 3,
+    "@project-sothoth/contracts/schema": 10,
+    "@project-sothoth/contracts/diagnostic": 9,
+    "@project-sothoth/contracts/projection": 4,
+    "@project-sothoth/contracts/pre-design": 9,
+    "@project-sothoth/contracts/extension": 1,
+    "@project-sothoth/core": 5,
+    "@project-sothoth/core/canonical-json": 2,
+    "@project-sothoth/core/digest": 1,
+    "@project-sothoth/core/compile": 5,
+    "@project-sothoth/core/diagnostics": 1,
+    "@project-sothoth/core/outcome": 1,
   };
 
   function runChildSpecifiers(specifiers: string[]): Record<string, { ok: boolean; resolved?: string; keys?: number; code?: string }> {
@@ -261,8 +261,8 @@ console.log(JSON.stringify(out));
   });
 
   test("unauthorized specifiers fail closed with ERR_PACKAGE_PATH_NOT_EXPORTED", () => {
-    const bare = PACKAGES.filter((p) => p !== "contracts" && p !== "core").map((p) => `@sothoth/${p}`);
-    const unlisted = PACKAGES.map((p) => `@sothoth/${p}/not-a-public-subpath`);
+    const bare = PACKAGES.filter((p) => p !== "contracts" && p !== "core").map((p) => `@project-sothoth/${p}`);
+    const unlisted = PACKAGES.map((p) => `@project-sothoth/${p}/not-a-public-subpath`);
     const results = runChildSpecifiers([...bare, ...unlisted]);
     for (const specifier of [...bare, ...unlisted]) {
       const result = results[specifier];
@@ -286,8 +286,8 @@ describe("Task 11 tarball contents (npm pack dry run)", () => {
     }>;
     const byName = new Map(packed.map((entry) => [entry.name, entry]));
     for (const p of PACKAGES) {
-      const entry = byName.get(`@sothoth/${p}`);
-      expect(entry, `dry-run pack entry for @sothoth/${p}`).toBeDefined();
+      const entry = byName.get(`@project-sothoth/${p}`);
+      expect(entry, `dry-run pack entry for @project-sothoth/${p}`).toBeDefined();
       const paths = (entry?.files ?? []).map((file) => file.path);
       expect(paths.length, `${p} packed entries`).toBeGreaterThan(0);
 
@@ -299,11 +299,11 @@ describe("Task 11 tarball contents (npm pack dry run)", () => {
         const types = exportEntry?.types?.replace(/^\.\//, "");
         expect(
           runtime && paths.includes(runtime),
-          `@sothoth/${p}${subpath === "." ? "" : subpath} runtime target ${runtime} must be packed`,
+          `@project-sothoth/${p}${subpath === "." ? "" : subpath} runtime target ${runtime} must be packed`,
         ).toBe(true);
         expect(
           types && paths.includes(types),
-          `@sothoth/${p}${subpath === "." ? "" : subpath} types target ${types} must be packed`,
+          `@project-sothoth/${p}${subpath === "." ? "" : subpath} types target ${types} must be packed`,
         ).toBe(true);
       }
       expect(
@@ -354,7 +354,7 @@ describe("Task 11 tarball contents (npm pack dry run)", () => {
 });
 
 describe("Task 11 docs usage examples bind to real built exports", () => {
-  test("every @sothoth symbol imported in docs/packages/*.md examples is exported by the built subpath", async () => {
+  test("every @project-sothoth symbol imported in docs/packages/*.md examples is exported by the built subpath", async () => {
     const moduleCache = new Map<string, Record<string, unknown>>();
     const problems: string[] = [];
     for (const p of PACKAGES) {
@@ -365,7 +365,7 @@ describe("Task 11 docs usage examples bind to real built exports", () => {
       const imports: Array<{ symbols: string[]; specifier: string; file: string }> = [];
       for (const block of doc.matchAll(/```ts\s*([\s\S]*?)```/g)) {
         for (const statement of (block[1] ?? "").matchAll(
-          /import\s+\{([^}]+)\}\s+from\s+"(@sothoth\/[a-z-]+(?:\/[a-z-]+)?)"/g,
+          /import\s+\{([^}]+)\}\s+from\s+"(@project-sothoth\/[a-z-]+(?:\/[a-z-]+)?)"/g,
         )) {
           const symbols = (statement[1] ?? "")
             .split(",")
@@ -379,14 +379,14 @@ describe("Task 11 docs usage examples bind to real built exports", () => {
       expect(imports.length, `docs/packages/${p}.md usage imports`).toBeGreaterThan(0);
 
       for (const { symbols, specifier, file } of imports) {
-        const match = specifier.match(/^@sothoth\/([a-z-]+)(?:\/([a-z-]+))?$/);
+        const match = specifier.match(/^@project-sothoth\/([a-z-]+)(?:\/([a-z-]+))?$/);
         expect(match, `${file}: unparseable specifier ${specifier}`).toBeTruthy();
         const pkg = match![1]!;
         const exportKey = match![2] === undefined ? "." : `./${match![2]}`;
         const manifest = await readManifest(pkg);
         const entry = (manifest.exports ?? {})[exportKey];
         if (entry?.import === undefined) {
-          problems.push(`${file}: ${specifier} is not an accepted export of @sothoth/${pkg}`);
+          problems.push(`${file}: ${specifier} is not an accepted export of @project-sothoth/${pkg}`);
           continue;
         }
         const distPath = join(root, "packages", pkg, entry.import.replace(/^\.\//, ""));
@@ -504,7 +504,7 @@ describe("Task 11 standby publisher (fake-npm harness, T11-C)", () => {
         "}",
         "if (argv[0] === 'publish') {",
         "  const state = readState();",
-        "  const pkg = '@sothoth/' + process.cwd().split(/[\\\\/]/).pop();",
+        "  const pkg = '@project-sothoth/' + process.cwd().split(/[\\\\/]/).pop();",
         "  state.published[pkg] = process.env.FAKE_NPM_PUBLISH_INTEGRITY || 'sha512-fake-new-publish';",
         "  fs.writeFileSync(process.env.FAKE_NPM_STATE, JSON.stringify(state, null, 2));",
         "  process.exit(0);",
@@ -520,7 +520,7 @@ describe("Task 11 standby publisher (fake-npm harness, T11-C)", () => {
     const candidateBom = {
       schema: "sothoth.release-candidate-bom/v1",
       packages: PUBLISH_ORDER.map((p) => ({
-        name: `@sothoth/${p}`,
+        name: `@project-sothoth/${p}`,
         version: "0.1.0",
         tarball: { sha512: { sri: expectedSriOf(p) } },
       })),
@@ -542,7 +542,7 @@ describe("Task 11 standby publisher (fake-npm harness, T11-C)", () => {
     try {
       const result = await publishAll!.executePublication({
         rootDir: root,
-        packageOrder: PUBLISH_ORDER.map((p) => `@sothoth/${p}`),
+        packageOrder: PUBLISH_ORDER.map((p) => `@project-sothoth/${p}`),
         candidateBomPath,
         env,
         // Plain-argument injection of the workflow gating (the sandbox
@@ -588,7 +588,7 @@ describe("Task 11 standby publisher (fake-npm harness, T11-C)", () => {
     const rest = result.invocations.slice(1);
     expect(rest.length, "eleven views + eleven publishes").toBe(22);
     for (let i = 0; i < PUBLISH_ORDER.length; i += 1) {
-      const name = `@sothoth/${PUBLISH_ORDER[i]}`;
+      const name = `@project-sothoth/${PUBLISH_ORDER[i]}`;
       expect(rest[i * 2]?.argv, `view before publish for ${name}`).toEqual(viewArgv(name));
       expect(rest[i * 2 + 1]?.argv, `publish invocation for ${name}`).toEqual(publishArgv);
       expect(cwdPackage(rest[i * 2 + 1]!)).toBe(PUBLISH_ORDER[i]);
@@ -599,7 +599,7 @@ describe("Task 11 standby publisher (fake-npm harness, T11-C)", () => {
     const resumed = ["contracts", "core", "git"];
     const result = await runPublishHarness({
       prePublished: Object.fromEntries(
-        resumed.map((p) => [`@sothoth/${p}`, expectedSriOf(p)]),
+        resumed.map((p) => [`@project-sothoth/${p}`, expectedSriOf(p)]),
       ),
     });
     expect(result.ok, `resumed run must succeed: ${result.reason.slice(0, 400)}`).toBe(true);
@@ -610,7 +610,7 @@ describe("Task 11 standby publisher (fake-npm harness, T11-C)", () => {
     const publishes = rest.filter((invocation) => invocation.argv[0] === "publish");
     // Every package is still checked against the registry first.
     expect(views.map((invocation) => invocation.argv[1])).toEqual(
-      PUBLISH_ORDER.map((p) => `@sothoth/${p}@0.1.0`),
+      PUBLISH_ORDER.map((p) => `@project-sothoth/${p}@0.1.0`),
     );
     // Only the not-yet-published packages are published, in dependency order.
     expect(publishes.map(cwdPackage)).toEqual(
@@ -620,14 +620,14 @@ describe("Task 11 standby publisher (fake-npm harness, T11-C)", () => {
 
   test("foreign/mismatched registry entry: fail closed before any publish, no overwrite or unpublish", async () => {
     const result = await runPublishHarness({
-      prePublished: { "@sothoth/contracts": "sha512-foreign-integrity-from-someone-else" },
+      prePublished: { "@project-sothoth/contracts": "sha512-foreign-integrity-from-someone-else" },
     });
     expect(result.ok, "mismatched integrity must fail the run").toBe(false);
     expect(result.reason).toContain("fail-closed");
     expect(result.invocations[0]?.argv).toEqual(["run", "release:verify"]);
     const rest = result.invocations.slice(1);
     expect(rest.length, "exactly one registry view, nothing else").toBe(1);
-    expect(rest[0]?.argv).toEqual(viewArgv("@sothoth/contracts"));
+    expect(rest[0]?.argv).toEqual(viewArgv("@project-sothoth/contracts"));
     expect(
       rest.filter((invocation) => invocation.argv[0] === "publish").length,
       "no publish may happen on a mismatch",

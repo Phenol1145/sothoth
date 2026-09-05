@@ -1,5 +1,5 @@
 /**
- * `@sothoth/core` public root entry.
+ * `@project-sothoth/core` public root entry.
  *
  * Aggregates the accepted public modules — `canonical-json`, `digest`,
  * `compile`, `diagnostics`, and `outcome`. The root re-export adds no name

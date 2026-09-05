@@ -1,5 +1,5 @@
 /**
- * Public module `@sothoth/document-index/anchors`: heading records and
+ * Public module `@project-sothoth/document-index/anchors`: heading records and
  * anchors. Derives the per-document heading identities and disambiguated
  * anchors from a validated parse result and forwards failures canonically.
  * All external imports live in the internal modules; the shared vocabulary

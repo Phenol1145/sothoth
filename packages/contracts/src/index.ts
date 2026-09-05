@@ -1,5 +1,5 @@
 /**
- * `@sothoth/contracts` public root entry.
+ * `@project-sothoth/contracts` public root entry.
  *
  * Aggregates exactly the six accepted public families — `identity`,
  * `schema`, `diagnostic`, `projection`, `pre-design`, and `extension` — and

@@ -1,5 +1,5 @@
 {
-  "name": "@sothoth/contracts",
+  "name": "@project-sothoth/contracts",
   "version": "0.1.0",
   "description": "Closed public contracts for the Sothoth governance control plane.",
   "license": "Apache-2.0",

@@ -1,4 +1,4 @@
-# @sothoth/cli
+# @project-sothoth/cli
 
 Operator-facing command-line composition and I/O adapter for Sothoth: eight explicit commands over the public SDK facade with a frozen exit mapping and atomic explicit output. One machine document per invocation (`sothoth.cli/cli-invocation-result@1`); every input failure is still a JSON document on stdout with exit code 2.
 
@@ -20,7 +20,7 @@ Options: `--format <json|sarif|terminal>` (required), `--input <path>` (default 
 | `./render` | `dist/render-json.js` | `dist/render-json.d.ts` |
 | `./write` | `dist/io.js` | `dist/io.d.ts` |
 
-There is no root export: the bare specifier `@sothoth/cli` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
+There is no root export: the bare specifier `@project-sothoth/cli` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
 
 ## Usage
 

@@ -1,5 +1,5 @@
 /**
- * Iterative descriptor-safe deep copy and freeze for `@sothoth/graph`.
+ * Iterative descriptor-safe deep copy and freeze for `@project-sothoth/graph`.
  *
  * Internal responsibility unit of the package: never re-exported from any
  * public subpath. Every value this package exposes passes through this module,

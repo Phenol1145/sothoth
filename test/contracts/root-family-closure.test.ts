@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import * as contractsRoot from "@sothoth/contracts";
+import * as contractsRoot from "@project-sothoth/contracts";
 import * as contractsIdentity from "../../packages/contracts/src/identity.js";
 import * as contractsSchema from "../../packages/contracts/src/schema.js";
 import * as contractsDiagnostic from "../../packages/contracts/src/diagnostics.js";

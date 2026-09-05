@@ -1,5 +1,5 @@
 /**
- * Public module `@sothoth/graph/condensation`: the component DAG of a
+ * Public module `@project-sothoth/graph/condensation`: the component DAG of a
  * canonical graph. Component identity is content-derived from the canonical
  * representative, intra-component edges are omitted without aggregation, and
  * the dag re-enters `createCanonicalGraphV1` unchanged.

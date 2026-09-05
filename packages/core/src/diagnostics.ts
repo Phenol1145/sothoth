@@ -1,8 +1,8 @@
 /**
  * Diagnostic finalization: ordering, deduplication, and digesting.
  *
- * Public module `@sothoth/core/diagnostics`. Finalization validates every
- * draft against the closed `@sothoth/contracts` diagnostic contract, then
+ * Public module `@project-sothoth/core/diagnostics`. Finalization validates every
+ * draft against the closed `@project-sothoth/contracts` diagnostic contract, then
  * consumes the draft only through an accessor-free, identity-preserving
  * data snapshot — every field, and every nested container inside
  * `subjects`, `parameters`, `causes`, `help`, and `location`, is read
@@ -23,8 +23,8 @@
  * contract fail closed instead of being silently coerced.
  */
 
-import { validateDiagnosticDraftV1, DIAGNOSTIC_DRAFT_FIELDS_V1 } from "@sothoth/contracts";
-import type { DiagnosticDraftV1, StructuredDiagnosticV1 } from "@sothoth/contracts";
+import { validateDiagnosticDraftV1, DIAGNOSTIC_DRAFT_FIELDS_V1 } from "@project-sothoth/contracts";
+import type { DiagnosticDraftV1, StructuredDiagnosticV1 } from "@project-sothoth/contracts";
 import { canonicalJson, SothothInputError } from "./canonical-json.js";
 import { compareCodePointOrder, compareStringArrays } from "./code-point-order.js";
 import { sha256Digest } from "./digests.js";

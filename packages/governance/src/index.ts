@@ -1,11 +1,11 @@
 /**
- * Internal shared unit of `@sothoth/governance`.
+ * Internal shared unit of `@project-sothoth/governance`.
  *
  * This module is NOT a public subpath: the accepted Dossier's public-surface
  * declaration lists seven public modules and no root `.` or `./index`
  * entry, so everything here is internal machinery shared by those modules —
  * the two declared diagnostic identities, the Structured Diagnostic draft
- * builder, outcome folding through `@sothoth/core`, code-point ordering, the
+ * builder, outcome folding through `@project-sothoth/core`, code-point ordering, the
  * small closed-value predicates every validator reuses, and the shared
  * envelope shape validators for the Document Contract, Design Scope Catalog,
  * Registry, and Artifact Design registrations.
@@ -13,7 +13,7 @@
  * The package emits projections only: nothing here reads a clock, a
  * filesystem, the network, or any process state, and nothing writes a Source
  * Fact back. Canonical bytes, digests, and outcome aggregation are owned by
- * `@sothoth/core` (`CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1`) and are
+ * `@project-sothoth/core` (`CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1`) and are
  * consumed directly, never re-implemented.
  */
 
@@ -24,11 +24,11 @@ import type {
   DiagnosticDraftV1,
   DiagnosticVerdictV1,
   StructuredDiagnosticV1,
-} from "@sothoth/contracts";
-import { EXACT_REFERENCE_PATTERN, SECTION_ID_PATTERN } from "@sothoth/contracts";
-import { finalizeDiagnostics } from "@sothoth/core/diagnostics";
-import { aggregateOutcome } from "@sothoth/core/outcome";
-import type { DocumentEntryV1 } from "@sothoth/document-index/index";
+} from "@project-sothoth/contracts";
+import { EXACT_REFERENCE_PATTERN, SECTION_ID_PATTERN } from "@project-sothoth/contracts";
+import { finalizeDiagnostics } from "@project-sothoth/core/diagnostics";
+import { aggregateOutcome } from "@project-sothoth/core/outcome";
+import type { DocumentEntryV1 } from "@project-sothoth/document-index/index";
 
 /** The declared diagnostic identity for pre-design closure and admissibility findings. */
 export const PRE_DESIGN_DIAGNOSTIC_IDENTITY_V1 = "sothoth.governance/pre-design-diagnostic@1";

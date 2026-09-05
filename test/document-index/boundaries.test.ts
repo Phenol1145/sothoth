@@ -340,10 +340,10 @@ describe("package boundary (T1–T3, T35–T37, T39, T48)", () => {
     const probe = `
       const out = [];
       for (const sub of ["parse", "sections", "anchors", "references", "index", "cache"]) {
-        out.push(import.meta.resolve("@sothoth/document-index/" + sub));
+        out.push(import.meta.resolve("@project-sothoth/document-index/" + sub));
       }
       let bare = "";
-      try { import.meta.resolve("@sothoth/document-index"); } catch (error) { bare = error.code; }
+      try { import.meta.resolve("@project-sothoth/document-index"); } catch (error) { bare = error.code; }
       console.log(JSON.stringify({ out, bare }));
     `;
     const stdout = execFileSync(process.execPath, ["--input-type=module", "-e", probe], {
@@ -425,20 +425,20 @@ describe("package boundary (T1–T3, T35–T37, T39, T48)", () => {
       }
     }
     expect([...externalImports.keys()].sort()).toEqual([
-      "@sothoth/contracts",
-      "@sothoth/core/canonical-json",
-      "@sothoth/core/digest",
-      "@sothoth/graph/digraph",
+      "@project-sothoth/contracts",
+      "@project-sothoth/core/canonical-json",
+      "@project-sothoth/core/digest",
+      "@project-sothoth/graph/digraph",
       "mdast-util-from-markdown",
     ]);
-    expect(externalImports.get("@sothoth/contracts")).toEqual([
+    expect(externalImports.get("@project-sothoth/contracts")).toEqual([
       "packages/document-index/src/internal/markdown.ts",
       "packages/document-index/src/internal/validation.ts",
     ]);
-    expect(externalImports.get("@sothoth/core/canonical-json")).toEqual([
+    expect(externalImports.get("@project-sothoth/core/canonical-json")).toEqual([
       "packages/document-index/src/internal/validation.ts",
     ]);
-    expect(externalImports.get("@sothoth/core/digest")).toEqual([
+    expect(externalImports.get("@project-sothoth/core/digest")).toEqual([
       "packages/document-index/src/internal/validation.ts",
     ]);
     expect(externalImports.get("mdast-util-from-markdown")).toEqual([
@@ -451,7 +451,7 @@ describe("package boundary (T1–T3, T35–T37, T39, T48)", () => {
       "utf8",
     );
     expect(validationSource).toMatch(
-      /import\s*\{[^}]*createCanonicalGraphV1[^}]*\}\s*from\s*"@sothoth\/graph\/digraph"/,
+      /import\s*\{[^}]*createCanonicalGraphV1[^}]*\}\s*from\s*"@project-sothoth\/graph\/digraph"/,
     );
    });
 

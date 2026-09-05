@@ -1,5 +1,5 @@
 /**
- * Public module `@sothoth/graph/traversal`: canonical adjacency and
+ * Public module `@project-sothoth/graph/traversal`: canonical adjacency and
  * reachability over a canonical graph result. Both callables accept the full
  * creation result union and forward failures by canonical value and bytes.
  */

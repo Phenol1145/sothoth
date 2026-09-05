@@ -43,7 +43,7 @@ export function sha512Sri(bytes) {
 }
 
 export function expectedTarballName(packageDir) {
-  return `sothoth-${packageDir}-${RELEASE_VERSION}.tgz`;
+  return `project-sothoth-${packageDir}-${RELEASE_VERSION}.tgz`;
 }
 
 /**
@@ -58,8 +58,8 @@ export async function packAll(rootDir, outDir) {
   // Validate every manifest before packing anything.
   for (const p of PACKAGE_ORDER) {
     const manifest = JSON.parse(readFileSync(join(rootDir, "packages", p, "package.json"), "utf8"));
-    if (manifest.name !== `@sothoth/${p}`) {
-      throw new Error(`packages/${p}/package.json name is ${manifest.name}, expected @sothoth/${p}`);
+    if (manifest.name !== `@project-sothoth/${p}`) {
+      throw new Error(`packages/${p}/package.json name is ${manifest.name}, expected @project-sothoth/${p}`);
     }
     if (manifest.version !== RELEASE_VERSION) {
       throw new Error(`packages/${p}/package.json version is ${manifest.version}, expected ${RELEASE_VERSION}`);
@@ -89,16 +89,16 @@ export async function packAll(rootDir, outDir) {
   const byName = new Map(packed.map((info) => [info.name, info]));
   const entries = [];
   for (const p of PACKAGE_ORDER) {
-    const info = byName.get(`@sothoth/${p}`);
+    const info = byName.get(`@project-sothoth/${p}`);
     if (info === undefined) {
-      throw new Error(`npm pack --workspaces result is missing @sothoth/${p}`);
+      throw new Error(`npm pack --workspaces result is missing @project-sothoth/${p}`);
     }
     const filename = expectedTarballName(p);
     if (info.filename !== filename) {
-      throw new Error(`npm pack filename for @sothoth/${p} is ${info.filename}, expected ${filename}`);
+      throw new Error(`npm pack filename for @project-sothoth/${p} is ${info.filename}, expected ${filename}`);
     }
     if (info.version !== RELEASE_VERSION) {
-      throw new Error(`npm pack identity mismatch for @sothoth/${p}`);
+      throw new Error(`npm pack identity mismatch for @project-sothoth/${p}`);
     }
 
     const tarballBytes = readFileSync(join(outDir, filename));
@@ -106,12 +106,12 @@ export async function packAll(rootDir, outDir) {
     const sri = sha512Sri(tarballBytes);
     if (typeof info.integrity === "string" && info.integrity !== sri) {
       throw new Error(
-        `npm-reported integrity for @sothoth/${p} (${info.integrity}) disagrees with the independently computed SRI (${sri})`,
+        `npm-reported integrity for @project-sothoth/${p} (${info.integrity}) disagrees with the independently computed SRI (${sri})`,
       );
     }
 
     entries.push({
-      name: `@sothoth/${p}`,
+      name: `@project-sothoth/${p}`,
       version: RELEASE_VERSION,
       directory: `packages/${p}`,
       filename,

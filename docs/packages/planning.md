@@ -1,8 +1,8 @@
-# `@sothoth/planning` package reference
+# `@project-sothoth/planning` package reference
 
 | | |
 |---|---|
-| Package | `@sothoth/planning` |
+| Package | `@project-sothoth/planning` |
 | Version | `0.1.0` |
 | Layer | Scheduling compiler |
 | License | Apache-2.0 |
@@ -20,7 +20,7 @@ The scheduler authority fence: no mutation of Source Facts, no executable plans,
 
 ## Public exports
 
-Exactly the accepted `public-surface-declaration@1` modules of the [Dossier](../design/dossiers/planning.md) (`surfaceKind: pure-functions-only`). No root export exists: the bare specifier `@sothoth/planning` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
+Exactly the accepted `public-surface-declaration@1` modules of the [Dossier](../design/dossiers/planning.md) (`surfaceKind: pure-functions-only`). No root export exists: the bare specifier `@project-sothoth/planning` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
 
 | Subpath | Runtime | Types |
 |---|---|---|
@@ -31,7 +31,7 @@ Exactly the accepted `public-surface-declaration@1` modules of the [Dossier](../
 
 ## Dependency direction
 
-Depends on `@sothoth/contracts@0.1.0`, `@sothoth/core@0.1.0`, `@sothoth/graph@0.1.0`, and `@sothoth/selectors@0.1.0`.
+Depends on `@project-sothoth/contracts@0.1.0`, `@project-sothoth/core@0.1.0`, `@project-sothoth/graph@0.1.0`, and `@project-sothoth/selectors@0.1.0`.
 
 ## Inputs and outputs
 
@@ -40,8 +40,8 @@ Inputs are `SchedulingProblemV1` values (explicit dependency constraints with st
 ## Minimal usage
 
 ```ts
-import { validatePlanGraphV1 } from "@sothoth/planning/constraints";
-import { compileDependencyScheduleV1 } from "@sothoth/planning/schedule";
+import { validatePlanGraphV1 } from "@project-sothoth/planning/constraints";
+import { compileDependencyScheduleV1 } from "@project-sothoth/planning/schedule";
 
 const problem = { /* SchedulingProblemV1 */ };
 const validation = validatePlanGraphV1(problem);
@@ -61,10 +61,10 @@ Unsatisfiable or malformed constraints produce an invalid outcome with structure
 - [Planning Dossier](../design/dossiers/planning.md)
 - [Architecture](../../ARCHITECTURE.md) — planning layer
 - [Repository README](../../README.md)
-- Adjacent references: [`@sothoth/graph`](graph.md), [`@sothoth/selectors`](selectors.md), [`@sothoth/governance`](governance.md), [`@sothoth/sdk`](sdk.md)
+- Adjacent references: [`@project-sothoth/graph`](graph.md), [`@project-sothoth/selectors`](selectors.md), [`@project-sothoth/governance`](governance.md), [`@project-sothoth/sdk`](sdk.md)
 
 <!-- sothoth-package-readme:start -->
-# @sothoth/planning
+# @project-sothoth/planning
 
 Pure scheduling compilation for Sothoth: validate dependency constraints, build the ordering graph, and assign deterministic topological waves in a single Schedule Solution. Inputs are never mutated; every scheduling axis is a projection of the one solution.
 
@@ -79,12 +79,12 @@ Version `0.1.0` — release candidate, not yet published on npm (see the reposit
 | `./solution` | `dist/schedule.js` | `dist/schedule.d.ts` |
 | `./waves` | `dist/schedule.js` | `dist/schedule.d.ts` |
 
-There is no root export: the bare specifier `@sothoth/planning` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
+There is no root export: the bare specifier `@project-sothoth/planning` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
 
 ## Usage
 
 ```ts
-import { compileDependencyScheduleV1 } from "@sothoth/planning/schedule";
+import { compileDependencyScheduleV1 } from "@project-sothoth/planning/schedule";
 
 const solution = compileDependencyScheduleV1({ /* SchedulingProblemV1 */ });
 ```

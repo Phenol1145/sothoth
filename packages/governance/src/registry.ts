@@ -1,6 +1,6 @@
 /**
- * Public module `@sothoth/governance/registry` (also served at
- * `@sothoth/governance/manifest`): Registry lifecycle compilation.
+ * Public module `@project-sothoth/governance/registry` (also served at
+ * `@project-sothoth/governance/manifest`): Registry lifecycle compilation.
  *
  * The registry is the manifest of registered design documents. Compilation
  * validates the `sothoth.design-document-registry/v1` envelope as a closed
@@ -21,11 +21,11 @@ import type {
   CompilationOutcomeKindV1,
   DesignDocumentRegistryV1,
   StructuredDiagnosticV1,
-} from "@sothoth/contracts";
+} from "@project-sothoth/contracts";
 import type {
   DocumentEntryV1,
   DocumentIndexProjectionV1,
-} from "@sothoth/document-index/index";
+} from "@project-sothoth/document-index/index";
 import {
   DOCUMENT_GOVERNANCE_DIAGNOSTIC_IDENTITY_V1,
   arraysEqual,

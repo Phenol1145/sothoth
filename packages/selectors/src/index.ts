@@ -1,11 +1,11 @@
 /**
- * Public module `@sothoth/selectors/ast`: the closed canonical form of the
+ * Public module `@project-sothoth/selectors/ast`: the closed canonical form of the
  * selector algebra — combinators `all`/`any`/`not`, exact identity terms,
  * normalized path globs, kind/status/owner/tag set terms, explicit
  * reference and traceability terms, diagnostic identity and namespace
  * terms, and the root cardinality bounds. The module is type-only
  * vocabulary: the runtime namespace is empty, the form is produced by
- * `@sothoth/selectors/parse`, and every runtime rule lives in the parse and
+ * `@project-sothoth/selectors/parse`, and every runtime rule lives in the parse and
  * match units. This type-only module adds no callable to the accepted
  * public surface.
  */

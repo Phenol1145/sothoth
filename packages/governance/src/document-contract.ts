@@ -1,5 +1,5 @@
 /**
- * Public module `@sothoth/governance/traceability`: Document Contract
+ * Public module `@project-sothoth/governance/traceability`: Document Contract
  * validation and exact-section conformance.
  *
  * A Document Contract is a consumer-neutral constraint over parsed
@@ -15,15 +15,15 @@
  *
  * Emissions carry the declared `sothoth.governance/document-governance-diagnostic@1`
  * identity under the Structured Diagnostic vocabulary; outcomes fold through
- * `@sothoth/core`. A failed validation leaves no contract value.
+ * `@project-sothoth/core`. A failed validation leaves no contract value.
  */
 
 import type {
   CompilationOutcomeKindV1,
   DocumentContractV1,
   StructuredDiagnosticV1,
-} from "@sothoth/contracts";
-import type { DocumentEntryV1 } from "@sothoth/document-index/index";
+} from "@project-sothoth/contracts";
+import type { DocumentEntryV1 } from "@project-sothoth/document-index/index";
 import {
   DOCUMENT_GOVERNANCE_DIAGNOSTIC_IDENTITY_V1,
   finalizeFindings,

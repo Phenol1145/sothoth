@@ -1,5 +1,5 @@
 /**
- * Public module `@sothoth/planning/constraints`: the closed planning-problem
+ * Public module `@project-sothoth/planning/constraints`: the closed planning-problem
  * vocabulary and dependency-constraint validation
  * (`CONTRACT/SOTHOTH/PLANNING@1`).
  *
@@ -13,14 +13,14 @@
  * it never repairs, defaults, or writes back any fact. Cycles are not
  * constraint violations: each cyclic constraint is individually resolvable,
  * and the impossible order is detected at wave assignment in
- * `@sothoth/planning/waves` through the generic graph package.
+ * `@project-sothoth/planning/waves` through the generic graph package.
  *
  * Dependency constraint identities are exactly `dependency:<prerequisite>
  * -><dependent>`; satisfied identities, findings, and every canonical order
  * in this package sort in Unicode code-point order.
  */
 
-import type { CompilationOutcomeKindV1, StructuredDiagnosticV1 } from "@sothoth/contracts";
+import type { CompilationOutcomeKindV1, StructuredDiagnosticV1 } from "@project-sothoth/contracts";
 import {
   compareCodePointOrder,
   findingDraft,
@@ -38,7 +38,7 @@ import type { PlainFindingV1 } from "./index.js";
  * The closed scheduling-dimension vocabulary of `0.1.0`: the solved
  * `dependency` axis plus the six axes that stay explicitly unsupported. The
  * unsupported members mirror `UNSUPPORTED_SCHEDULING_DIMENSIONS_V1` from
- * `@sothoth/contracts`; `workstream` and `organization` remain navigation
+ * `@project-sothoth/contracts`; `workstream` and `organization` remain navigation
  * dimensions and are not scheduling dimensions.
  */
 export const SCHEDULING_DIMENSIONS_V1 = [

@@ -1,18 +1,18 @@
 /**
  * CommonMark parsing and content-derived derivations for
- * `@sothoth/document-index`.
+ * `@project-sothoth/document-index`.
  *
  * Internal responsibility unit of the package: never re-exported from any
  * public subpath, and the only file importing `mdast-util-from-markdown`.
  * The pinned parser runs with no extensions and no options; its value never
  * leaves this module except as projected package-owned fields. All walks are
  * iterative with explicit work stacks. `SECTION_MARKER_PATTERN` is consumed
- * here from `@sothoth/contracts` and never re-exported. Marker binding never
+ * here from `@project-sothoth/contracts` and never re-exported. Marker binding never
  * inspects prose: markers are recognized only through the exact frozen
  * pattern over parser-produced root `html` values.
  */
 
-import { SECTION_MARKER_PATTERN } from "@sothoth/contracts";
+import { SECTION_MARKER_PATTERN } from "@project-sothoth/contracts";
 import { fromMarkdown } from "mdast-util-from-markdown";
 import { ASCII_WHITESPACE } from "./code-point.js";
 import { digestOfContent } from "./validation.js";

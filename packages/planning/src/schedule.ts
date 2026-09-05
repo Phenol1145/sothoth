@@ -1,6 +1,6 @@
 /**
- * Public modules `@sothoth/planning/schedule`, `@sothoth/planning/solution`,
- * and `@sothoth/planning/waves`: the closed scheduling compilation of
+ * Public modules `@project-sothoth/planning/schedule`, `@project-sothoth/planning/solution`,
+ * and `@project-sothoth/planning/waves`: the closed scheduling compilation of
  * `0.1.0` (`CONTRACT/SOTHOTH/PLANNING@1`).
  *
  * `compileDependencyScheduleV1` drives the whole compilation: dependency
@@ -9,7 +9,7 @@
  * assigned deterministically, and exactly one digest-bearing Schedule
  * Solution under the shared identity
  * `SCHEDULE_SOLUTION_IDENTITY_V1` is emitted — canonical bytes and digests
- * through `@sothoth/core`. `0.1.0` solves only the dependency dimension:
+ * through `@project-sothoth/core`. `0.1.0` solves only the dependency dimension:
  * any active `time`, `resource`, `assignment`, `placement`, `gate`, or
  * `release-train` dimension fails closed as
  * `sothoth.planning/unsupported-dimension` naming the axis identity and is
@@ -30,13 +30,13 @@ import type {
   GraphNodeWaveV1,
   ScheduleSolutionV1 as ContractScheduleSolutionV1,
   StructuredDiagnosticV1,
-} from "@sothoth/contracts";
-import { SCHEDULE_SOLUTION_IDENTITY_V1 } from "@sothoth/contracts";
-import { canonicalJson } from "@sothoth/core/canonical-json";
-import { sha256Digest } from "@sothoth/core/digest";
-import { createCanonicalGraphV1 } from "@sothoth/graph/digraph";
-import type { DirectedMultigraphDeclarationV1 } from "@sothoth/graph/digraph";
-import { topologicalWavesV1 } from "@sothoth/graph/waves";
+} from "@project-sothoth/contracts";
+import { SCHEDULE_SOLUTION_IDENTITY_V1 } from "@project-sothoth/contracts";
+import { canonicalJson } from "@project-sothoth/core/canonical-json";
+import { sha256Digest } from "@project-sothoth/core/digest";
+import { createCanonicalGraphV1 } from "@project-sothoth/graph/digraph";
+import type { DirectedMultigraphDeclarationV1 } from "@project-sothoth/graph/digraph";
+import { topologicalWavesV1 } from "@project-sothoth/graph/waves";
 import { compareCodePointOrder, deepFreezeInPlace, findingDraft, finalizeFindings, outcomeOf } from "./index.js";
 import type { PlainFindingV1 } from "./index.js";
 import {

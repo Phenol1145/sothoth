@@ -12,7 +12,7 @@ import type {
 function draft(overrides: Partial<DiagnosticDraftV1> = {}): DiagnosticDraftV1 {
   return {
     code: "sothoth.evidence/unresolved",
-    origin: "@sothoth/core",
+    origin: "@project-sothoth/core",
     category: "evidence",
     phase: "validation",
     verdict: "unresolved",
@@ -31,7 +31,7 @@ describe("diagnostic finalization", () => {
   test("assigns the hand-derived digest of the canonical diagnostic record", () => {
     const [diagnostic] = finalizeDiagnostics([draft()]);
     expect(diagnostic?.digest).toBe(
-      "sha256:c8207b53cbf76d2de8a733d80514b97262c9775a13e8e10931715309b855e478",
+      "sha256:c3d609a6f47c0f36b835bf0eab7f77ab24c8bf8f4d49fa2e155ab2adac75363e",
     );
   });
 

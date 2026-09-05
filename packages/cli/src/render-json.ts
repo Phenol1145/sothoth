@@ -1,5 +1,5 @@
 /**
- * Public module `@sothoth/cli/render`: the JSON machine-document renderer.
+ * Public module `@project-sothoth/cli/render`: the JSON machine-document renderer.
  *
  * The machine document is one closed `sothoth.cli/cli-invocation-result@1`
  * value — the invocation record the CLI owns — serialized deterministically
@@ -8,7 +8,7 @@
  * separate renderer modules composed by `main`.
  */
 
-import type { CompilationOutcomeKindV1, StructuredDiagnosticV1 } from "@sothoth/sdk/diagnostics";
+import type { CompilationOutcomeKindV1, StructuredDiagnosticV1 } from "@project-sothoth/sdk/diagnostics";
 import type { CliCommandV1 } from "./args.js";
 
 /** What a document can report as its command: a real command, `help`, or

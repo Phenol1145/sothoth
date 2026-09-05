@@ -1,5 +1,5 @@
 /**
- * Public module `@sothoth/governance/change-plan`: change impact and change
+ * Public module `@project-sothoth/governance/change-plan`: change impact and change
  * planning (`CONTRACT/SOTHOTH/CHANGE-PLAN@1`).
  *
  * The compiler consumes the Document Index projection of the artifact
@@ -14,7 +14,7 @@
  * records its originating relation and mapping rule. `impact` expands
  * review scope through the impact closure without creating any order, so
  * impact-only cycles stay legal, while ordering cycles fail closed through
- * `@sothoth/graph`'s deterministic cycle witness. Dispositions come from
+ * `@project-sothoth/graph`'s deterministic cycle witness. Dispositions come from
  * the closed `CHANGE_DISPOSITIONS_V1` vocabulary: changed artifacts are
  * `revise`, derivation dependents `rebuild`, normative dependents
  * `revalidate`, artifacts with stale evidence snapshots
@@ -28,12 +28,12 @@ import type {
   CompilationOutcomeKindV1,
   GraphNodeWaveV1,
   StructuredDiagnosticV1,
-} from "@sothoth/contracts";
-import { createCanonicalGraphV1 } from "@sothoth/graph/digraph";
-import type { DirectedMultigraphDeclarationV1 } from "@sothoth/graph/digraph";
-import { topologicalWavesV1 } from "@sothoth/graph/waves";
-import { selectDocumentsV1 } from "@sothoth/selectors/match";
-import type { DocumentIndexProjectionV1 } from "@sothoth/document-index/index";
+} from "@project-sothoth/contracts";
+import { createCanonicalGraphV1 } from "@project-sothoth/graph/digraph";
+import type { DirectedMultigraphDeclarationV1 } from "@project-sothoth/graph/digraph";
+import { topologicalWavesV1 } from "@project-sothoth/graph/waves";
+import { selectDocumentsV1 } from "@project-sothoth/selectors/match";
+import type { DocumentIndexProjectionV1 } from "@project-sothoth/document-index/index";
 import {
   DOCUMENT_GOVERNANCE_DIAGNOSTIC_IDENTITY_V1,
   compareCodePointOrder,

@@ -1,5 +1,5 @@
 /**
- * Public module `@sothoth/document-index/references`: declared-relation
+ * Public module `@project-sothoth/document-index/references`: declared-relation
  * resolution. Relations originate only from caller metadata; resolution
  * orders records by canonical identity, which is exactly the Graph canonical
  * edge order produced by the package's single Graph call,

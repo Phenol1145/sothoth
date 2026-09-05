@@ -40,7 +40,7 @@ const EXPECTED_KINDS = [
 const SAMPLES: Record<(typeof EXPECTED_KINDS)[number], Sample> = {
   "sothoth-dossier/cli-command-declaration@1": {
     kind: "sothoth-dossier/cli-command-declaration@1",
-    packageId: "@sothoth/cli",
+    packageId: "@project-sothoth/cli",
     surfaceKind: "explicit-command-surface",
     commands: ["check"],
     hiddenCommands: [],
@@ -48,7 +48,7 @@ const SAMPLES: Record<(typeof EXPECTED_KINDS)[number], Sample> = {
   },
   "sothoth-dossier/cli-exit-declaration@1": {
     kind: "sothoth-dossier/cli-exit-declaration@1",
-    packageId: "@sothoth/cli",
+    packageId: "@project-sothoth/cli",
     exitMap: {
       "0": "valid",
       "1": "invalid",
@@ -61,7 +61,7 @@ const SAMPLES: Record<(typeof EXPECTED_KINDS)[number], Sample> = {
   },
   "sothoth-dossier/cli-input-declaration@1": {
     kind: "sothoth-dossier/cli-input-declaration@1",
-    packageId: "@sothoth/cli",
+    packageId: "@project-sothoth/cli",
     explicitInputSources: ["argv-flags"],
     implicitScanning: "forbidden",
     environmentVariableSemantics: "forbidden",
@@ -69,7 +69,7 @@ const SAMPLES: Record<(typeof EXPECTED_KINDS)[number], Sample> = {
   },
   "sothoth-dossier/cli-output-declaration@1": {
     kind: "sothoth-dossier/cli-output-declaration@1",
-    packageId: "@sothoth/cli",
+    packageId: "@project-sothoth/cli",
     defaultOutput: "stdout",
     writeStrategy: "same-directory-temp-then-replace",
     atomicExplicitWrites: true,
@@ -80,35 +80,35 @@ const SAMPLES: Record<(typeof EXPECTED_KINDS)[number], Sample> = {
   },
   "sothoth-dossier/cli-stream-declaration@1": {
     kind: "sothoth-dossier/cli-stream-declaration@1",
-    packageId: "@sothoth/cli",
+    packageId: "@project-sothoth/cli",
     stdoutContract: "exactly-one-machine-document",
     stdoutContamination: "forbidden",
     operationalNarration: "stderr-only",
   },
   "sothoth-dossier/dependency-declaration@1": {
     kind: "sothoth-dossier/dependency-declaration@1",
-    packageId: "@sothoth/contracts",
+    packageId: "@project-sothoth/contracts",
     runtimeImportAllowlist: [],
     providedContracts: [],
     requiredContracts: [],
   },
   "sothoth-dossier/determinism-declaration@1": {
     kind: "sothoth-dossier/determinism-declaration@1",
-    packageId: "@sothoth/contracts",
+    packageId: "@project-sothoth/contracts",
     byteStableOutputs: true,
     stringOrdering: "unicode-code-point",
     tieBreaking: "declared-enumeration-order",
   },
   "sothoth-dossier/domain-semantics-declaration@1": {
     kind: "sothoth-dossier/domain-semantics-declaration@1",
-    packageId: "@sothoth/graph",
+    packageId: "@project-sothoth/graph",
     ownedDomainSemantics: [],
     interpretedEdgeRoles: [],
     semanticsDeferredTo: "consuming-domain-package",
   },
   "sothoth-dossier/facade-capability-declaration@1": {
     kind: "sothoth-dossier/facade-capability-declaration@1",
-    packageId: "@sothoth/sdk",
+    packageId: "@project-sothoth/sdk",
     facadeKind: "aggregate-public-library-facade",
     solePublicLibraryFacade: true,
     secondCore: false,
@@ -121,26 +121,26 @@ const SAMPLES: Record<(typeof EXPECTED_KINDS)[number], Sample> = {
   },
   "sothoth-dossier/forbidden-capability-declaration@1": {
     kind: "sothoth-dossier/forbidden-capability-declaration@1",
-    packageId: "@sothoth/contracts",
+    packageId: "@project-sothoth/contracts",
     capabilityClasses: { filesystem: "forbidden" },
   },
   "sothoth-dossier/git-budget-declaration@1": {
     kind: "sothoth-dossier/git-budget-declaration@1",
-    packageId: "@sothoth/git",
+    packageId: "@project-sothoth/git",
     enforcedBudgets: ["file-count"],
     exhaustionPolicy: "fail-closed",
     truncationPolicy: "forbidden",
   },
   "sothoth-dossier/git-path-declaration@1": {
     kind: "sothoth-dossier/git-path-declaration@1",
-    packageId: "@sothoth/git",
+    packageId: "@project-sothoth/git",
     normalization: "repository-relative-posix",
     ambiguousRefPolicy: "reject",
     rejectedPathClasses: ["absolute-path"],
   },
   "sothoth-dossier/git-process-declaration@1": {
     kind: "sothoth-dossier/git-process-declaration@1",
-    packageId: "@sothoth/git",
+    packageId: "@project-sothoth/git",
     executableSubcommands: ["status"],
     argumentStyle: "fixed-argument-array",
     shellInvocation: "forbidden",
@@ -150,7 +150,7 @@ const SAMPLES: Record<(typeof EXPECTED_KINDS)[number], Sample> = {
   },
   "sothoth-dossier/git-provenance-declaration@1": {
     kind: "sothoth-dossier/git-provenance-declaration@1",
-    packageId: "@sothoth/git",
+    packageId: "@project-sothoth/git",
     workspaceMasqueradesAsCommit: false,
     provenanceIdentitySeparation: "strict",
     modes: [
@@ -164,7 +164,7 @@ const SAMPLES: Record<(typeof EXPECTED_KINDS)[number], Sample> = {
   },
   "sothoth-dossier/profile-boundary-declaration@1": {
     kind: "sothoth-dossier/profile-boundary-declaration@1",
-    packageId: "@sothoth/profile-sdk",
+    packageId: "@project-sothoth/profile-sdk",
     compositionMode: "caller-owned-exact-reference-data",
     ownsConsumerIdentity: false,
     ownsConsumerPolicy: false,
@@ -182,20 +182,20 @@ const SAMPLES: Record<(typeof EXPECTED_KINDS)[number], Sample> = {
   },
   "sothoth-dossier/profile-failure-declaration@1": {
     kind: "sothoth-dossier/profile-failure-declaration@1",
-    packageId: "@sothoth/profile-sdk",
+    packageId: "@project-sothoth/profile-sdk",
     conformanceResult: "non-authoritative-projection-or-diagnostic",
     failClosedConditions: ["unknown-field"],
     profileMutation: "forbidden",
   },
   "sothoth-dossier/public-surface-declaration@1": {
     kind: "sothoth-dossier/public-surface-declaration@1",
-    packageId: "@sothoth/contracts",
+    packageId: "@project-sothoth/contracts",
     publicModules: [],
     surfaceKind: "types-and-validation-only",
   },
   "sothoth-dossier/schedule-solution-declaration@1": {
     kind: "sothoth-dossier/schedule-solution-declaration@1",
-    packageId: "@sothoth/planning",
+    packageId: "@project-sothoth/planning",
     solutionIdentity: "sothoth.planning/schedule-solution@1",
     authority: "non-authoritative-projection",
     implementedCapabilities: ["dependency-constraint-validation"],
@@ -204,7 +204,7 @@ const SAMPLES: Record<(typeof EXPECTED_KINDS)[number], Sample> = {
   },
   "sothoth-dossier/sdk-outcome-declaration@1": {
     kind: "sothoth-dossier/sdk-outcome-declaration@1",
-    packageId: "@sothoth/sdk",
+    packageId: "@project-sothoth/sdk",
     outcomeEnvelope: "closed-typed-outcome-with-diagnostics",
     selectsProcessExitCode: false,
     extensionSelectsOutcome: false,
@@ -212,7 +212,7 @@ const SAMPLES: Record<(typeof EXPECTED_KINDS)[number], Sample> = {
   },
   "sothoth-dossier/skill-recommendation-declaration@1": {
     kind: "sothoth-dossier/skill-recommendation-declaration@1",
-    packageId: "@sothoth/profile-sdk",
+    packageId: "@project-sothoth/profile-sdk",
     sourceKind: "caller-supplied-curated-versioned-catalog",
     automaticDiscovery: false,
     revisionLocking: "exact-only",
@@ -224,14 +224,14 @@ const SAMPLES: Record<(typeof EXPECTED_KINDS)[number], Sample> = {
   },
   "sothoth-dossier/truth-ownership-declaration@1": {
     kind: "sothoth-dossier/truth-ownership-declaration@1",
-    packageId: "@sothoth/contracts",
+    packageId: "@project-sothoth/contracts",
     producedStateRefs: [],
     issuedAuthorityRefs: [],
     effectOwnership: "declarative-only",
   },
   "sothoth-dossier/verification-criteria@1": {
     kind: "sothoth-dossier/verification-criteria@1",
-    packageId: "@sothoth/contracts",
+    packageId: "@project-sothoth/contracts",
     criteria: [
       {
         criterionId: "contracts-schema-closure",
@@ -320,7 +320,7 @@ describe("dossier declaration-kind vocabulary (M-4)", () => {
     expect(
       validateDossierDeclarationV1({
         kind: "sothoth-dossier/surprise-declaration@1",
-        packageId: "@sothoth/contracts",
+        packageId: "@project-sothoth/contracts",
       }),
     ).toContainEqual({
       code: "sothoth.contracts/unknown-declaration-kind",
@@ -329,7 +329,7 @@ describe("dossier declaration-kind vocabulary (M-4)", () => {
   });
 
   test("rejects a declaration without a kind", () => {
-    expect(validateDossierDeclarationV1({ packageId: "@sothoth/contracts" })).toContainEqual({
+    expect(validateDossierDeclarationV1({ packageId: "@project-sothoth/contracts" })).toContainEqual({
       code: "sothoth.contracts/missing-field",
       subject: "declaration.kind",
     });
@@ -395,7 +395,7 @@ describe("dossier declaration-kind vocabulary (M-4)", () => {
       enumerable: true,
       get() {
         calls += 1;
-        return "@sothoth/contracts";
+        return "@project-sothoth/contracts";
       },
     });
 

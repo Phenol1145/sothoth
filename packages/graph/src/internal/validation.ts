@@ -1,6 +1,6 @@
 /**
  * Descriptor-only hostile-input validation and the canonical graph model for
- * `@sothoth/graph`.
+ * `@project-sothoth/graph`.
  *
  * Internal responsibility unit of the package: never re-exported from any
  * public subpath. This module owns the complete hostile-input machinery —
@@ -11,11 +11,11 @@
  * accessor on a known field fails closed as `sothoth.graph/invalid-field`
  * without its getter ever executing, nothing is coerced, and no input is
  * mutated. Facet validation reuses `canonicalJson` from
- * `@sothoth/core/canonical-json` inside a fail-closed try/catch as the single
+ * `@project-sothoth/core/canonical-json` inside a fail-closed try/catch as the single
  * owner of the JSON value grammar.
  */
 
-import { canonicalJson } from "@sothoth/core/canonical-json";
+import { canonicalJson } from "@project-sothoth/core/canonical-json";
 import type {
   CanonicalGraphV1,
   DirectedMultigraphDeclarationV1,

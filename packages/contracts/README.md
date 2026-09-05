@@ -1,4 +1,4 @@
-# @sothoth/contracts
+# @project-sothoth/contracts
 
 Closed public contracts for the Sothoth governance control plane: one authoritative vocabulary for exact design references, record schemas, Structured Diagnostics, projections, pre-design declarations, and extension contracts. Types, constants, predicates, and structural validators only — no executable capability beyond shape validation, and zero runtime dependencies.
 
@@ -21,8 +21,8 @@ Specifiers outside this map fail with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
 ## Usage
 
 ```ts
-import { EXACT_REFERENCE_PATTERN, DIGEST_PATTERN } from "@sothoth/contracts/identity";
-import { isDiagnosticCodeV1 } from "@sothoth/contracts/diagnostic";
+import { EXACT_REFERENCE_PATTERN, DIGEST_PATTERN } from "@project-sothoth/contracts/identity";
+import { isDiagnosticCodeV1 } from "@project-sothoth/contracts/diagnostic";
 
 EXACT_REFERENCE_PATTERN.test("SOTHOTH-CORE-DOSSIER@1"); // true
 DIGEST_PATTERN.test("sha256:" + "0".repeat(64)); // true

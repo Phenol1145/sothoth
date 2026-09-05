@@ -1,5 +1,5 @@
 /**
- * Public modules `@sothoth/cli/write` and `@sothoth/cli/exit`: the terminal
+ * Public modules `@project-sothoth/cli/write` and `@project-sothoth/cli/exit`: the terminal
  * process I/O boundary of the CLI.
  *
  * `write` performs atomic explicit output: a document destined for an
@@ -18,10 +18,10 @@
 
 import { readFileSync, renameSync, unlinkSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
-import type { CompilationOutcomeKindV1 } from "@sothoth/sdk/diagnostics";
+import type { CompilationOutcomeKindV1 } from "@project-sothoth/sdk/diagnostics";
 
 // ---------------------------------------------------------------------------
-// exit (`@sothoth/cli/exit`)
+// exit (`@project-sothoth/cli/exit`)
 // ---------------------------------------------------------------------------
 
 /** The frozen outcome-to-exit table; owned by the CLI and by nothing else. */
@@ -43,7 +43,7 @@ export function exitCodeOfOutcomeV1(outcome: CompilationOutcomeKindV1): number {
 }
 
 // ---------------------------------------------------------------------------
-// write (`@sothoth/cli/write`)
+// write (`@project-sothoth/cli/write`)
 // ---------------------------------------------------------------------------
 
 /** An explicit output destination that could not be written atomically. */

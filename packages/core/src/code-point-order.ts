@@ -1,5 +1,5 @@
 /**
- * Internal Unicode code-point ordering for `@sothoth/core`.
+ * Internal Unicode code-point ordering for `@project-sothoth/core`.
  *
  * The Core Dossier pins `stringOrdering: "unicode-code-point"` with
  * `tieBreaking: "canonical-identity-then-code-point"`: canonical JSON keys,

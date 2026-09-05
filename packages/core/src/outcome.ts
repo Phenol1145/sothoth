@@ -1,8 +1,8 @@
 /**
  * Outcome aggregation: folding diagnostics into the single process outcome.
  *
- * Public module `@sothoth/core/outcome`. The outcome set and its frozen exit
- * mapping are owned by `@sothoth/contracts`; this module owns the fold. An
+ * Public module `@project-sothoth/core/outcome`. The outcome set and its frozen exit
+ * mapping are owned by `@project-sothoth/contracts`; this module owns the fold. An
  * `internal` diagnostic is a kernel defect and outranks every other class; an
  * `extension` diagnostic normalizes extension misbehavior; an `input`
  * diagnostic outranks rule failure; otherwise a `fail` or `unresolved`
@@ -10,8 +10,8 @@
  * unresolved diagnostic the compilation is `valid` and exits `0`.
  */
 
-import { COMPILATION_OUTCOMES_V1, OUTCOME_EXIT_CODES_V1 } from "@sothoth/contracts";
-import type { CompilationOutcomeV1, DiagnosticDraftV1 } from "@sothoth/contracts";
+import { COMPILATION_OUTCOMES_V1, OUTCOME_EXIT_CODES_V1 } from "@project-sothoth/contracts";
+import type { CompilationOutcomeV1, DiagnosticDraftV1 } from "@project-sothoth/contracts";
 
 function classExitCode(diagnostic: DiagnosticDraftV1): number {
   switch (diagnostic.category) {

@@ -1,5 +1,5 @@
 {
-  "name": "@sothoth/profile-sdk",
+  "name": "@project-sothoth/profile-sdk",
   "version": "0.1.0",
   "description": "Consumer-neutral Consumer Profile contract, loading, and conformance for Sothoth.",
   "license": "Apache-2.0",
@@ -16,7 +16,7 @@
   "repository": { "type": "git", "url": "git+https://github.com/Phenol1145/sothoth.git", "directory": "packages/profile-sdk" },
   "engines": { "node": ">=22.14.0" },
   "dependencies": {
-    "@sothoth/contracts": "0.1.0",
-    "@sothoth/core": "0.1.0"
+    "@project-sothoth/contracts": "0.1.0",
+    "@project-sothoth/core": "0.1.0"
   }
 }

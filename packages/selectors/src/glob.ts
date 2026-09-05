@@ -1,5 +1,5 @@
 /**
- * Internal machinery unit for `@sothoth/selectors`. Not a public module:
+ * Internal machinery unit for `@project-sothoth/selectors`. Not a public module:
  * nothing here is re-exported from any accepted subpath. It owns two
  * responsibilities of the closed engine —
  *
@@ -19,7 +19,7 @@
  * their getters ever executing.
  */
 
-import { isDiagnosticCodeV1 } from "@sothoth/contracts";
+import { isDiagnosticCodeV1 } from "@project-sothoth/contracts";
 import type {
   SelectorAnyV1,
   SelectorAllV1,

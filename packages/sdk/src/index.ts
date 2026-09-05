@@ -1,5 +1,5 @@
 /**
- * Public modules `@sothoth/sdk/{change-plan,check,compile,diagnostics,
+ * Public modules `@project-sothoth/sdk/{change-plan,check,compile,diagnostics,
  * documents,git,profiles,verify}` — the sole aggregate public library facade
  * of Sothoth `0.1.0` (`CONTRACT/SOTHOTH/PUBLIC-SDK@1`).
  *
@@ -14,7 +14,7 @@
  * never scans a filesystem, never mutates Git, runs no process, and never
  * selects a process exit code: expected failures return through the closed
  * typed outcome/diagnostic envelope `sothoth.sdk/facade-result@1`, and the
- * outcome-to-exit mapping belongs to `@sothoth/cli` alone.
+ * outcome-to-exit mapping belongs to `@project-sothoth/cli` alone.
  *
  * Every delegated callable is re-exported by reference in `SDK_DELEGATES_V1`
  * so delegation identity is observable; the facade does not wrap
@@ -22,36 +22,36 @@
  * `CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1`.
  */
 
-import { buildDocumentIndexV1 } from "@sothoth/document-index/index";
-import type { DocumentIndexResultV1 } from "@sothoth/document-index/index";
+import { buildDocumentIndexV1 } from "@project-sothoth/document-index/index";
+import type { DocumentIndexResultV1 } from "@project-sothoth/document-index/index";
 import {
   compileDesignClosureV1,
   compileScopeBomAdmissibilityV1,
-} from "@sothoth/governance/pre-design";
+} from "@project-sothoth/governance/pre-design";
 import type {
   DesignClosureCompilationV1,
   ScopeBomAdmissibilityCompilationV1,
-} from "@sothoth/governance/pre-design";
-import { compileChangePlanV1 } from "@sothoth/governance/change-plan";
-import type { ChangePlanProjectionV1 } from "@sothoth/governance/change-plan";
-import { compileDependencyScheduleV1 } from "@sothoth/planning/schedule";
-import type { ScheduleSolutionV1 } from "@sothoth/planning/schedule";
-import type { SchedulingProblemV1 } from "@sothoth/planning/constraints";
-import { selectDocumentsV1 } from "@sothoth/selectors/match";
-import type { SelectorSelectionResultV1 } from "@sothoth/selectors/match";
-import { defineProfileV1, validateProfileV1 } from "@sothoth/profile-sdk/load";
-import type { ConsumerProfileV1, ProfileDefinitionV1 } from "@sothoth/profile-sdk/load";
-import { runProfileConformanceV1 } from "@sothoth/profile-sdk/conformance";
-import type { ProfileConformanceV1 } from "@sothoth/profile-sdk/conformance";
-import { createGitSourceAdapterV1 } from "@sothoth/git/commit";
+} from "@project-sothoth/governance/pre-design";
+import { compileChangePlanV1 } from "@project-sothoth/governance/change-plan";
+import type { ChangePlanProjectionV1 } from "@project-sothoth/governance/change-plan";
+import { compileDependencyScheduleV1 } from "@project-sothoth/planning/schedule";
+import type { ScheduleSolutionV1 } from "@project-sothoth/planning/schedule";
+import type { SchedulingProblemV1 } from "@project-sothoth/planning/constraints";
+import { selectDocumentsV1 } from "@project-sothoth/selectors/match";
+import type { SelectorSelectionResultV1 } from "@project-sothoth/selectors/match";
+import { defineProfileV1, validateProfileV1 } from "@project-sothoth/profile-sdk/load";
+import type { ConsumerProfileV1, ProfileDefinitionV1 } from "@project-sothoth/profile-sdk/load";
+import { runProfileConformanceV1 } from "@project-sothoth/profile-sdk/conformance";
+import type { ProfileConformanceV1 } from "@project-sothoth/profile-sdk/conformance";
+import { createGitSourceAdapterV1 } from "@project-sothoth/git/commit";
 import type {
   GitSourceAdapterOptionsV1,
   GitSourceAdapterV1,
-} from "@sothoth/git/commit";
-import { canonicalJson, SothothInputError } from "@sothoth/core/canonical-json";
-import { sha256Digest } from "@sothoth/core/digest";
-import { finalizeDiagnostics } from "@sothoth/core/diagnostics";
-import { aggregateOutcome } from "@sothoth/core/outcome";
+} from "@project-sothoth/git/commit";
+import { canonicalJson, SothothInputError } from "@project-sothoth/core/canonical-json";
+import { sha256Digest } from "@project-sothoth/core/digest";
+import { finalizeDiagnostics } from "@project-sothoth/core/diagnostics";
+import { aggregateOutcome } from "@project-sothoth/core/outcome";
 import {
   COMPILATION_OUTCOMES_V1,
   DIAGNOSTIC_CATEGORIES_V1,
@@ -61,7 +61,7 @@ import {
   DIAGNOSTIC_VERDICTS_V1,
   isDiagnosticCodeV1,
   validateDiagnosticDraftV1,
-} from "@sothoth/contracts";
+} from "@project-sothoth/contracts";
 import type {
   CompilationOutcomeKindV1,
   CompilationOutcomeV1,
@@ -71,13 +71,13 @@ import type {
   DiagnosticVerdictV1,
   JsonValue,
   StructuredDiagnosticV1,
-} from "@sothoth/contracts";
+} from "@project-sothoth/contracts";
 
 // ---------------------------------------------------------------------------
-// Vocabulary (public module `@sothoth/sdk/diagnostics`)
+// Vocabulary (public module `@project-sothoth/sdk/diagnostics`)
 // ---------------------------------------------------------------------------
-// The closed `@sothoth/contracts` diagnostic vocabulary plus the canonical
-// compilation finalization/folding of `@sothoth/core`, re-exported verbatim
+// The closed `@project-sothoth/contracts` diagnostic vocabulary plus the canonical
+// compilation finalization/folding of `@project-sothoth/core`, re-exported verbatim
 // for envelope consumers. The facade adds no parallel schema, diagnostic, or
 // digest vocabulary of its own.
 
@@ -109,14 +109,14 @@ export type {
 
 /** The closed runtime import allowlist of the facade (eight packages). */
 export const SDK_RUNTIME_IMPORT_ALLOWLIST_V1: readonly string[] = Object.freeze([
-  "@sothoth/contracts",
-  "@sothoth/core",
-  "@sothoth/document-index",
-  "@sothoth/git",
-  "@sothoth/governance",
-  "@sothoth/planning",
-  "@sothoth/profile-sdk",
-  "@sothoth/selectors",
+  "@project-sothoth/contracts",
+  "@project-sothoth/core",
+  "@project-sothoth/document-index",
+  "@project-sothoth/git",
+  "@project-sothoth/governance",
+  "@project-sothoth/planning",
+  "@project-sothoth/profile-sdk",
+  "@project-sothoth/selectors",
 ]);
 
 /**
@@ -209,7 +209,7 @@ function outcomeEnvelope<TResult extends OutcomeBearingV1>(
  * data (Document Index structural issues, Selector issues, Profile issues):
  * a rejection is the invalid-input transport class, and each owner issue
  * forwards verbatim — code and subject unchanged — as a finalized Structured
- * Diagnostic through `@sothoth/core`. This classification is envelope
+ * Diagnostic through `@project-sothoth/core`. This classification is envelope
  * adaptation only; no owner semantic is re-implemented or re-interpreted.
  */
 function issueEnvelope<TResult extends { readonly ok: boolean }>(
@@ -312,7 +312,7 @@ function objectRequestEnvelope<TResult extends OutcomeBearingV1>(
 // Capability: check (pre-design Design Closure checking)
 // ---------------------------------------------------------------------------
 
-/** Pre-design Design Closure checking through `@sothoth/governance`. */
+/** Pre-design Design Closure checking through `@project-sothoth/governance`. */
 export function checkDesignClosure(
   facts: unknown,
 ): SothothFacadeResultV1<DesignClosureCompilationV1> {
@@ -329,7 +329,7 @@ export function checkDesignClosure(
 // Capability: compile (governance and planning compilation)
 // ---------------------------------------------------------------------------
 
-/** Scope BOM Admissibility compilation through `@sothoth/governance`. */
+/** Scope BOM Admissibility compilation through `@project-sothoth/governance`. */
 export function compileGovernance(
   facts: unknown,
 ): SothothFacadeResultV1<ScopeBomAdmissibilityCompilationV1> {
@@ -342,7 +342,7 @@ export function compileGovernance(
   );
 }
 
-/** Dependency schedule compilation through `@sothoth/planning`. */
+/** Dependency schedule compilation through `@project-sothoth/planning`. */
 export function compilePlanning(
   problem: unknown,
 ): SothothFacadeResultV1<ScheduleSolutionV1> {
@@ -359,7 +359,7 @@ export function compilePlanning(
 // Capability: change-plan (change-plan projection)
 // ---------------------------------------------------------------------------
 
-/** Change-plan projection through `@sothoth/governance`. */
+/** Change-plan projection through `@project-sothoth/governance`. */
 export function compileChangePlan(
   facts: unknown,
 ): SothothFacadeResultV1<ChangePlanProjectionV1> {
@@ -426,14 +426,14 @@ function selectRequestEnvelope(
   );
 }
 
-/** Selector resolution through `@sothoth/selectors`. */
+/** Selector resolution through `@project-sothoth/selectors`. */
 export function selectDocuments(
   request: unknown,
 ): SothothFacadeResultV1<SelectorSelectionResultV1> {
   return selectRequestEnvelope("documents/select", "selectDocumentsV1", request);
 }
 
-/** Selector evaluation explanation through `@sothoth/selectors` (trace owner). */
+/** Selector evaluation explanation through `@project-sothoth/selectors` (trace owner). */
 export function explainSelector(
   request: unknown,
 ): SothothFacadeResultV1<SelectorSelectionResultV1> {
@@ -444,7 +444,7 @@ export function explainSelector(
 // Capability: git (source snapshots; X9→10)
 // ---------------------------------------------------------------------------
 
-/** Builds the read-only Git source adapter of `@sothoth/git`, verbatim. */
+/** Builds the read-only Git source adapter of `@project-sothoth/git`, verbatim. */
 export function gitSourceAdapter(options?: GitSourceAdapterOptionsV1): GitSourceAdapterV1 {
   return createGitSourceAdapterV1(options);
 }
@@ -453,7 +453,7 @@ export function gitSourceAdapter(options?: GitSourceAdapterOptionsV1): GitSource
 // Capability: profiles (Consumer Profile conformance)
 // ---------------------------------------------------------------------------
 
-/** Consumer Profile loading through `@sothoth/profile-sdk`. */
+/** Consumer Profile loading through `@project-sothoth/profile-sdk`. */
 export function loadConsumerProfile(candidate: unknown): SothothFacadeResultV1<ProfileDefinitionV1> {
   const definition = defineProfileV1(candidate);
   if (definition.issues.length > 0) {
@@ -483,7 +483,7 @@ export function loadConsumerProfile(candidate: unknown): SothothFacadeResultV1<P
   });
 }
 
-/** Consumer Profile conformance through `@sothoth/profile-sdk`. */
+/** Consumer Profile conformance through `@project-sothoth/profile-sdk`. */
 export function runConsumerProfileConformance(
   profile: unknown,
 ): SothothFacadeResultV1<ProfileConformanceV1> {
@@ -520,7 +520,7 @@ const VERIFY_CONTRACT_REFS: readonly string[] = Object.freeze([
 
 /**
  * Verifies one projection digest: the digest input is the document minus its
- * own digest field, canonicalized and digested through `@sothoth/core` —
+ * own digest field, canonicalized and digested through `@project-sothoth/core` —
  * exactly how every owner projection computes its digest. A mismatch is the
  * `invalid` outcome; a malformed request fails closed as `invalid-input`;
  * a non-JSON document value forwards the Core gate's own code verbatim.

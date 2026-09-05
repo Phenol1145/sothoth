@@ -1,7 +1,7 @@
 /**
  * Canonical JSON serialization for the Sothoth kernel.
  *
- * Public module `@sothoth/core/canonical-json`. Canonical JSON serializes
+ * Public module `@project-sothoth/core/canonical-json`. Canonical JSON serializes
  * recursively key-sorted with compact separators: object keys sort in Unicode
  * code-point order, array order is preserved, and no whitespace is emitted.
  * Hostile values fail closed as `sothoth.input/invalid-json-value` —

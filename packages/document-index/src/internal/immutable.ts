@@ -1,6 +1,6 @@
 /**
  * Iterative descriptor-safe deep copy and freeze for
- * `@sothoth/document-index`.
+ * `@project-sothoth/document-index`.
  *
  * Internal responsibility unit of the package: never re-exported from any
  * public subpath. Every value this package exposes passes through this

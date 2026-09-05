@@ -1,8 +1,8 @@
-# `@sothoth/cli` package reference
+# `@project-sothoth/cli` package reference
 
 | | |
 |---|---|
-| Package | `@sothoth/cli` |
+| Package | `@project-sothoth/cli` |
 | Version | `0.1.0` |
 | Layer | Operator command-line adapter |
 | License | Apache-2.0 |
@@ -16,11 +16,11 @@ One adapter: turn explicit command-line input into exactly one facade compositio
 
 ## Non-goals
 
-The adapter fence: no domain semantics, no second implementation of any operation (everything composes `@sothoth/sdk`), no implicit output, no ambient configuration, and no interpretation of results beyond the frozen exit mapping.
+The adapter fence: no domain semantics, no second implementation of any operation (everything composes `@project-sothoth/sdk`), no implicit output, no ambient configuration, and no interpretation of results beyond the frozen exit mapping.
 
 ## Public exports
 
-Exactly the accepted `public-surface-declaration@1` modules of the [Dossier](../design/dossiers/cli.md) (`surfaceKind: explicit-command-surface`). No root export exists: the bare specifier `@sothoth/cli` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
+Exactly the accepted `public-surface-declaration@1` modules of the [Dossier](../design/dossiers/cli.md) (`surfaceKind: explicit-command-surface`). No root export exists: the bare specifier `@project-sothoth/cli` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
 
 | Subpath | Runtime | Types |
 |---|---|---|
@@ -32,7 +32,7 @@ Exactly the accepted `public-surface-declaration@1` modules of the [Dossier](../
 
 ## Dependency direction
 
-Depends only on `@sothoth/sdk@0.1.0` (which transitively provides the whole workspace). The CLI imports no other Sothoth package directly.
+Depends only on `@project-sothoth/sdk@0.1.0` (which transitively provides the whole workspace). The CLI imports no other Sothoth package directly.
 
 ## Inputs and outputs
 
@@ -41,7 +41,7 @@ Inputs are explicit argv: exactly one of the eight commands (`check`, `compile g
 ## Minimal usage
 
 ```ts
-import { parseCliArgumentsV1, CLI_HELP_TEXT_V1 } from "@sothoth/cli/input";
+import { parseCliArgumentsV1, CLI_HELP_TEXT_V1 } from "@project-sothoth/cli/input";
 
 const input = parseCliArgumentsV1(["check", "--format", "json"]);
 ```
@@ -65,10 +65,10 @@ Every failure to name a command or a format is reported as the `input` command i
 - [CLI Dossier](../design/dossiers/cli.md)
 - [Architecture](../../ARCHITECTURE.md) — operator adapter
 - [Repository README](../../README.md)
-- Adjacent references: [`@sothoth/sdk`](sdk.md), [`@sothoth/governance`](governance.md), [`@sothoth/document-index`](document-index.md)
+- Adjacent references: [`@project-sothoth/sdk`](sdk.md), [`@project-sothoth/governance`](governance.md), [`@project-sothoth/document-index`](document-index.md)
 
 <!-- sothoth-package-readme:start -->
-# @sothoth/cli
+# @project-sothoth/cli
 
 Operator-facing command-line composition and I/O adapter for Sothoth: eight explicit commands over the public SDK facade with a frozen exit mapping and atomic explicit output. One machine document per invocation (`sothoth.cli/cli-invocation-result@1`); every input failure is still a JSON document on stdout with exit code 2.
 
@@ -90,7 +90,7 @@ Options: `--format <json|sarif|terminal>` (required), `--input <path>` (default 
 | `./render` | `dist/render-json.js` | `dist/render-json.d.ts` |
 | `./write` | `dist/io.js` | `dist/io.d.ts` |
 
-There is no root export: the bare specifier `@sothoth/cli` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
+There is no root export: the bare specifier `@project-sothoth/cli` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
 
 ## Usage
 

@@ -589,7 +589,7 @@ describe("sdk-facade-delegation-only", () => {
 });
 
 // ---------------------------------------------------------------------------
-// X9→10: the git facade delegates to the @sothoth/git public entries
+// X9→10: the git facade delegates to the @project-sothoth/git public entries
 // ---------------------------------------------------------------------------
 
 describe("sdk git facade (X9→10)", () => {
@@ -620,7 +620,7 @@ describe("sdk git facade (X9→10)", () => {
 
 // ---------------------------------------------------------------------------
 // verify: projection digest verification through the canonical compilation
-// primitives of @sothoth/core
+// primitives of @project-sothoth/core
 // ---------------------------------------------------------------------------
 
 describe("sdk verify capability", () => {
@@ -670,27 +670,27 @@ describe("sdk verify capability", () => {
 
 describe("sdk-import-boundary-closure / sdk-no-generic-graph-wrap (source scan)", () => {
   const source = readFileSync(join(repoRoot, "packages/sdk/src/index.ts"), "utf8");
-  const specifiers = [...source.matchAll(/from "(@sothoth\/[^"]+)"/g)].map((match) => match[1]!);
+  const specifiers = [...source.matchAll(/from "(@project-sothoth\/[^"]+)"/g)].map((match) => match[1]!);
   const packages = new Set(specifiers.map((specifier) => specifier.split("/").slice(0, 2).join("/")));
 
   test("imports only the eight allowlisted packages", () => {
     expect(packages).toEqual(new Set(SDK_RUNTIME_IMPORT_ALLOWLIST_V1));
     expect(SDK_RUNTIME_IMPORT_ALLOWLIST_V1).toEqual([
-      "@sothoth/contracts",
-      "@sothoth/core",
-      "@sothoth/document-index",
-      "@sothoth/git",
-      "@sothoth/governance",
-      "@sothoth/planning",
-      "@sothoth/profile-sdk",
-      "@sothoth/selectors",
+      "@project-sothoth/contracts",
+      "@project-sothoth/core",
+      "@project-sothoth/document-index",
+      "@project-sothoth/git",
+      "@project-sothoth/governance",
+      "@project-sothoth/planning",
+      "@project-sothoth/profile-sdk",
+      "@project-sothoth/selectors",
     ]);
   });
 
-  test("never imports @sothoth/graph, @sothoth/cli, or a non-allowlisted package", () => {
-    expect(packages.has("@sothoth/graph")).toBe(false);
-    expect(packages.has("@sothoth/cli")).toBe(false);
-    expect(source.includes('from "@sothoth/graph')).toBe(false);
+  test("never imports @project-sothoth/graph, @project-sothoth/cli, or a non-allowlisted package", () => {
+    expect(packages.has("@project-sothoth/graph")).toBe(false);
+    expect(packages.has("@project-sothoth/cli")).toBe(false);
+    expect(source.includes('from "@project-sothoth/graph')).toBe(false);
   });
 });
 

@@ -1,11 +1,11 @@
 /**
- * Public module `@sothoth/governance/ledger`: append-only ledger
+ * Public module `@project-sothoth/governance/ledger`: append-only ledger
  * verification.
  *
  * A ledger is a caller-owned sequence of records; every record carries its
  * identity, the digest of the payload it appends, the digest of the record
  * before it, and its own record digest — the SHA-256 digest, owned by
- * `@sothoth/core`, over the canonical bytes of the other three fields. A
+ * `@project-sothoth/core`, over the canonical bytes of the other three fields. A
  * genesis record links to null.
  *
  * `validateAppendOnlyLedgerV1` proves immutable prefixes: when a base ledger
@@ -21,11 +21,11 @@
 import type {
   CompilationOutcomeKindV1,
   DigestV1,
-} from "@sothoth/contracts";
-import { DIGEST_PATTERN } from "@sothoth/contracts";
-import { canonicalJson } from "@sothoth/core/canonical-json";
-import { sha256Digest } from "@sothoth/core/digest";
-import type { StructuredDiagnosticV1 } from "@sothoth/contracts";
+} from "@project-sothoth/contracts";
+import { DIGEST_PATTERN } from "@project-sothoth/contracts";
+import { canonicalJson } from "@project-sothoth/core/canonical-json";
+import { sha256Digest } from "@project-sothoth/core/digest";
+import type { StructuredDiagnosticV1 } from "@project-sothoth/contracts";
 import {
   DOCUMENT_GOVERNANCE_DIAGNOSTIC_IDENTITY_V1,
   finalizeFindings,

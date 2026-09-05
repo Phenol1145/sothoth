@@ -1,4 +1,4 @@
-# @sothoth/git
+# @project-sothoth/git
 
 Read-only Git source adapter for Sothoth: bind exact commit, compare, and workspace snapshots through a frozen allowlist of read-only subcommands, normalize repository-relative POSIX paths, and return digest-bearing snapshots for downstream compilers. No Git mutation, no network, no path or ref ambiguity.
 
@@ -15,12 +15,12 @@ Version `0.1.0` — release candidate, not yet published on npm (see the reposit
 | `./snapshot` | `dist/snapshot.js` | `dist/snapshot.d.ts` |
 | `./workspace` | `dist/index.js` | `dist/index.d.ts` |
 
-There is no root export: the bare specifier `@sothoth/git` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
+There is no root export: the bare specifier `@project-sothoth/git` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
 
 ## Usage
 
 ```ts
-import { createGitSourceAdapterV1 } from "@sothoth/git/commit";
+import { createGitSourceAdapterV1 } from "@project-sothoth/git/commit";
 
 const adapter = createGitSourceAdapterV1({ /* GitSourceAdapterOptionsV1 */ });
 ```

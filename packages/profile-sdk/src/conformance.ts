@@ -1,5 +1,5 @@
 /**
- * Public module `@sothoth/profile-sdk/conformance` (also carrying the
+ * Public module `@project-sothoth/profile-sdk/conformance` (also carrying the
  * `/recommendations` surface, which maps to this same dist file): the
  * non-authoritative conformance Projection and the Recommended Skill
  * Catalog validation.
@@ -9,7 +9,7 @@
  * fail-closed, and one immutable conformance result comes back — finalized
  * Structured Diagnostics under the declared
  * `sothoth.profile-sdk/profile-diagnostic@1` observation identity, the
- * single outcome folded through `@sothoth/core`, and the canonical echo of
+ * single outcome folded through `@project-sothoth/core`, and the canonical echo of
  * exactly the facts that were evaluated. An `impact` relation is never
  * promoted to an ordering edge: `orderingRelationKinds` classifies a
  * relation kind as ordering only when an explicit, versioned, caller-owned
@@ -28,17 +28,17 @@ import {
   DIGEST_PATTERN,
   isDiagnosticCodeV1,
   validateExactRecordV1,
-} from "@sothoth/contracts";
+} from "@project-sothoth/contracts";
 import type {
   CompilationOutcomeKindV1,
   ContractIssueV1,
   DiagnosticCodeV1,
   DigestV1,
   StructuredDiagnosticV1,
-} from "@sothoth/contracts";
-import { aggregateOutcome } from "@sothoth/core/outcome";
-import { canonicalJson } from "@sothoth/core/canonical-json";
-import { sha256Digest } from "@sothoth/core/digest";
+} from "@project-sothoth/contracts";
+import { aggregateOutcome } from "@project-sothoth/core/outcome";
+import { canonicalJson } from "@project-sothoth/core/canonical-json";
+import { sha256Digest } from "@project-sothoth/core/digest";
 import {
   canonicalizeProfileV1,
   compareCodePointOrder,

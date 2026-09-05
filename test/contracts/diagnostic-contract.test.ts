@@ -13,7 +13,7 @@ import type { DiagnosticDraftV1 } from "../../packages/contracts/src/index.js";
 function draft(overrides: Partial<DiagnosticDraftV1> = {}): DiagnosticDraftV1 {
   return {
     code: "sothoth.evidence/unresolved",
-    origin: "@sothoth/core",
+    origin: "@project-sothoth/core",
     category: "evidence",
     phase: "validation",
     verdict: "unresolved",

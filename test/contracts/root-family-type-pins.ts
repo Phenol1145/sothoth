@@ -9,19 +9,19 @@
  * `npm run typecheck`.
  */
 
-import type { StructuredDiagnosticV1 } from "@sothoth/contracts";
+import type { StructuredDiagnosticV1 } from "@project-sothoth/contracts";
 import type {
   DocumentContractV1,
   GraphEdgeV1,
   GraphNodeV1,
   GraphNodeWaveV1,
   SectionIdV1,
-} from "@sothoth/contracts/schema";
+} from "@project-sothoth/contracts/schema";
 import type {
   ChangeDispositionV1,
   ScheduleSolutionV1,
   UnsupportedSchedulingDimensionV1,
-} from "@sothoth/contracts/projection";
+} from "@project-sothoth/contracts/projection";
 
 export const graphNodePin: GraphNodeV1 = { id: "graph-node-pin" };
 
@@ -58,7 +58,7 @@ export const unsupportedDimensionPin: UnsupportedSchedulingDimensionV1 = "time";
 
 export const rootDiagnosticPin: StructuredDiagnosticV1 = {
   code: "sothoth.evidence/unresolved",
-  origin: "@sothoth/core",
+  origin: "@project-sothoth/core",
   category: "evidence",
   phase: "validation",
   verdict: "unresolved",

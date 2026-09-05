@@ -1,5 +1,5 @@
 /**
- * Internal Unicode code-point ordering helpers for `@sothoth/contracts`.
+ * Internal Unicode code-point ordering helpers for `@project-sothoth/contracts`.
  *
  * The Contracts Dossier pins `stringOrdering: "unicode-code-point"` with
  * `tieBreaking: "declared-enumeration-order"`: every ordered list this package

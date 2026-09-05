@@ -1,5 +1,5 @@
 /**
- * Public module `@sothoth/git/process`: the closed read-only Git process
+ * Public module `@project-sothoth/git/process`: the closed read-only Git process
  * boundary.
  *
  * This is the only module in the repository allowed to start a process, and
@@ -18,7 +18,7 @@
  */
 
 import { execFile } from "node:child_process";
-import type { JsonValue } from "@sothoth/contracts";
+import type { JsonValue } from "@project-sothoth/contracts";
 import { GitSourceAdapterError, gitFindingDraftV1 } from "./snapshot.js";
 
 /** The closed executable subcommand set. */

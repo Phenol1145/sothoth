@@ -1,8 +1,8 @@
-# `@sothoth/git` package reference
+# `@project-sothoth/git` package reference
 
 | | |
 |---|---|
-| Package | `@sothoth/git` |
+| Package | `@project-sothoth/git` |
 | Version | `0.1.0` |
 | Layer | Read-only Git source adapter |
 | License | Apache-2.0 |
@@ -20,7 +20,7 @@ The mutation and ambiguity fence: no Git mutation of any kind (add, commit, push
 
 ## Public exports
 
-Exactly the accepted `public-surface-declaration@1` modules of the [Dossier](../design/dossiers/git.md) (`surfaceKind: pure-functions-only`). No root export exists: the bare specifier `@sothoth/git` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
+Exactly the accepted `public-surface-declaration@1` modules of the [Dossier](../design/dossiers/git.md) (`surfaceKind: pure-functions-only`). No root export exists: the bare specifier `@project-sothoth/git` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
 
 | Subpath | Runtime | Types |
 |---|---|---|
@@ -33,7 +33,7 @@ Exactly the accepted `public-surface-declaration@1` modules of the [Dossier](../
 
 ## Dependency direction
 
-Depends on `@sothoth/contracts@0.1.0` and `@sothoth/core@0.1.0`.
+Depends on `@project-sothoth/contracts@0.1.0` and `@project-sothoth/core@0.1.0`.
 
 ## Inputs and outputs
 
@@ -42,7 +42,7 @@ Inputs are explicit commit refs, path compositions, and budgeted read requests. 
 ## Minimal usage
 
 ```ts
-import { createGitSourceAdapterV1 } from "@sothoth/git/commit";
+import { createGitSourceAdapterV1 } from "@project-sothoth/git/commit";
 
 const adapter = createGitSourceAdapterV1({ /* GitSourceAdapterOptionsV1 */ });
 ```
@@ -60,10 +60,10 @@ Mutation subcommands are rejected outright; ambiguous paths, unknown refs, and b
 - [Git Dossier](../design/dossiers/git.md)
 - [Architecture](../../ARCHITECTURE.md) — adapter boundary
 - [Repository README](../../README.md)
-- Adjacent references: [`@sothoth/contracts`](contracts.md), [`@sothoth/core`](core.md), [`@sothoth/sdk`](sdk.md)
+- Adjacent references: [`@project-sothoth/contracts`](contracts.md), [`@project-sothoth/core`](core.md), [`@project-sothoth/sdk`](sdk.md)
 
 <!-- sothoth-package-readme:start -->
-# @sothoth/git
+# @project-sothoth/git
 
 Read-only Git source adapter for Sothoth: bind exact commit, compare, and workspace snapshots through a frozen allowlist of read-only subcommands, normalize repository-relative POSIX paths, and return digest-bearing snapshots for downstream compilers. No Git mutation, no network, no path or ref ambiguity.
 
@@ -80,12 +80,12 @@ Version `0.1.0` — release candidate, not yet published on npm (see the reposit
 | `./snapshot` | `dist/snapshot.js` | `dist/snapshot.d.ts` |
 | `./workspace` | `dist/index.js` | `dist/index.d.ts` |
 
-There is no root export: the bare specifier `@sothoth/git` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
+There is no root export: the bare specifier `@project-sothoth/git` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
 
 ## Usage
 
 ```ts
-import { createGitSourceAdapterV1 } from "@sothoth/git/commit";
+import { createGitSourceAdapterV1 } from "@project-sothoth/git/commit";
 
 const adapter = createGitSourceAdapterV1({ /* GitSourceAdapterOptionsV1 */ });
 ```

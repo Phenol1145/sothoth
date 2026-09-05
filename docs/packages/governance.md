@@ -1,8 +1,8 @@
-# `@sothoth/governance` package reference
+# `@project-sothoth/governance` package reference
 
 | | |
 |---|---|
-| Package | `@sothoth/governance` |
+| Package | `@project-sothoth/governance` |
 | Version | `0.1.0` |
 | Layer | Governance compiler |
 | License | Apache-2.0 |
@@ -20,7 +20,7 @@ The authority fence: this package never accepts, repairs, or writes Source Facts
 
 ## Public exports
 
-Exactly the accepted `public-surface-declaration@1` modules of the [Dossier](../design/dossiers/governance.md) (`surfaceKind: pure-functions-only`). No root export exists: the bare specifier `@sothoth/governance` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
+Exactly the accepted `public-surface-declaration@1` modules of the [Dossier](../design/dossiers/governance.md) (`surfaceKind: pure-functions-only`). No root export exists: the bare specifier `@project-sothoth/governance` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
 
 | Subpath | Runtime | Types |
 |---|---|---|
@@ -34,7 +34,7 @@ Exactly the accepted `public-surface-declaration@1` modules of the [Dossier](../
 
 ## Dependency direction
 
-Depends on `@sothoth/contracts@0.1.0`, `@sothoth/core@0.1.0`, `@sothoth/document-index@0.1.0`, `@sothoth/graph@0.1.0`, and `@sothoth/selectors@0.1.0`.
+Depends on `@project-sothoth/contracts@0.1.0`, `@project-sothoth/core@0.1.0`, `@project-sothoth/document-index@0.1.0`, `@project-sothoth/graph@0.1.0`, and `@project-sothoth/selectors@0.1.0`.
 
 ## Inputs and outputs
 
@@ -46,8 +46,8 @@ Inputs are Source Facts (registries, ledgers, dossiers, registrations, Architect
 import {
   compileDesignClosureV1,
   compileScopeBomAdmissibilityV1,
-} from "@sothoth/governance/pre-design";
-import { compileChangePlanV1 } from "@sothoth/governance/change-plan";
+} from "@project-sothoth/governance/pre-design";
+import { compileChangePlanV1 } from "@project-sothoth/governance/change-plan";
 
 const closure = compileDesignClosureV1({ /* DesignClosureFactsV1 */ });
 const admissibility = compileScopeBomAdmissibilityV1({ /* ScopeBomAdmissibilityFactsV1 */ });
@@ -67,10 +67,10 @@ Source Facts are never authoritative here: validators read and reject, they neve
 - [Governance Dossier](../design/dossiers/governance.md)
 - [Architecture](../../ARCHITECTURE.md) — governance layer
 - [Repository README](../../README.md)
-- Adjacent references: [`@sothoth/document-index`](document-index.md), [`@sothoth/selectors`](selectors.md), [`@sothoth/planning`](planning.md), [`@sothoth/sdk`](sdk.md)
+- Adjacent references: [`@project-sothoth/document-index`](document-index.md), [`@project-sothoth/selectors`](selectors.md), [`@project-sothoth/planning`](planning.md), [`@project-sothoth/sdk`](sdk.md)
 
 <!-- sothoth-package-readme:start -->
-# @sothoth/governance
+# @project-sothoth/governance
 
 Pure document-governance compilation for Sothoth: registry and append-only ledger validation, traceability and manifest consistency, pre-design closure projections, Scope BOM Admissibility, non-authoritative change-plan projections, and gate macro expansion into acyclic check graphs. Source Facts are read and validated, never accepted, repaired, or written back.
 
@@ -88,12 +88,12 @@ Version `0.1.0` — release candidate, not yet published on npm (see the reposit
 | `./change-plan` | `dist/change-plan.js` | `dist/change-plan.d.ts` |
 | `./gate-macros` | `dist/gates.js` | `dist/gates.d.ts` |
 
-There is no root export: the bare specifier `@sothoth/governance` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
+There is no root export: the bare specifier `@project-sothoth/governance` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
 
 ## Usage
 
 ```ts
-import { compileDesignClosureV1 } from "@sothoth/governance/pre-design";
+import { compileDesignClosureV1 } from "@project-sothoth/governance/pre-design";
 
 const closure = compileDesignClosureV1({ /* DesignClosureFactsV1 */ });
 ```

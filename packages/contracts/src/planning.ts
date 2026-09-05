@@ -1,7 +1,7 @@
 /**
  * Planning-domain contracts.
  *
- * Internal implementation file of the accepted `@sothoth/contracts/projection`
+ * Internal implementation file of the accepted `@project-sothoth/contracts/projection`
  * family, re-exported by `projection.ts` and never exposed under its own
  * subpath. Scheduling has one non-authoritative Schedule Solution identity;
  * at `0.1.0` only dependency validation and deterministic wave assignment are

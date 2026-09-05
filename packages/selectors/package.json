@@ -1,5 +1,5 @@
 {
-  "name": "@sothoth/selectors",
+  "name": "@project-sothoth/selectors",
   "version": "0.1.0",
   "description": "Closed declarative selector algebra with deterministic matching for Sothoth.",
   "license": "Apache-2.0",
@@ -16,8 +16,8 @@
   "repository": { "type": "git", "url": "git+https://github.com/Phenol1145/sothoth.git", "directory": "packages/selectors" },
   "engines": { "node": ">=22.14.0" },
   "dependencies": {
-    "@sothoth/contracts": "0.1.0",
-    "@sothoth/core": "0.1.0",
-    "@sothoth/document-index": "0.1.0"
+    "@project-sothoth/contracts": "0.1.0",
+    "@project-sothoth/core": "0.1.0",
+    "@project-sothoth/document-index": "0.1.0"
   }
 }

@@ -41,7 +41,7 @@ function help(
   return { code, help: [...lines] };
 }
 
-function lock(moduleId = "@sothoth/contracts", lockedRevision = "CONTRACT/SOTHOTH/SCHEMAS@1"): ModuleLockV1 {
+function lock(moduleId = "@project-sothoth/contracts", lockedRevision = "CONTRACT/SOTHOTH/SCHEMAS@1"): ModuleLockV1 {
   return { moduleId, lockedRevision };
 }
 
@@ -188,7 +188,7 @@ describe("exact-reference integrity of contracts, macros, and module locks", () 
 
   test("a floating module lock revision is rejected", () => {
     expect(
-      validateProfileV1(profile({ moduleLocks: [lock("@sothoth/core", "latest")] })),
+      validateProfileV1(profile({ moduleLocks: [lock("@project-sothoth/core", "latest")] })),
     ).toContainEqual({
       code: "sothoth.profile/floating-ref",
       subject: "profile.moduleLocks[0].lockedRevision",
@@ -218,7 +218,7 @@ describe("exact-reference integrity of contracts, macros, and module locks", () 
     expect(
       validateProfileV1({
         ...profile(),
-        moduleLocks: [lock("@sothoth/contracts"), lock("@sothoth/contracts")],
+        moduleLocks: [lock("@project-sothoth/contracts"), lock("@project-sothoth/contracts")],
       }),
     ).toContainEqual({
       code: "sothoth.profile/duplicate-identity",
@@ -364,14 +364,14 @@ describe("defineProfileV1 loads caller-owned values deterministically", () => {
       profile({
         documentContracts: ["DOC-A@1", "DOC-B@1"],
         gateMacros: ["MACRO-B@1", "MACRO-A@1"],
-        moduleLocks: [lock("@sothoth/contracts"), lock("@sothoth/core")],
+        moduleLocks: [lock("@project-sothoth/contracts"), lock("@project-sothoth/core")],
       }),
     );
     const second = defineProfileV1(
       profile({
         documentContracts: ["DOC-B@1", "DOC-A@1"],
         gateMacros: ["MACRO-A@1", "MACRO-B@1"],
-        moduleLocks: [lock("@sothoth/core"), lock("@sothoth/contracts")],
+        moduleLocks: [lock("@project-sothoth/core"), lock("@project-sothoth/contracts")],
       }),
     );
     expect(second.profileDigest).toBe(first.profileDigest);

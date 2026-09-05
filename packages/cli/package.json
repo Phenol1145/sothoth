@@ -1,5 +1,5 @@
 {
-  "name": "@sothoth/cli",
+  "name": "@project-sothoth/cli",
   "version": "0.1.0",
   "description": "Operator-facing command-line composition and I/O adapter: eight explicit commands over the public SDK facade with frozen exit mapping and atomic explicit output.",
   "license": "Apache-2.0",
@@ -19,6 +19,6 @@
   "repository": { "type": "git", "url": "git+https://github.com/Phenol1145/sothoth.git", "directory": "packages/cli" },
   "engines": { "node": ">=22.14.0" },
   "dependencies": {
-    "@sothoth/sdk": "0.1.0"
+    "@project-sothoth/sdk": "0.1.0"
   }
 }

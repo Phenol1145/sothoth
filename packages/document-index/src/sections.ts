@@ -1,5 +1,5 @@
 /**
- * Public module `@sothoth/document-index/sections`: stable section binding.
+ * Public module `@project-sothoth/document-index/sections`: stable section binding.
  * Binds root-level exact markers to their next-sibling headings and forwards
  * failures canonically. All external imports live in the internal modules;
  * the shared vocabulary is imported type-only from `/parse`.

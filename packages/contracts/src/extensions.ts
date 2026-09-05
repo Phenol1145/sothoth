@@ -2,7 +2,7 @@
  * Extension and evidence contracts: Gate Macros, Trusted Rule Modules, and
  * Evidence Checks.
  *
- * Public family `@sothoth/contracts/extension`. Gate Macros are declarative
+ * Public family `@project-sothoth/contracts/extension`. Gate Macros are declarative
  * templates that expand to acyclic exact Check References; Trusted Rule
  * Modules are explicitly installed, allowlisted, integrity-locked code;
  * Evidence Checks run outside Sothoth, which validates only the report's

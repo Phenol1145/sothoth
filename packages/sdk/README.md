@@ -1,4 +1,4 @@
-# @sothoth/sdk
+# @project-sothoth/sdk
 
 Sole aggregate public library facade for Sothoth: one typed, versioned surface delegating every semantic operation to its owning package — governance, planning, document indexing, Git snapshots, profiles, and selectors over the contracts/core foundation. Returns closed typed outcomes with Structured Diagnostics; never chooses process exits.
 
@@ -17,13 +17,13 @@ Version `0.1.0` — release candidate, not yet published on npm (see the reposit
 | `./profiles` | `dist/index.js` | `dist/index.d.ts` |
 | `./verify` | `dist/index.js` | `dist/index.d.ts` |
 
-There is no root export: the bare specifier `@sothoth/sdk` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
+There is no root export: the bare specifier `@project-sothoth/sdk` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
 
 ## Usage
 
 ```ts
-import { createSothothV1 } from "@sothoth/sdk/compile";
-import { checkDesignClosure } from "@sothoth/sdk/check";
+import { createSothothV1 } from "@project-sothoth/sdk/compile";
+import { checkDesignClosure } from "@project-sothoth/sdk/check";
 
 const sothoth = createSothothV1();
 const closure = checkDesignClosure({ /* DesignClosureFactsV1 */ });

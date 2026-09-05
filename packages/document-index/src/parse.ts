@@ -1,5 +1,5 @@
 /**
- * Public module `@sothoth/document-index/parse`: hostile single-source
+ * Public module `@project-sothoth/document-index/parse`: hostile single-source
  * validation, budget enforcement, digest verification, and deterministic
  * CommonMark projection. This module owns the shared Document Index
  * vocabulary — spans, the closed fifteen-code issue union, the failure

@@ -1,5 +1,5 @@
 {
-  "name": "@sothoth/sdk",
+  "name": "@project-sothoth/sdk",
   "version": "0.1.0",
   "description": "Sole aggregate public library facade: one typed, versioned surface delegating every semantic operation to its owning Sothoth package.",
   "license": "Apache-2.0",
@@ -19,13 +19,13 @@
   "repository": { "type": "git", "url": "git+https://github.com/Phenol1145/sothoth.git", "directory": "packages/sdk" },
   "engines": { "node": ">=22.14.0" },
   "dependencies": {
-    "@sothoth/contracts": "0.1.0",
-    "@sothoth/core": "0.1.0",
-    "@sothoth/document-index": "0.1.0",
-    "@sothoth/git": "0.1.0",
-    "@sothoth/governance": "0.1.0",
-    "@sothoth/planning": "0.1.0",
-    "@sothoth/profile-sdk": "0.1.0",
-    "@sothoth/selectors": "0.1.0"
+    "@project-sothoth/contracts": "0.1.0",
+    "@project-sothoth/core": "0.1.0",
+    "@project-sothoth/document-index": "0.1.0",
+    "@project-sothoth/git": "0.1.0",
+    "@project-sothoth/governance": "0.1.0",
+    "@project-sothoth/planning": "0.1.0",
+    "@project-sothoth/profile-sdk": "0.1.0",
+    "@project-sothoth/selectors": "0.1.0"
   }
 }

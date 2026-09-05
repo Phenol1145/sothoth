@@ -1,8 +1,8 @@
-# `@sothoth/graph` package reference
+# `@project-sothoth/graph` package reference
 
 | | |
 |---|---|
-| Package | `@sothoth/graph` |
+| Package | `@project-sothoth/graph` |
 | Version | `0.1.0` |
 | Layer | Meaning-free graph algorithms |
 | License | Apache-2.0 |
@@ -20,7 +20,7 @@ The package must not know what it is ordering: no domain semantics, no node or e
 
 ## Public exports
 
-Exactly the accepted `public-surface-declaration@1` modules of the [Dossier](../design/dossiers/graph.md) (`surfaceKind: pure-functions-only`). There is deliberately no root (`.`) export: the bare specifier `@sothoth/graph` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
+Exactly the accepted `public-surface-declaration@1` modules of the [Dossier](../design/dossiers/graph.md) (`surfaceKind: pure-functions-only`). There is deliberately no root (`.`) export: the bare specifier `@project-sothoth/graph` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
 
 | Subpath | Runtime | Types |
 |---|---|---|
@@ -33,7 +33,7 @@ Exactly the accepted `public-surface-declaration@1` modules of the [Dossier](../
 
 ## Dependency direction
 
-Depends on `@sothoth/contracts@0.1.0` and `@sothoth/core@0.1.0`; nothing else.
+Depends on `@project-sothoth/contracts@0.1.0` and `@project-sothoth/core@0.1.0`; nothing else.
 
 ## Inputs and outputs
 
@@ -42,8 +42,8 @@ Inputs are explicit multigraph declarations with caller-provided stable sort key
 ## Minimal usage
 
 ```ts
-import { createCanonicalGraphV1 } from "@sothoth/graph/digraph";
-import { topologicalWavesV1 } from "@sothoth/graph/waves";
+import { createCanonicalGraphV1 } from "@project-sothoth/graph/digraph";
+import { topologicalWavesV1 } from "@project-sothoth/graph/waves";
 
 const graph = createCanonicalGraphV1({
   /* DirectedMultigraphDeclarationV1: explicit nodes and edges
@@ -65,10 +65,10 @@ Malformed declarations are rejected with structured diagnostics before any algor
 - [Graph Dossier](../design/dossiers/graph.md)
 - [Architecture](../../ARCHITECTURE.md) — algorithm layer
 - [Repository README](../../README.md)
-- Adjacent references: [`@sothoth/core`](core.md), [`@sothoth/document-index`](document-index.md), [`@sothoth/planning`](planning.md)
+- Adjacent references: [`@project-sothoth/core`](core.md), [`@project-sothoth/document-index`](document-index.md), [`@project-sothoth/planning`](planning.md)
 
 <!-- sothoth-package-readme:start -->
-# @sothoth/graph
+# @project-sothoth/graph
 
 Deterministic, meaning-free directed multigraph algorithms for Sothoth: canonical graph construction, traversal, strongly connected components, condensation, topological waves, and deterministic longest paths. Results are always ordered by the caller's stable keys. The package has no domain semantics and no I/O of any kind.
 
@@ -85,13 +85,13 @@ Version `0.1.0` — release candidate, not yet published on npm (see the reposit
 | `./waves` | `dist/waves.js` | `dist/waves.d.ts` |
 | `./longest-paths` | `dist/longest-paths.js` | `dist/longest-paths.d.ts` |
 
-There is no root export: the bare specifier `@sothoth/graph` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
+There is no root export: the bare specifier `@project-sothoth/graph` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
 
 ## Usage
 
 ```ts
-import { createCanonicalGraphV1 } from "@sothoth/graph/digraph";
-import { topologicalWavesV1 } from "@sothoth/graph/waves";
+import { createCanonicalGraphV1 } from "@project-sothoth/graph/digraph";
+import { topologicalWavesV1 } from "@project-sothoth/graph/waves";
 
 const graph = createCanonicalGraphV1({ /* DirectedMultigraphDeclarationV1 */ });
 const waves = topologicalWavesV1(graph);

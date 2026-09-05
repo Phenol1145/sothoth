@@ -510,10 +510,10 @@ describe("package boundary", () => {
     const probe = `
       const out = [];
       for (const sub of ["parse", "ast", "match", "cardinality", "explain"]) {
-        out.push(import.meta.resolve("@sothoth/selectors/" + sub));
+        out.push(import.meta.resolve("@project-sothoth/selectors/" + sub));
       }
       let bare = "";
-      try { import.meta.resolve("@sothoth/selectors"); } catch (error) { bare = error.code; }
+      try { import.meta.resolve("@project-sothoth/selectors"); } catch (error) { bare = error.code; }
       console.log(JSON.stringify({ out, bare }));
     `;
     const stdout = execFileSync(process.execPath, ["--input-type=module", "-e", probe], {

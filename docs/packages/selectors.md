@@ -1,8 +1,8 @@
-# `@sothoth/selectors` package reference
+# `@project-sothoth/selectors` package reference
 
 | | |
 |---|---|
-| Package | `@sothoth/selectors` |
+| Package | `@project-sothoth/selectors` |
 | Version | `0.1.0` |
 | Layer | Selection algebra over indexed documents |
 | License | Apache-2.0 |
@@ -20,7 +20,7 @@ The algebra is closed: no user-defined operators, no arbitrary expression evalua
 
 ## Public exports
 
-Exactly the accepted `public-surface-declaration@1` modules of the [Dossier](../design/dossiers/selectors.md) (`surfaceKind: pure-functions-only`). No root export exists: the bare specifier `@sothoth/selectors` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
+Exactly the accepted `public-surface-declaration@1` modules of the [Dossier](../design/dossiers/selectors.md) (`surfaceKind: pure-functions-only`). No root export exists: the bare specifier `@project-sothoth/selectors` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
 
 | Subpath | Runtime | Types |
 |---|---|---|
@@ -32,7 +32,7 @@ Exactly the accepted `public-surface-declaration@1` modules of the [Dossier](../
 
 ## Dependency direction
 
-Depends on `@sothoth/contracts@0.1.0`, `@sothoth/core@0.1.0`, and `@sothoth/document-index@0.1.0`.
+Depends on `@project-sothoth/contracts@0.1.0`, `@project-sothoth/core@0.1.0`, and `@project-sothoth/document-index@0.1.0`.
 
 ## Inputs and outputs
 
@@ -41,8 +41,8 @@ Inputs are Selector values (unknown candidates validated by the parser) and `Doc
 ## Minimal usage
 
 ```ts
-import { parseSelectorV1 } from "@sothoth/selectors/parse";
-import { selectDocumentsV1 } from "@sothoth/selectors/match";
+import { parseSelectorV1 } from "@project-sothoth/selectors/parse";
+import { selectDocumentsV1 } from "@project-sothoth/selectors/match";
 
 const parsed = parseSelectorV1({ /* Selector */ });
 const selection = selectDocumentsV1(indexProjection, { /* Selector */ });
@@ -61,10 +61,10 @@ Hostile selectors are rejected by explicit budgets before evaluation; order-inde
 - [Selectors Dossier](../design/dossiers/selectors.md)
 - [Architecture](../../ARCHITECTURE.md) — selection layer
 - [Repository README](../../README.md)
-- Adjacent references: [`@sothoth/document-index`](document-index.md), [`@sothoth/governance`](governance.md), [`@sothoth/planning`](planning.md)
+- Adjacent references: [`@project-sothoth/document-index`](document-index.md), [`@project-sothoth/governance`](governance.md), [`@project-sothoth/planning`](planning.md)
 
 <!-- sothoth-package-readme:start -->
-# @sothoth/selectors
+# @project-sothoth/selectors
 
 Closed declarative selector algebra with deterministic matching for Sothoth: parse Selectors into a canonical AST under hostile-input budgets, match them against document-index projections, enforce cardinality, and explain the selection. Results are ordered by canonical identity; zero matches produce a diagnostic by default rather than a silent empty set.
 
@@ -80,13 +80,13 @@ Version `0.1.0` — release candidate, not yet published on npm (see the reposit
 | `./cardinality` | `dist/evaluate.js` | `dist/evaluate.d.ts` |
 | `./explain` | `dist/evaluate.js` | `dist/evaluate.d.ts` |
 
-There is no root export: the bare specifier `@sothoth/selectors` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
+There is no root export: the bare specifier `@project-sothoth/selectors` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
 
 ## Usage
 
 ```ts
-import { parseSelectorV1 } from "@sothoth/selectors/parse";
-import { selectDocumentsV1 } from "@sothoth/selectors/match";
+import { parseSelectorV1 } from "@project-sothoth/selectors/parse";
+import { selectDocumentsV1 } from "@project-sothoth/selectors/match";
 
 const parsed = parseSelectorV1({ /* Selector */ });
 const selection = selectDocumentsV1(indexProjection, { /* Selector */ });

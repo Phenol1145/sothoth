@@ -1,20 +1,20 @@
 /**
- * Internal shared unit of `@sothoth/planning`.
+ * Internal shared unit of `@project-sothoth/planning`.
  *
  * This module is NOT a public subpath: the accepted Dossier's public-surface
- * declaration lists exactly four public modules — `@sothoth/planning/
+ * declaration lists exactly four public modules — `@project-sothoth/planning/
  * constraints`, `/schedule`, `/solution`, and `/waves` — and no root `.` or
  * `./index` entry, so everything here is internal machinery shared by those
  * modules: the single declared schedule-diagnostic identity, the Structured
  * Diagnostic draft builder, diagnostic finalization and outcome folding
- * through `@sothoth/core` (`CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1`),
+ * through `@project-sothoth/core` (`CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1`),
  * code-point ordering, the closed-value predicates every validator reuses,
  * and the deep freeze that makes emitted values immutable.
  *
  * The package is a pure scheduling compiler: nothing here reads a clock, a
  * filesystem, the network, or any process state, and nothing writes a Source
  * Fact back. Canonicalization, digesting, diagnostic aggregation, and
- * outcome folding are owned by `@sothoth/core` and are consumed directly,
+ * outcome folding are owned by `@project-sothoth/core` and are consumed directly,
  * never re-implemented.
  */
 
@@ -25,9 +25,9 @@ import type {
   DiagnosticDraftV1,
   DiagnosticVerdictV1,
   StructuredDiagnosticV1,
-} from "@sothoth/contracts";
-import { finalizeDiagnostics } from "@sothoth/core/diagnostics";
-import { aggregateOutcome } from "@sothoth/core/outcome";
+} from "@project-sothoth/contracts";
+import { finalizeDiagnostics } from "@project-sothoth/core/diagnostics";
+import { aggregateOutcome } from "@project-sothoth/core/outcome";
 
 /**
  * The one observation identity every planning diagnostic carries, exactly as

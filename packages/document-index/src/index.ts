@@ -1,5 +1,5 @@
 /**
- * Public module `@sothoth/document-index/index`: whole-index assembly.
+ * Public module `@project-sothoth/document-index/index`: whole-index assembly.
  * Validates (including cache shapes), freshly derives every document from
  * current content under current budgets, resolves, digests, and freezes. A
  * matching cache entry is verified by fresh canonical comparison and never

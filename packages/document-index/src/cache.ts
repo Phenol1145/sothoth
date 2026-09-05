@@ -1,5 +1,5 @@
 /**
- * Public module `@sothoth/document-index/cache`: the untrusted,
+ * Public module `@project-sothoth/document-index/cache`: the untrusted,
  * content-neutral derivation witness builder. The builder validates the
  * hostile source/budgets/compiler, verifies the content digest, and derives
  * directly from that exact content under those budgets. There is no

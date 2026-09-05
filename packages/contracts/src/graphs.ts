@@ -1,7 +1,7 @@
 /**
  * Generic graph shape contracts.
  *
- * Internal implementation file of the accepted `@sothoth/contracts/schema`
+ * Internal implementation file of the accepted `@project-sothoth/contracts/schema`
  * family, re-exported by `schema.ts` and never exposed under its own
  * subpath. Nodes, edges, weights, and sort keys are caller-provided; this
  * contract declares no relation meaning, so no domain semantics can leak

@@ -1,8 +1,8 @@
-# `@sothoth/core` package reference
+# `@project-sothoth/core` package reference
 
 | | |
 |---|---|
-| Package | `@sothoth/core` |
+| Package | `@project-sothoth/core` |
 | Version | `0.1.0` |
 | Layer | Foundation — pure deterministic compilation kernel |
 | License | Apache-2.0 |
@@ -35,7 +35,7 @@ Specifiers outside this map fail with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
 
 ## Dependency direction
 
-Depends only on `@sothoth/contracts@0.1.0`. Production sources import nothing else besides `node:crypto`.
+Depends only on `@project-sothoth/contracts@0.1.0`. Production sources import nothing else besides `node:crypto`.
 
 ## Inputs and outputs
 
@@ -44,8 +44,8 @@ Inputs are plain JSON values and diagnostic records. Outputs are canonical bytes
 ## Minimal usage
 
 ```ts
-import { canonicalJson, SothothInputError } from "@sothoth/core/canonical-json";
-import { sha256Digest } from "@sothoth/core/digest";
+import { canonicalJson, SothothInputError } from "@project-sothoth/core/canonical-json";
+import { sha256Digest } from "@project-sothoth/core/digest";
 
 canonicalJson({ b: [1, 2], a: "x" }); // deterministic canonical bytes
 sha256Digest(""); // "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
@@ -71,10 +71,10 @@ Non-canonicalizable input (cyclic structures, non-finite numbers, invalid JSON v
 - [Core Dossier](../design/dossiers/core.md)
 - [Architecture](../../ARCHITECTURE.md) — foundation layer
 - [Repository README](../../README.md)
-- Adjacent references: [`@sothoth/contracts`](contracts.md), [`@sothoth/graph`](graph.md), [`@sothoth/governance`](governance.md)
+- Adjacent references: [`@project-sothoth/contracts`](contracts.md), [`@project-sothoth/graph`](graph.md), [`@project-sothoth/governance`](governance.md)
 
 <!-- sothoth-package-readme:start -->
-# @sothoth/core
+# @project-sothoth/core
 
 Pure deterministic compilation primitives for Sothoth: canonical JSON serialization, SHA-256 digesting over canonical bytes, code-point ordering, diagnostic deduplication and ordering, outcome aggregation, and the frozen outcome-to-exit mapping. No filesystem, Git, process, network, clock, random, or locale access — the only non-package import is `node:crypto`.
 
@@ -96,8 +96,8 @@ Specifiers outside this map fail with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
 ## Usage
 
 ```ts
-import { canonicalJson } from "@sothoth/core/canonical-json";
-import { sha256Digest } from "@sothoth/core/digest";
+import { canonicalJson } from "@project-sothoth/core/canonical-json";
+import { sha256Digest } from "@project-sothoth/core/digest";
 
 canonicalJson({ b: [1, 2], a: "x" }); // deterministic canonical bytes
 sha256Digest(""); // sha256 of the empty string

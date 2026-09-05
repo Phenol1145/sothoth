@@ -1,4 +1,4 @@
-# @sothoth/core
+# @project-sothoth/core
 
 Pure deterministic compilation primitives for Sothoth: canonical JSON serialization, SHA-256 digesting over canonical bytes, code-point ordering, diagnostic deduplication and ordering, outcome aggregation, and the frozen outcome-to-exit mapping. No filesystem, Git, process, network, clock, random, or locale access — the only non-package import is `node:crypto`.
 
@@ -20,8 +20,8 @@ Specifiers outside this map fail with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
 ## Usage
 
 ```ts
-import { canonicalJson } from "@sothoth/core/canonical-json";
-import { sha256Digest } from "@sothoth/core/digest";
+import { canonicalJson } from "@project-sothoth/core/canonical-json";
+import { sha256Digest } from "@project-sothoth/core/digest";
 
 canonicalJson({ b: [1, 2], a: "x" }); // deterministic canonical bytes
 sha256Digest(""); // sha256 of the empty string

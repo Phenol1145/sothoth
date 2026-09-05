@@ -1,5 +1,5 @@
 /**
- * Unicode code-point ordering and canonical rank for `@sothoth/graph`.
+ * Unicode code-point ordering and canonical rank for `@project-sothoth/graph`.
  *
  * Internal responsibility unit of the package: never re-exported from any
  * public subpath. This module owns the single ordering primitive every

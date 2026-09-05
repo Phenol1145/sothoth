@@ -1,5 +1,5 @@
 /**
- * Public module `@sothoth/governance/pre-design`: Design Closure and Scope
+ * Public module `@project-sothoth/governance/pre-design`: Design Closure and Scope
  * BOM Admissibility compilation (`CONTRACT/SOTHOTH/PRE-DESIGN@1`).
  *
  * The compiler consumes exact Source Fact values — a Document Contract, a
@@ -20,7 +20,7 @@
  * or stages a Source Fact, never synthesizes acceptance metadata, and never
  * emits an authoritative Scope BOM. Projections are byte-stable for
  * identical fact sets and deletable/rebuildable; the `sourceFactsDigest`
- * binds the normalized fact values through `@sothoth/core`'s canonical
+ * binds the normalized fact values through `@project-sothoth/core`'s canonical
  * bytes and digests. Emissions carry the declared
  * `sothoth.governance/pre-design-diagnostic@1` identity.
  */
@@ -34,14 +34,14 @@ import type {
   DocumentContractV1,
   ExactDesignDocumentRefV1,
   StructuredDiagnosticV1,
-} from "@sothoth/contracts";
-import { EXACT_REFERENCE_PATTERN } from "@sothoth/contracts";
-import { canonicalJson } from "@sothoth/core/canonical-json";
-import { sha256Digest } from "@sothoth/core/digest";
+} from "@project-sothoth/contracts";
+import { EXACT_REFERENCE_PATTERN } from "@project-sothoth/contracts";
+import { canonicalJson } from "@project-sothoth/core/canonical-json";
+import { sha256Digest } from "@project-sothoth/core/digest";
 import type {
   DocumentEntryV1,
   DocumentIndexProjectionV1,
-} from "@sothoth/document-index/index";
+} from "@project-sothoth/document-index/index";
 import {
   PRE_DESIGN_DIAGNOSTIC_IDENTITY_V1,
   arraysEqual,

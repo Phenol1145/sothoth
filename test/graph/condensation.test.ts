@@ -1,4 +1,4 @@
-import { canonicalJson } from "@sothoth/core/canonical-json";
+import { canonicalJson } from "@project-sothoth/core/canonical-json";
 import { describe, expect, test } from "vitest";
 import { createCanonicalGraphV1 } from "../../packages/graph/src/digraph.js";
 import type {

@@ -1,5 +1,5 @@
 /**
- * Unicode code-point ordering for `@sothoth/document-index`.
+ * Unicode code-point ordering for `@project-sothoth/document-index`.
  *
  * Internal responsibility unit of the package: never re-exported from any
  * public subpath. This module owns the single ordering primitive every

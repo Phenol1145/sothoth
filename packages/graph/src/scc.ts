@@ -1,5 +1,5 @@
 /**
- * Public module `@sothoth/graph/scc`: strongly connected components of the
+ * Public module `@project-sothoth/graph/scc`: strongly connected components of the
  * directed multigraph, canonically re-ordered so the output is independent
  * of the traversal algorithm used to find the partition.
  */

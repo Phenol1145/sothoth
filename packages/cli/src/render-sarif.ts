@@ -7,7 +7,7 @@
  * document.
  */
 
-import type { StructuredDiagnosticV1 } from "@sothoth/sdk/diagnostics";
+import type { StructuredDiagnosticV1 } from "@project-sothoth/sdk/diagnostics";
 import type { CliInvocationResultV1 } from "./render-json.js";
 
 interface SarifResultV1 {

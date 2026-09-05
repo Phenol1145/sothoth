@@ -1,5 +1,5 @@
 /**
- * Public modules `@sothoth/selectors/match`, `/cardinality`, and `/explain`
+ * Public modules `@project-sothoth/selectors/match`, `/cardinality`, and `/explain`
  * (one implementation unit of the accepted file layout): deterministic
  * selection of document-index entries by a canonical selector AST, declared
  * cardinality enforcement, the default zero-match diagnostic, and the
@@ -8,7 +8,7 @@
  * Selection consumes only the structural facts of
  * `CONTRACT/SOTHOTH/DOCUMENT-INDEX@1` — `DocumentIndexProjectionV1` and
  * `DocumentEntryV1` are consumed as types from
- * `@sothoth/document-index/index`, so no runtime dependency on that package
+ * `@project-sothoth/document-index/index`, so no runtime dependency on that package
  * and no re-derivation of its projections exists here. Matching is a pure
  * read over the supplied entries: the index is never mutated or reordered,
  * candidates are processed in canonical artifact-identity order, and output
@@ -23,7 +23,7 @@
 import type {
   DocumentEntryV1,
   DocumentIndexProjectionV1,
-} from "@sothoth/document-index/index";
+} from "@project-sothoth/document-index/index";
 import type { SelectorV1 } from "./index.js";
 import {
   DEFAULT_SELECTOR_BUDGETS_V1,

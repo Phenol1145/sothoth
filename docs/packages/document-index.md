@@ -1,8 +1,8 @@
-# `@sothoth/document-index` package reference
+# `@project-sothoth/document-index` package reference
 
 | | |
 |---|---|
-| Package | `@sothoth/document-index` |
+| Package | `@project-sothoth/document-index` |
 | Version | `0.1.0` |
 | Layer | Document layer — deterministic CommonMark indexing |
 | License | Apache-2.0 |
@@ -20,7 +20,7 @@ No interpretation of document meaning beyond structure: no semantics for what do
 
 ## Public exports
 
-Exactly the accepted `public-surface-declaration@1` modules of the [Dossier](../design/dossiers/document-index.md) (`surfaceKind: pure-functions-only`). No root export exists: the bare specifier `@sothoth/document-index` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
+Exactly the accepted `public-surface-declaration@1` modules of the [Dossier](../design/dossiers/document-index.md) (`surfaceKind: pure-functions-only`). No root export exists: the bare specifier `@project-sothoth/document-index` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
 
 | Subpath | Runtime | Types |
 |---|---|---|
@@ -33,7 +33,7 @@ Exactly the accepted `public-surface-declaration@1` modules of the [Dossier](../
 
 ## Dependency direction
 
-Depends on `@sothoth/contracts@0.1.0`, `@sothoth/core@0.1.0`, `@sothoth/graph@0.1.0`, and the external parser `mdast-util-from-markdown@2.0.2` (exact pin, no range; its `micromark@4.0.2` subtree is a release consequence recorded in the CycloneDX SBOM). The parser is the only non-Sothoth runtime dependency in the workspace.
+Depends on `@project-sothoth/contracts@0.1.0`, `@project-sothoth/core@0.1.0`, `@project-sothoth/graph@0.1.0`, and the external parser `mdast-util-from-markdown@2.0.2` (exact pin, no range; its `micromark@4.0.2` subtree is a release consequence recorded in the CycloneDX SBOM). The parser is the only non-Sothoth runtime dependency in the workspace.
 
 ## Inputs and outputs
 
@@ -42,8 +42,8 @@ Inputs are document sources (`DocumentSourceV1`) with declared identity and budg
 ## Minimal usage
 
 ```ts
-import { parseDocumentV1 } from "@sothoth/document-index/parse";
-import { buildDocumentIndexV1 } from "@sothoth/document-index/index";
+import { parseDocumentV1 } from "@project-sothoth/document-index/parse";
+import { buildDocumentIndexV1 } from "@project-sothoth/document-index/index";
 
 const parsed = parseDocumentV1(
   { /* DocumentSourceV1: identity, kind, status, version, owner, content, … */ },
@@ -65,10 +65,10 @@ Structural parse boundary: malformed or hostile input is rejected within explici
 - [Document Index Dossier](../design/dossiers/document-index.md)
 - [Architecture](../../ARCHITECTURE.md) — document layer
 - [Repository README](../../README.md)
-- Adjacent references: [`@sothoth/graph`](graph.md), [`@sothoth/selectors`](selectors.md), [`@sothoth/governance`](governance.md)
+- Adjacent references: [`@project-sothoth/graph`](graph.md), [`@project-sothoth/selectors`](selectors.md), [`@project-sothoth/governance`](governance.md)
 
 <!-- sothoth-package-readme:start -->
-# @sothoth/document-index
+# @project-sothoth/document-index
 
 Deterministic CommonMark structural document indexing for Sothoth: parse exact document content through the pinned `mdast-util-from-markdown@2.0.2` parser (with its `micromark@4.0.2` tree), project headings, anchors, stable sections, explicit references, and provenance, and produce the deterministic index projection consumed downstream. Cache entries are byte-neutral; hostile input fails closed within explicit budgets.
 
@@ -85,12 +85,12 @@ Version `0.1.0` — release candidate, not yet published on npm (see the reposit
 | `./index` | `dist/index.js` | `dist/index.d.ts` |
 | `./cache` | `dist/cache.js` | `dist/cache.d.ts` |
 
-There is no root export: the bare specifier `@sothoth/document-index` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
+There is no root export: the bare specifier `@project-sothoth/document-index` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
 
 ## Usage
 
 ```ts
-import { parseDocumentV1 } from "@sothoth/document-index/parse";
+import { parseDocumentV1 } from "@project-sothoth/document-index/parse";
 
 const parsed = parseDocumentV1({ /* DocumentSourceV1 */ }, { /* budgets */ });
 ```

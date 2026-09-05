@@ -1,7 +1,7 @@
 /**
  * Document contract and stable section identity declarations.
  *
- * Internal implementation file of the accepted `@sothoth/contracts/schema`
+ * Internal implementation file of the accepted `@project-sothoth/contracts/schema`
  * family, re-exported by `schema.ts` and never exposed under its own
  * subpath. A stable section marker is an HTML comment of the exact form
  * `<!-- sothoth:section id="purpose" -->`; section identity is closed over

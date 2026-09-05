@@ -1,5 +1,5 @@
 /**
- * Public module `@sothoth/selectors/parse`: turns hostile selector source
+ * Public module `@project-sothoth/selectors/parse`: turns hostile selector source
  * into the canonical AST or a typed rejection within the hostile-input
  * budget. A selector arrives as declarative data — never as an executable —
  * and compiles once into a canonical, deeply frozen AST: a selector
@@ -9,7 +9,7 @@
  * exact root-relative subject, no field getter of a hostile object ever
  * executes, and nothing throws outward. The typed Selector terms, the
  * issue shapes, and the zero-match diagnostic identity are expressed in the
- * `CONTRACT/SOTHOTH/SCHEMAS@1` vocabulary of `@sothoth/contracts` (the
+ * `CONTRACT/SOTHOTH/SCHEMAS@1` vocabulary of `@project-sothoth/contracts` (the
  * diagnostic-code grammar is consumed directly, never reimplemented or
  * widened). The shared hostile compiler and the glob matcher live in the
  * package's internal machinery unit.

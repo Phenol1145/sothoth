@@ -1,12 +1,12 @@
 /**
  * Closed envelope schemas for catalog, registry, and registration facts.
  *
- * Public family `@sothoth/contracts/schema`. Every field set below is closed:
+ * Public family `@project-sothoth/contracts/schema`. Every field set below is closed:
  * an envelope carrying a key outside its declared field set is a schema
  * violation, not a graceful extension point. Field sets are pinned as
  * constants so validators and tests share one declaration per fact shape.
  * The document and graph contract names are internal implementation files of
- * this family, so `@sothoth/contracts/schema` is their accepted public home.
+ * this family, so `@project-sothoth/contracts/schema` is their accepted public home.
  */
 
 import { sortContractIssues } from "./code-point-order.js";

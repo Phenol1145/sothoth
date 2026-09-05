@@ -41,7 +41,7 @@ function profile(overrides: Record<string, unknown> = {}): Record<string, unknow
     gateMacros: ["EXAMPLE-GATE-MACRO@1"],
     relationRoleMappings: [mapping()],
     diagnosticHelp: [],
-    moduleLocks: [{ moduleId: "@sothoth/contracts", lockedRevision: "CONTRACT/SOTHOTH/SCHEMAS@1" }],
+    moduleLocks: [{ moduleId: "@project-sothoth/contracts", lockedRevision: "CONTRACT/SOTHOTH/SCHEMAS@1" }],
     ...overrides,
   };
 }
@@ -80,7 +80,7 @@ describe("runProfileConformanceV1 fails closed", () => {
     expect(result.documentContractRefs).toEqual(["DOC-SOTHOTH-PROFILE-SDK-DOSSIER@1"]);
     expect(result.gateMacroRefs).toEqual(["EXAMPLE-GATE-MACRO@1"]);
     expect(result.moduleLocks).toEqual([
-      { moduleId: "@sothoth/contracts", lockedRevision: "CONTRACT/SOTHOTH/SCHEMAS@1" },
+      { moduleId: "@project-sothoth/contracts", lockedRevision: "CONTRACT/SOTHOTH/SCHEMAS@1" },
     ]);
     expect(result.relationRoleAssignments).toEqual([mapping()]);
     expect(result.diagnosticHelp).toEqual([]);

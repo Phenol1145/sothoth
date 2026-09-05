@@ -1,5 +1,5 @@
 {
-  "name": "@sothoth/planning",
+  "name": "@project-sothoth/planning",
   "version": "0.1.0",
   "description": "Pure scheduling compilation: dependency-constraint validation and deterministic topological wave assignment for Sothoth.",
   "license": "Apache-2.0",
@@ -15,9 +15,9 @@
   "repository": { "type": "git", "url": "git+https://github.com/Phenol1145/sothoth.git", "directory": "packages/planning" },
   "engines": { "node": ">=22.14.0" },
   "dependencies": {
-    "@sothoth/contracts": "0.1.0",
-    "@sothoth/core": "0.1.0",
-    "@sothoth/graph": "0.1.0",
-    "@sothoth/selectors": "0.1.0"
+    "@project-sothoth/contracts": "0.1.0",
+    "@project-sothoth/core": "0.1.0",
+    "@project-sothoth/graph": "0.1.0",
+    "@project-sothoth/selectors": "0.1.0"
   }
 }

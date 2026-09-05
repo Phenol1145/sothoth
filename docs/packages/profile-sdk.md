@@ -1,8 +1,8 @@
-# `@sothoth/profile-sdk` package reference
+# `@project-sothoth/profile-sdk` package reference
 
 | | |
 |---|---|
-| Package | `@sothoth/profile-sdk` |
+| Package | `@project-sothoth/profile-sdk` |
 | Version | `0.1.0` |
 | Layer | Consumer boundary — Consumer Profile contract, loading, conformance |
 | License | Apache-2.0 |
@@ -20,7 +20,7 @@ The policy-engine fence: this package never evaluates consumer policy, never dec
 
 ## Public exports
 
-Exactly the accepted `public-surface-declaration@1` modules of the [Dossier](../design/dossiers/profile-sdk.md) (`surfaceKind: pure-functions-only`). No root export exists: the bare specifier `@sothoth/profile-sdk` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
+Exactly the accepted `public-surface-declaration@1` modules of the [Dossier](../design/dossiers/profile-sdk.md) (`surfaceKind: pure-functions-only`). No root export exists: the bare specifier `@project-sothoth/profile-sdk` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
 
 | Subpath | Runtime | Types |
 |---|---|---|
@@ -32,7 +32,7 @@ Exactly the accepted `public-surface-declaration@1` modules of the [Dossier](../
 
 ## Dependency direction
 
-Depends on `@sothoth/contracts@0.1.0` and `@sothoth/core@0.1.0`.
+Depends on `@project-sothoth/contracts@0.1.0` and `@project-sothoth/core@0.1.0`.
 
 ## Inputs and outputs
 
@@ -41,7 +41,7 @@ Inputs are candidate Consumer Profile values (`unknown`) and versioned relation-
 ## Minimal usage
 
 ```ts
-import { defineProfileV1 } from "@sothoth/profile-sdk/load";
+import { defineProfileV1 } from "@project-sothoth/profile-sdk/load";
 
 const profile = defineProfileV1({ /* Consumer Profile candidate */ });
 ```
@@ -59,10 +59,10 @@ Conformance fails closed: unknown fields, inexact references, revision incompati
 - [Profile SDK Dossier](../design/dossiers/profile-sdk.md)
 - [Architecture](../../ARCHITECTURE.md) — consumer boundary
 - [Repository README](../../README.md)
-- Adjacent references: [`@sothoth/contracts`](contracts.md), [`@sothoth/core`](core.md), [`@sothoth/sdk`](sdk.md)
+- Adjacent references: [`@project-sothoth/contracts`](contracts.md), [`@project-sothoth/core`](core.md), [`@project-sothoth/sdk`](sdk.md)
 
 <!-- sothoth-package-readme:start -->
-# @sothoth/profile-sdk
+# @project-sothoth/profile-sdk
 
 Consumer-neutral Consumer Profile contract, loading, and conformance for Sothoth: load caller-supplied values, validate closed structure and exact references, compile versioned relation-role mappings, and return non-authoritative conformance projections. Profiles are never modified; recommended skills are curated and exact-only.
 
@@ -78,12 +78,12 @@ Version `0.1.0` — release candidate, not yet published on npm (see the reposit
 | `./conformance` | `dist/conformance.js` | `dist/conformance.d.ts` |
 | `./recommendations` | `dist/conformance.js` | `dist/conformance.d.ts` |
 
-There is no root export: the bare specifier `@sothoth/profile-sdk` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
+There is no root export: the bare specifier `@project-sothoth/profile-sdk` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
 
 ## Usage
 
 ```ts
-import { defineProfileV1 } from "@sothoth/profile-sdk/load";
+import { defineProfileV1 } from "@project-sothoth/profile-sdk/load";
 
 const profile = defineProfileV1({ /* Consumer Profile candidate */ });
 ```

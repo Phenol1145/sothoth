@@ -14,7 +14,7 @@
 #   6. Every package publishes with `npm publish --provenance --access public`.
 #   7. Bootstrap token: the protected short-lived granular NPM_TOKEN is used
 #      only until every package is migrated to the OIDC trusted publisher
-#      bound to this workflow file (`npm trust github @sothoth/<name>
+#      bound to this workflow file (`npm trust github @project-sothoth/<name>
 #      --file publish.yml --repo Phenol1145/sothoth --allow-publish`); after
 #      the migration completes, delete the NPM_TOKEN secret.
 #   8. No automatic FRACTA notification is ever sent from this workflow;

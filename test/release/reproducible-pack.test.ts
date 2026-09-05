@@ -72,18 +72,18 @@ afterAll(async () => {
 });
 
 describe("Task 11 reproducible pack", () => {
-  test("pack manifests record exactly the eleven @sothoth packages at 0.1.0 in canonical order", async () => {
+  test("pack manifests record exactly the eleven @project-sothoth packages at 0.1.0 in canonical order", async () => {
     for (const dir of [dirA!, dirB!]) {
       const entries = await readPackManifest(dir);
       expect(
         entries.map((entry) => entry.name),
         `pack order in ${dir}`,
-      ).toEqual(PACKAGES.map((p) => `@sothoth/${p}`));
+      ).toEqual(PACKAGES.map((p) => `@project-sothoth/${p}`));
       for (const entry of entries) {
         expect(entry.version).toBe("0.1.0");
-        expect(entry.directory).toBe(entry.name.replace("@sothoth/", "packages/"));
+        expect(entry.directory).toBe(entry.name.replace("@project-sothoth/", "packages/"));
         expect(entry.filename).toBe(
-          `sothoth-${entry.name.replace("@sothoth/", "")}-0.1.0.tgz`,
+          `project-sothoth-${entry.name.replace("@project-sothoth/", "")}-0.1.0.tgz`,
         );
         expect(entry.sizeBytes).toBeGreaterThan(0);
         expect(entry.entryCount).toBeGreaterThan(0);
@@ -95,7 +95,7 @@ describe("Task 11 reproducible pack", () => {
     for (const dir of [dirA!, dirB!]) {
       const files = (await readdir(dir)).filter((file) => file.endsWith(".tgz")).sort();
       expect(files).toEqual(
-        PACKAGES.map((p) => `sothoth-${p}-0.1.0.tgz`).sort(),
+        PACKAGES.map((p) => `project-sothoth-${p}-0.1.0.tgz`).sort(),
       );
     }
   });
@@ -216,11 +216,11 @@ describe("Task 11 release lock generation (PRE-1)", () => {
 
     const packages: Fixture["packages"] = [];
     for (const p of PACKAGES) {
-      const filename = `sothoth-${p}-0.1.0.tgz`;
-      const bytes = Buffer.from(`release-lock fixture tarball for @sothoth/${p}\n`, "utf8");
+      const filename = `project-sothoth-${p}-0.1.0.tgz`;
+      const bytes = Buffer.from(`release-lock fixture tarball for @project-sothoth/${p}\n`, "utf8");
       await writeFile(join(packDir, filename), bytes);
       packages.push({
-        name: `@sothoth/${p}`,
+        name: `@project-sothoth/${p}`,
         version: "0.1.0",
         filename,
         sha512: digestOf(bytes),
@@ -315,7 +315,7 @@ describe("Task 11 release lock generation (PRE-1)", () => {
     expect(lock.candidateBom?.sha512).toEqual(fixture.candidateSha512);
     expect(lock.sbom?.sha512).toEqual(fixture.sbomSha512);
     expect(lock.packages?.map((entry) => entry.name)).toEqual(
-      PACKAGES.map((p) => `@sothoth/${p}`),
+      PACKAGES.map((p) => `@project-sothoth/${p}`),
     );
     for (const entry of lock.packages ?? []) {
       const expected = fixture.packages.find((candidate) => candidate.name === entry.name);

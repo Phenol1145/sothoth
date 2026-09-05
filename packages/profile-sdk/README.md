@@ -1,4 +1,4 @@
-# @sothoth/profile-sdk
+# @project-sothoth/profile-sdk
 
 Consumer-neutral Consumer Profile contract, loading, and conformance for Sothoth: load caller-supplied values, validate closed structure and exact references, compile versioned relation-role mappings, and return non-authoritative conformance projections. Profiles are never modified; recommended skills are curated and exact-only.
 
@@ -14,12 +14,12 @@ Version `0.1.0` — release candidate, not yet published on npm (see the reposit
 | `./conformance` | `dist/conformance.js` | `dist/conformance.d.ts` |
 | `./recommendations` | `dist/conformance.js` | `dist/conformance.d.ts` |
 
-There is no root export: the bare specifier `@sothoth/profile-sdk` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
+There is no root export: the bare specifier `@project-sothoth/profile-sdk` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
 
 ## Usage
 
 ```ts
-import { defineProfileV1 } from "@sothoth/profile-sdk/load";
+import { defineProfileV1 } from "@project-sothoth/profile-sdk/load";
 
 const profile = defineProfileV1({ /* Consumer Profile candidate */ });
 ```

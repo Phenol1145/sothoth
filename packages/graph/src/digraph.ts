@@ -1,11 +1,11 @@
 /**
- * Public module `@sothoth/graph/digraph`: fail-closed construction of the
+ * Public module `@project-sothoth/graph/digraph`: fail-closed construction of the
  * canonical directed multigraph value. Hostile declarations are validated
  * descriptor-only; accepted declarations return as descriptor-safe deep
  * copies in canonical order, recursively frozen.
  */
 
-import type { DiagnosticCodeV1, GraphEdgeV1, GraphNodeV1 } from "@sothoth/contracts";
+import type { DiagnosticCodeV1, GraphEdgeV1, GraphNodeV1 } from "@project-sothoth/contracts";
 import { deepFreezeInPlace } from "./internal/immutable.js";
 import {
   canonicalGraphValue,

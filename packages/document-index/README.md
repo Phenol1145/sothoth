@@ -1,4 +1,4 @@
-# @sothoth/document-index
+# @project-sothoth/document-index
 
 Deterministic CommonMark structural document indexing for Sothoth: parse exact document content through the pinned `mdast-util-from-markdown@2.0.2` parser (with its `micromark@4.0.2` tree), project headings, anchors, stable sections, explicit references, and provenance, and produce the deterministic index projection consumed downstream. Cache entries are byte-neutral; hostile input fails closed within explicit budgets.
 
@@ -15,12 +15,12 @@ Version `0.1.0` — release candidate, not yet published on npm (see the reposit
 | `./index` | `dist/index.js` | `dist/index.d.ts` |
 | `./cache` | `dist/cache.js` | `dist/cache.d.ts` |
 
-There is no root export: the bare specifier `@sothoth/document-index` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
+There is no root export: the bare specifier `@project-sothoth/document-index` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
 
 ## Usage
 
 ```ts
-import { parseDocumentV1 } from "@sothoth/document-index/parse";
+import { parseDocumentV1 } from "@project-sothoth/document-index/parse";
 
 const parsed = parseDocumentV1({ /* DocumentSourceV1 */ }, { /* budgets */ });
 ```

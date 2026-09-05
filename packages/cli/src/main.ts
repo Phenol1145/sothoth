@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
- * Public module `@sothoth/cli/commands`: the executable command surface.
+ * Public module `@project-sothoth/cli/commands`: the executable command surface.
  *
  * One invocation is the only lifecycle: parse explicit argv, read the
  * explicit request (a named path or standard input), compose exactly one
- * facade composition through `@sothoth/sdk`, render exactly one machine
+ * facade composition through `@project-sothoth/sdk`, render exactly one machine
  * document (JSON or SARIF) or one human terminal rendering, write any
  * explicit output path atomically, and exit through the frozen table.
  * Nothing persists between invocations, nothing is staged, the working
@@ -35,15 +35,15 @@ import {
 } from "./render-json.js";
 import { renderSarifDocumentV1 } from "./render-sarif.js";
 import { renderTerminalDiagnosticsV1, renderTerminalSummaryV1 } from "./render-terminal.js";
-import { COMPILATION_OUTCOMES_V1, finalizeDiagnostics } from "@sothoth/sdk/diagnostics";
+import { COMPILATION_OUTCOMES_V1, finalizeDiagnostics } from "@project-sothoth/sdk/diagnostics";
 import type {
   CompilationOutcomeKindV1,
   DiagnosticDraftV1,
   JsonValue,
   StructuredDiagnosticV1,
-} from "@sothoth/sdk/diagnostics";
-import { createSothothV1 } from "@sothoth/sdk/documents";
-import type { SothothFacadeResultV1, SothothV1 } from "@sothoth/sdk/documents";
+} from "@project-sothoth/sdk/diagnostics";
+import { createSothothV1 } from "@project-sothoth/sdk/documents";
+import type { SothothFacadeResultV1, SothothV1 } from "@project-sothoth/sdk/documents";
 
 /** One CLI-owned diagnostic draft in the closed diagnostic contract. */
 function cliDraft(

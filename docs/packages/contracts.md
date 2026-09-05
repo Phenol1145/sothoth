@@ -1,8 +1,8 @@
-# `@sothoth/contracts` package reference
+# `@project-sothoth/contracts` package reference
 
 | | |
 |---|---|
-| Package | `@sothoth/contracts` |
+| Package | `@project-sothoth/contracts` |
 | Version | `0.1.0` |
 | Layer | Foundation — closed public contracts |
 | License | Apache-2.0 |
@@ -45,8 +45,8 @@ Inputs are candidate JSON values and unknown values offered as contracts data. O
 ## Minimal usage
 
 ```ts
-import { EXACT_REFERENCE_PATTERN, DIGEST_PATTERN } from "@sothoth/contracts/identity";
-import { isDiagnosticCodeV1 } from "@sothoth/contracts/diagnostic";
+import { EXACT_REFERENCE_PATTERN, DIGEST_PATTERN } from "@project-sothoth/contracts/identity";
+import { isDiagnosticCodeV1 } from "@project-sothoth/contracts/diagnostic";
 
 EXACT_REFERENCE_PATTERN.test("SOTHOTH-CORE-DOSSIER@1"); // true
 DIGEST_PATTERN.test("sha256:" + "0".repeat(64)); // true
@@ -66,10 +66,10 @@ Invalid shapes produce structured `ContractIssueV1` records from the validators;
 - [Contracts Dossier](../design/dossiers/contracts.md)
 - [Architecture](../../ARCHITECTURE.md) — foundation layer
 - [Repository README](../../README.md)
-- Adjacent references: [`@sothoth/core`](core.md), [`@sothoth/governance`](governance.md), [`@sothoth/sdk`](sdk.md)
+- Adjacent references: [`@project-sothoth/core`](core.md), [`@project-sothoth/governance`](governance.md), [`@project-sothoth/sdk`](sdk.md)
 
 <!-- sothoth-package-readme:start -->
-# @sothoth/contracts
+# @project-sothoth/contracts
 
 Closed public contracts for the Sothoth governance control plane: one authoritative vocabulary for exact design references, record schemas, Structured Diagnostics, projections, pre-design declarations, and extension contracts. Types, constants, predicates, and structural validators only — no executable capability beyond shape validation, and zero runtime dependencies.
 
@@ -92,8 +92,8 @@ Specifiers outside this map fail with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
 ## Usage
 
 ```ts
-import { EXACT_REFERENCE_PATTERN, DIGEST_PATTERN } from "@sothoth/contracts/identity";
-import { isDiagnosticCodeV1 } from "@sothoth/contracts/diagnostic";
+import { EXACT_REFERENCE_PATTERN, DIGEST_PATTERN } from "@project-sothoth/contracts/identity";
+import { isDiagnosticCodeV1 } from "@project-sothoth/contracts/diagnostic";
 
 EXACT_REFERENCE_PATTERN.test("SOTHOTH-CORE-DOSSIER@1"); // true
 DIGEST_PATTERN.test("sha256:" + "0".repeat(64)); // true

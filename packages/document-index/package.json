@@ -1,5 +1,5 @@
 {
-  "name": "@sothoth/document-index",
+  "name": "@project-sothoth/document-index",
   "version": "0.1.0",
   "description": "Deterministic CommonMark structural document indexing for Sothoth.",
   "license": "Apache-2.0",
@@ -17,9 +17,9 @@
   "repository": { "type": "git", "url": "git+https://github.com/Phenol1145/sothoth.git", "directory": "packages/document-index" },
   "engines": { "node": ">=22.14.0" },
   "dependencies": {
-    "@sothoth/contracts": "0.1.0",
-    "@sothoth/core": "0.1.0",
-    "@sothoth/graph": "0.1.0",
+    "@project-sothoth/contracts": "0.1.0",
+    "@project-sothoth/core": "0.1.0",
+    "@project-sothoth/graph": "0.1.0",
     "mdast-util-from-markdown": "2.0.2"
   }
 }

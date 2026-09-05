@@ -39,7 +39,7 @@ async function importSpecifiersOf(directory: string): Promise<string[]> {
 }
 
 describe("accepted public subpaths", () => {
-  test("exposes the six accepted @sothoth/contracts families", () => {
+  test("exposes the six accepted @project-sothoth/contracts families", () => {
     expect(contractsIdentity.EXACT_REFERENCE_PATTERN).toBeInstanceOf(RegExp);
     expect(contractsIdentity.DIGEST_PATTERN).toBeInstanceOf(RegExp);
     expect(typeof contractsSchema.validateExactRecordV1).toBe("function");
@@ -51,7 +51,7 @@ describe("accepted public subpaths", () => {
     expect(Array.isArray(contractsExtension.CHECK_VERDICTS_V1)).toBe(true);
   });
 
-  test("exposes the five accepted @sothoth/core modules", () => {
+  test("exposes the five accepted @project-sothoth/core modules", () => {
     expect(typeof coreCanonicalJson.canonicalJson).toBe("function");
     expect(typeof coreCanonicalJson.SothothInputError).toBe("function");
     expect(typeof coreDigest.sha256Digest).toBe("function");
@@ -97,35 +97,35 @@ describe("accepted public subpaths", () => {
 });
 
 describe("dependency floor and pinned direction", () => {
-  test("@sothoth/contracts declares zero runtime dependencies", async () => {
+  test("@project-sothoth/contracts declares zero runtime dependencies", async () => {
     const manifest = await readJson("packages/contracts/package.json");
     expect(Object.keys(manifest.dependencies ?? {})).toEqual([]);
   });
 
-  test("@sothoth/core depends only on @sothoth/contracts", async () => {
+  test("@project-sothoth/core depends only on @project-sothoth/contracts", async () => {
     const manifest = await readJson("packages/core/package.json");
-    expect(Object.keys(manifest.dependencies ?? {})).toEqual(["@sothoth/contracts"]);
+    expect(Object.keys(manifest.dependencies ?? {})).toEqual(["@project-sothoth/contracts"]);
   });
 
-  test("@sothoth/contracts production sources import nothing outside the package", async () => {
+  test("@project-sothoth/contracts production sources import nothing outside the package", async () => {
     const specifiers = await importSpecifiersOf("packages/contracts/src");
     const bare = specifiers.filter((specifier) => !specifier.startsWith("."));
     expect(bare).toEqual([]);
   });
 
-  test("@sothoth/core production sources import only @sothoth/contracts and node:crypto", async () => {
+  test("@project-sothoth/core production sources import only @project-sothoth/contracts and node:crypto", async () => {
     const specifiers = await importSpecifiersOf("packages/core/src");
     const bare = specifiers.filter((specifier) => !specifier.startsWith("."));
     expect(
       bare.every(
         (specifier) =>
-          specifier === "@sothoth/contracts" ||
-          specifier.startsWith("@sothoth/contracts/") ||
+          specifier === "@project-sothoth/contracts" ||
+          specifier.startsWith("@project-sothoth/contracts/") ||
           specifier === "node:crypto",
       ),
     ).toBe(true);
     // Node standard-library cryptography is the one sanctioned non-package
     // import; filesystem, process, and network modules are forbidden.
-    expect(new Set(bare)).toEqual(new Set(["@sothoth/contracts", "node:crypto"]));
+    expect(new Set(bare)).toEqual(new Set(["@project-sothoth/contracts", "node:crypto"]));
   });
 });

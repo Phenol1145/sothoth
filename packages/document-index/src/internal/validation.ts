@@ -1,6 +1,6 @@
 /**
  * Descriptor-only hostile-input validation, closed field grammars, and the
- * canonical issue machinery for `@sothoth/document-index`.
+ * canonical issue machinery for `@project-sothoth/document-index`.
  *
  * Internal responsibility unit of the package: never re-exported from any
  * public subpath. This module owns the shared hostile machinery — known-field
@@ -9,18 +9,18 @@
  * validator with its phase order and suppression cascade, cache container
  * validation (§8.8 phases 1–2), and issue coalescing and total ordering
  * (§9). All reads go through property descriptors; nothing is coerced; no
- * input is mutated. `canonicalJson` (`@sothoth/core/canonical-json`) is the
+ * input is mutated. `canonicalJson` (`@project-sothoth/core/canonical-json`) is the
  * single owner of the JSON value grammar and `sha256Digest`
- * (`@sothoth/core/digest`) the single owner of digesting;
- * `SECTION_ID_PATTERN` (`@sothoth/contracts`) is consumed here inside
+ * (`@project-sothoth/core/digest`) the single owner of digesting;
+ * `SECTION_ID_PATTERN` (`@project-sothoth/contracts`) is consumed here inside
  * `src/internal/*` and never re-exported.
  */
 
-import { SECTION_ID_PATTERN } from "@sothoth/contracts";
-import { canonicalJson } from "@sothoth/core/canonical-json";
-import { sha256Digest } from "@sothoth/core/digest";
-import { createCanonicalGraphV1 } from "@sothoth/graph/digraph";
-import type { DirectedMultigraphDeclarationV1 } from "@sothoth/graph/digraph";
+import { SECTION_ID_PATTERN } from "@project-sothoth/contracts";
+import { canonicalJson } from "@project-sothoth/core/canonical-json";
+import { sha256Digest } from "@project-sothoth/core/digest";
+import { createCanonicalGraphV1 } from "@project-sothoth/graph/digraph";
+import type { DirectedMultigraphDeclarationV1 } from "@project-sothoth/graph/digraph";
 import { compareCodePointOrder } from "./code-point.js";
 import { deepFrozenCopy, deepFreezeInPlace } from "./immutable.js";
 import type {
@@ -1556,7 +1556,7 @@ export interface RelationEmitter {
 /**
  * The shared §8.5 resolution core for the `/references` stage and the whole
  * index assembly, including the package's single Graph value import
- * (§6.1: the only `@sothoth/graph/digraph` import lives in the internal
+ * (§6.1: the only `@project-sothoth/graph/digraph` import lives in the internal
  * modules; §8.6: exactly one Graph function is called, a runtime import of
  * `createCanonicalGraphV1`). `anchor` selects the subject root: `parsed[k]`
  * elements chain through `.source.relations[j]`; index assembly chains

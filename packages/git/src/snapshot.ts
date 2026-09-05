@@ -1,5 +1,5 @@
 /**
- * Public module `@sothoth/git/snapshot`: the digest-bearing Git source
+ * Public module `@project-sothoth/git/snapshot`: the digest-bearing Git source
  * snapshot contract `CONTRACT/SOTHOTH/GIT-SOURCE-SNAPSHOT@1`.
  *
  * This module declares the closed snapshot vocabulary of the read-only Git
@@ -9,9 +9,9 @@
  * and `sothoth.git/workspace-snapshot@1`, the four workspace byte classes,
  * the enforced budget set, the single declared observation identity
  * `sothoth.git/git-adapter-diagnostic@1` under the Structured Diagnostic
- * vocabulary of `@sothoth/contracts`, and the error that every fail-closed
+ * vocabulary of `@project-sothoth/contracts`, and the error that every fail-closed
  * path raises. Diagnostic finalization and outcome folding are consumed
- * directly from `@sothoth/core` (`CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1`);
+ * directly from `@project-sothoth/core` (`CONTRACT/SOTHOTH/CANONICAL-COMPILATION@1`);
  * no parallel diagnostic, digest, or snapshot vocabulary is invented here.
  *
  * A workspace snapshot binds the explicit HEAD/index/unstaged/untracked
@@ -28,9 +28,9 @@ import type {
   DiagnosticDraftV1,
   JsonValue,
   StructuredDiagnosticV1,
-} from "@sothoth/contracts";
-import { finalizeDiagnostics } from "@sothoth/core/diagnostics";
-import { aggregateOutcome } from "@sothoth/core/outcome";
+} from "@project-sothoth/contracts";
+import { finalizeDiagnostics } from "@project-sothoth/core/diagnostics";
+import { aggregateOutcome } from "@project-sothoth/core/outcome";
 
 /** The schema identity every Git source snapshot carries. */
 export const GIT_SOURCE_SNAPSHOT_SCHEMA_V1 = "sothoth.git/source-snapshot@1";

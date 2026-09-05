@@ -1,5 +1,5 @@
 {
-  "name": "@sothoth/core",
+  "name": "@project-sothoth/core",
   "version": "0.1.0",
   "description": "Pure deterministic compilation primitives for Sothoth.",
   "license": "Apache-2.0",
@@ -36,5 +36,5 @@
   "publishConfig": { "access": "public", "provenance": true },
   "repository": { "type": "git", "url": "git+https://github.com/Phenol1145/sothoth.git", "directory": "packages/core" },
   "engines": { "node": ">=22.14.0" },
-  "dependencies": { "@sothoth/contracts": "0.1.0" }
+  "dependencies": { "@project-sothoth/contracts": "0.1.0" }
 }

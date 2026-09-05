@@ -2,7 +2,7 @@
  * The Dossier pre-design vocabulary: topics, resolutions, applicability
  * kinds, and the closed `sothoth-dossier/*@1` declaration-kind registry.
  *
- * Public family `@sothoth/contracts/pre-design`. This module is the single
+ * Public family `@project-sothoth/contracts/pre-design`. This module is the single
  * shipped owner of every declaration kind used by the accepted Dossiers: no
  * other package may re-declare, extend, or partially mirror this vocabulary.
  * The registry below was derived from the declaration blocks of the eleven

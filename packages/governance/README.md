@@ -1,4 +1,4 @@
-# @sothoth/governance
+# @project-sothoth/governance
 
 Pure document-governance compilation for Sothoth: registry and append-only ledger validation, traceability and manifest consistency, pre-design closure projections, Scope BOM Admissibility, non-authoritative change-plan projections, and gate macro expansion into acyclic check graphs. Source Facts are read and validated, never accepted, repaired, or written back.
 
@@ -16,12 +16,12 @@ Version `0.1.0` — release candidate, not yet published on npm (see the reposit
 | `./change-plan` | `dist/change-plan.js` | `dist/change-plan.d.ts` |
 | `./gate-macros` | `dist/gates.js` | `dist/gates.d.ts` |
 
-There is no root export: the bare specifier `@sothoth/governance` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
+There is no root export: the bare specifier `@project-sothoth/governance` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`, as do all unlisted subpaths.
 
 ## Usage
 
 ```ts
-import { compileDesignClosureV1 } from "@sothoth/governance/pre-design";
+import { compileDesignClosureV1 } from "@project-sothoth/governance/pre-design";
 
 const closure = compileDesignClosureV1({ /* DesignClosureFactsV1 */ });
 ```

@@ -5,7 +5,7 @@
  * from the invocation record alone: byte-identical across invocations.
  */
 
-import type { CompilationOutcomeKindV1, StructuredDiagnosticV1 } from "@sothoth/sdk/diagnostics";
+import type { CompilationOutcomeKindV1, StructuredDiagnosticV1 } from "@project-sothoth/sdk/diagnostics";
 import type { CliCommandLabelV1 } from "./render-json.js";
 
 /** The single human summary line for stdout. */
