@@ -18,7 +18,10 @@
     "check:pre-design:dossiers": "node scripts/check-pre-design.mjs --phase dossiers",
     "check:pre-design:closure": "node scripts/check-pre-design.mjs --phase closure",
     "check:pre-design:scope": "node scripts/check-pre-design.mjs --phase scope",
-    "check": "npm run typecheck && npm test && npm run check:design-scope"
+    "check": "npm run typecheck && npm test && npm run check:design-scope",
+    "release:sync": "node scripts/sync-package-assets.mjs",
+    "release:pack": "node scripts/pack-all.mjs --out dist/release/pack",
+    "release:verify": "node scripts/verify-release.mjs"
   },
   "devDependencies": {
     "@types/node": "22.20.1",

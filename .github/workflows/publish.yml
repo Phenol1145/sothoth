@@ -1,0 +1,97 @@
+# Sothoth 0.1.0 publisher — STANDBY (Task 12 deliverable; not run by Task 11).
+#
+# Preconditions embodied here and enforced by scripts/publish-all.mjs:
+#   1. Trigger is the exact tag ref refs/tags/v0.1.0 only (no branch, no
+#      manual dispatch path that could bypass the tag).
+#   2. The tagged commit is a clean commit on main.
+#   3. Every workspace version is exactly 0.1.0.
+#   4. Full release verification (`npm run release:verify`) passes first;
+#      Task 11 local tarball/SBOM evidence is NEVER treated as registry
+#      evidence — only per-package publish success counts.
+#   5. Publication runs in the eleven-package dependency order:
+#      contracts, core, git, graph, profile-sdk, document-index, selectors,
+#      governance, planning, sdk, cli.
+#   6. Every package publishes with `npm publish --provenance --access public`.
+#   7. Bootstrap token: the protected short-lived granular NPM_TOKEN is used
+#      only until every package is migrated to the OIDC trusted publisher
+#      bound to this workflow file (`npm trust github @sothoth/<name>
+#      --file publish.yml --repo Phenol1145/sothoth --allow-publish`); after
+#      the migration completes, delete the NPM_TOKEN secret.
+#   8. No automatic FRACTA notification is ever sent from this workflow;
+#      notification may only follow full Task 12 completion, separately.
+#   9. Single-package success never counts as overall success: the job fails
+#      unless all eleven packages publish.
+name: publish
+
+on:
+  push:
+    tags:
+      - "v0.1.0"
+
+permissions: {}
+
+jobs:
+  publish:
+    name: publish 0.1.0 (dependency order)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # required for npm provenance statements
+    steps:
+      - name: Assert exact tag ref
+        run: |
+          if [ "$GITHUB_REF" != "refs/tags/v0.1.0" ]; then
+            echo "refusing to publish from $GITHUB_REF; only refs/tags/v0.1.0 is authorized" >&2
+            exit 1
+          fi
+
+      - name: Check out the tagged commit
+        uses: actions/checkout@v4
+        with:
+          ref: refs/tags/v0.1.0
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Assert the tagged commit is a clean commit on main
+        run: |
+          git status --porcelain | grep -q . && { echo "tree is dirty" >&2; exit 1; } || true
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          registry-url: https://registry.npmjs.org
+
+      - name: Install exact dependencies
+        run: npm ci
+
+      - name: Assert every workspace version is 0.1.0
+        run: |
+          node -e '
+          const fs = require("node:fs");
+          for (const p of fs.readdirSync("packages")) {
+            const m = JSON.parse(fs.readFileSync(`packages/${p}/package.json`, "utf8"));
+            if (m.version !== "0.1.0") { console.error(`${m.name} is ${m.version}, expected 0.1.0`); process.exit(1); }
+          }
+          console.log("all 11 workspace versions are 0.1.0");
+          '
+
+      - name: Full release verification before publishing
+        run: npm run release:verify
+
+      - name: Publish all eleven packages in dependency order
+        # Bootstrap token (protected, short-lived, granular). Migrate each
+        # package to the OIDC trusted publisher and then remove this secret.
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          SOOTHOTH_PUBLISH_EXECUTE: "1"
+          GITHUB_REF: ${{ github.ref }}
+        run: node scripts/publish-all.mjs --execute
+
+      - name: Assert all eleven packages published (aggregate success gate)
+        run: |
+          echo "publish-all.mjs exited 0 only if all eleven packages published;"
+          echo "per-package registry evidence is recorded separately in Task 12."
+          echo "No FRACTA notification is sent from this workflow."

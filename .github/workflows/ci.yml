@@ -1,0 +1,42 @@
+# Sothoth CI — clean-checkout release verification.
+#
+# Runs the full Task 11 verification battery on every push to main and every
+# pull request targeting main. It requires no secrets: `npm run
+# release:verify` performs typecheck, a clean build, the full test suite
+# (including import-boundary scans and docs-link checks), deterministic
+# package-asset sync, two reproducible packs of all eleven packages with
+# tarball byte/SHA-512 comparison, the CycloneDX SBOM, the pre-publication
+# Candidate BOM, and an offline local-tarball CLI install smoke. Everything
+# it generates stays under gitignored dist/release/.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: release verification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the exact commit
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install exact dependencies (clean checkout)
+        run: npm ci
+
+      - name: Run full release verification
+        run: npm run release:verify
