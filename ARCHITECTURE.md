@@ -52,7 +52,7 @@ Notes verified from the manifests:
 ## Release packaging
 
 - All eleven packages are `0.1.0`, Apache-2.0, published from `packages/<p>` with `files: ["dist", "README.md", "LICENSE"]`, `publishConfig.access: public`, and provenance enabled; tarballs contain declarations and JavaScript only — no tests, sources, source maps, secrets, or repository-internal design files.
-- Release verification (`npm run release:verify`) proves the local pack surface: two reproducible packs, byte-identical tarballs, SHA-512 digests in distinct hex/SRI representations, a CycloneDX SBOM including the MIT parser subtree, the pre-publication Candidate BOM bound to the clean source commit and Scope BOM `@3`, and an offline CLI install smoke from the local tarballs. All of it is repository evidence, not registry evidence; per-package publication evidence is recorded from the live npm registry by the release task that actually publishes.
+- Release verification (`npm run release:verify`) proves the local pack surface: two reproducible packs, byte-identical tarballs, SHA-512 digests in distinct hex/SRI representations, a CycloneDX SBOM including the MIT parser subtree, the pre-publication Candidate BOM bound to the clean source commit and Scope BOM `@4`, and an offline CLI install smoke from the local tarballs. All of it is repository evidence, not registry evidence; per-package publication evidence is recorded from the live npm registry by the release task that actually publishes.
 
 ## Pointers
 

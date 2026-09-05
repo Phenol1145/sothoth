@@ -84,7 +84,7 @@ jobs:
 
       - name: Generate the release lock from the verified artifacts
         # Binds the exact source commit, this workflow file and run id/attempt
-        # (read from the real GitHub Actions environment), Scope BOM @3, the
+        # (read from the real GitHub Actions environment), Scope BOM @4, the
         # Candidate BOM and SBOM digests, and the eleven tarball digests.
         run: node scripts/create-release-lock.mjs
 
