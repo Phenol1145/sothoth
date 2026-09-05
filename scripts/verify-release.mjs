@@ -7,8 +7,13 @@
  * tarball-contents suite, and the two-pack reproducibility suite); the four
  * design checks; deterministic package-asset sync; two isolated packs of all
  * eleven packages with per-package byte and SHA-512 comparison; a CycloneDX
- * SBOM; the pre-publication Candidate BOM; and an offline local-tarball CLI
- * install smoke. Finally it asserts the tracked tree is still clean and
+ * SBOM; the pre-publication Candidate BOM; and a hermetic offline
+ * local-tarball CLI install smoke (a network-allowed cache-preparation phase
+ * over the real pack-1 tarballs, then an --offline install/execute with the
+ * network sabotaged, so no runner ever depends on ambient npm-cache warmth).
+ * Every command step runs through a bounded, secret-redacted runner that
+ * surfaces command identity, exit code or signal, and captured output on
+ * failure. Finally it asserts the tracked tree is still clean and
  * writes the release verification report under `dist/release/`.
  *
  * Everything this script produces is LOCAL, PRE-PUBLICATION REPOSITORY
@@ -18,7 +23,7 @@
  * invokes the standby publisher.
  */
 
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
   existsSync,
@@ -28,6 +33,8 @@ import {
   rmSync,
   writeFileSync,
 } from "node:fs";
+import { mkdtemp } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { join } from "node:path";
 import { PACKAGE_ORDER, packAll, sha512Hex, sha512Sri } from "./pack-all.mjs";
@@ -42,6 +49,314 @@ const PENDING_PUBLICATION_EVIDENCE = [
   "@project-sothoth/profile-sdk@0.1.0",
   "@project-sothoth/sdk@0.1.0",
 ];
+
+/**
+ * Deterministic upper bound, in UTF-8 bytes, on the stdout/stderr text each
+ * bounded command keeps per stream. The child process is never terminated by
+ * this cap; only the retained text is bounded (the tail is kept, because
+ * test-runner failure summaries appear at the end of output).
+ */
+export const BOUNDED_CAPTURE_LIMIT = 20000;
+
+/** Unroutable proxy endpoint used to sabotage the offline phase's network. */
+const OFFLINE_NETWORK_SABOTAGE_PROXY = "http://127.0.0.1:9";
+
+/**
+ * Environment overrides that make any accidental network access fail fast:
+ * every generic and npm-specific proxy variable points at an unroutable
+ * loopback port. Applied ONLY to the offline install/execute phase of the
+ * CLI smoke; the cache-preparation phase deliberately keeps the inherited
+ * environment (network allowed).
+ */
+const OFFLINE_NETWORK_SABOTAGE = Object.freeze({
+  HTTP_PROXY: OFFLINE_NETWORK_SABOTAGE_PROXY,
+  HTTPS_PROXY: OFFLINE_NETWORK_SABOTAGE_PROXY,
+  http_proxy: OFFLINE_NETWORK_SABOTAGE_PROXY,
+  https_proxy: OFFLINE_NETWORK_SABOTAGE_PROXY,
+  ALL_PROXY: OFFLINE_NETWORK_SABOTAGE_PROXY,
+  all_proxy: OFFLINE_NETWORK_SABOTAGE_PROXY,
+  npm_config_proxy: OFFLINE_NETWORK_SABOTAGE_PROXY,
+  npm_config_https_proxy: OFFLINE_NETWORK_SABOTAGE_PROXY,
+});
+
+const REDACTION_PATTERNS = [
+  // Authorization-style headers, ANY scheme ("Authorization: Basic/Bearer/…",
+  // "proxy-authorization: …"): consume the key AND the entire header value to
+  // end of line. A header value is credential material wholesale — partial
+  // redaction that leaves any payload substring is a leak (fix-round F1).
+  { pattern: /\b(?:proxy-)?authorization[=:][^\r\n]*/gi, replacement: "[REDACTED:authorization-credentials]" },
+  // Standalone credential material carrying its scheme ("Basic …", "Bearer …",
+  // "Token …") without the header key.
+  { pattern: /\b(?:basic|bearer|token)[ \t]+[^\s",;]{8,}/gi, replacement: "[REDACTED:authorization-credentials]" },
+  // npm's canonical `_authToken` configuration value, including the npmrc
+  // URI-scoped form ("//registry…/:_authToken=…") and env-var spellings (M1).
+  { pattern: /[\w.\/:@-]*_authtoken[=:][^\s",;]+/gi, replacement: "[REDACTED:npm-auth-token]" },
+  // GitHub fine-grained personal access tokens.
+  { pattern: /github_pat_[0-9A-Za-z_]{22,}/g, replacement: "[REDACTED:github-pat]" },
+  // GitHub classic tokens: ghp_ (PAT), gho_ (OAuth), ghu_ (user), ghs_ (server), ghr_ (refresh).
+  { pattern: /gh[posur]_[0-9A-Za-z]{30,}/g, replacement: "[REDACTED:github-token]" },
+  // npm granular/automation tokens.
+  { pattern: /npm_[0-9A-Za-z_-]{20,}/g, replacement: "[REDACTED:npm-token]" },
+];
+
+/**
+ * Defensive, deterministic secret redaction for captured command output.
+ * Replaces common npm and GitHub credential shapes with explicit markers;
+ * ordinary text (including npm config names like `npm_config_cache`) is left
+ * untouched. Pure function; safe to import in tests.
+ */
+export function redactSecrets(text) {
+  let redacted = String(text ?? "");
+  for (const { pattern, replacement } of REDACTION_PATTERNS) {
+    redacted = redacted.replace(pattern, replacement);
+  }
+  return redacted;
+}
+
+/**
+ * Keeps the LAST `limit` UTF-8 bytes of `text` (failure summaries live at
+ * the end of output) and reports how many bytes were dropped. A multibyte
+ * character split at the boundary decodes with a replacement character;
+ * the result stays deterministic for identical input.
+ */
+function boundTail(text, limit) {
+  const total = Buffer.byteLength(text, "utf8");
+  if (total <= limit) {
+    return { text, omitted: 0, total };
+  }
+  const bytes = Buffer.from(text, "utf8");
+  return { text: bytes.subarray(bytes.length - limit).toString("utf8"), omitted: total - limit, total };
+}
+
+function truncateMarker(omitted, total, limit) {
+  return omitted > 0
+    ? `[...truncated ${omitted} of ${total} bytes; showing the last ${limit}...]`
+    : "";
+}
+
+/** Rolling accumulator that never grows past the capture limit + one chunk. */
+function makeStreamAccumulator(captureLimit) {
+  let buffer = "";
+  return {
+    push(chunk) {
+      buffer += chunk;
+      if (Buffer.byteLength(buffer, "utf8") > captureLimit + 65536) {
+        buffer = boundTail(buffer, captureLimit).text;
+      }
+    },
+    finish() {
+      return boundTail(buffer, captureLimit);
+    },
+  };
+}
+
+/**
+ * Spawns `command` with piped, secret-redacted, bounded stdout/stderr capture
+ * and resolves with its identity, exit code or signal, and the captured
+ * streams (tail-kept, each prefixed with an explicit truncation marker when
+ * bytes were dropped). The child is NEVER terminated by the capture cap, and
+ * the promise always resolves — a failing child never throws, so the
+ * original failure cause is never overwritten by a secondary exception.
+ */
+export async function runBoundedCommand(command, args, options = {}) {
+  const captureLimit = options.captureLimit ?? BOUNDED_CAPTURE_LIMIT;
+  const commandText = [command, ...args].join(" ");
+  const streams = {
+    stdout: makeStreamAccumulator(captureLimit),
+    stderr: makeStreamAccumulator(captureLimit),
+  };
+  return await new Promise((resolve) => {
+    let child;
+    try {
+      child = spawn(command, args, {
+        cwd: options.cwd ?? rootDir,
+        env: options.env,
+        stdio: ["ignore", "pipe", "pipe"],
+      });
+    } catch (error) {
+      resolve({
+        ok: false,
+        status: null,
+        signal: null,
+        command: commandText,
+        stdout: "",
+        stderr: "",
+        stdoutOmittedBytes: 0,
+        stderrOmittedBytes: 0,
+        spawnError: redactSecrets(error instanceof Error ? error.message : String(error)),
+      });
+      return;
+    }
+    child.stdout.setEncoding("utf8");
+    child.stdout.on("data", (chunk) => streams.stdout.push(chunk));
+    child.stderr.setEncoding("utf8");
+    child.stderr.on("data", (chunk) => streams.stderr.push(chunk));
+    let settled = false;
+    const finish = (status, signal, spawnError) => {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      const boundStdout = streams.stdout.finish();
+      const boundStderr = streams.stderr.finish();
+      const stdout = `${truncateMarker(boundStdout.omitted, boundStdout.total, captureLimit)}${boundStdout.text}`;
+      const stderr = `${truncateMarker(boundStderr.omitted, boundStderr.total, captureLimit)}${boundStderr.text}`;
+      resolve({
+        ok: spawnError === undefined && status === 0,
+        status,
+        signal,
+        command: commandText,
+        stdout: redactSecrets(stdout),
+        stderr: redactSecrets(stderr),
+        stdoutOmittedBytes: boundStdout.omitted,
+        stderrOmittedBytes: boundStderr.omitted,
+        ...(spawnError === undefined ? {} : { spawnError }),
+      });
+    };
+    child.on("error", (error) => {
+      finish(null, null, redactSecrets(error instanceof Error ? error.message : String(error)));
+    });
+    child.on("close", (code, signalName) => {
+      finish(code, signalName, undefined);
+    });
+  });
+}
+
+/**
+ * Runs one verification step through the bounded runner. Success keeps the
+ * exact historical record format (`exit 0`). Failure prints a bounded,
+ * redacted diagnostic block (command identity, exit code or signal, both
+ * captured streams with truncation notes) so a CI log shows WHICH check
+ * failed and WHY — the runner failure of check 3 in CI run 33956033927 was
+ * previously invisible because the child's output was discarded entirely.
+ */
+export async function commandStep(name, command, args) {
+  const result = await runBoundedCommand(command, args, { cwd: rootDir });
+  const exitText = result.spawnError !== undefined
+    ? `spawn failed: ${result.spawnError}`
+    : result.status !== null
+      ? `exit ${result.status}`
+      : `signal ${result.signal}`;
+  if (result.ok) {
+    record(name, result.command, "PASS", "exit 0");
+    return true;
+  }
+  console.log(`[FAIL] ${name} — ${exitText} (bounded child output follows; redacted)`);
+  console.log(`--- command: ${result.command}`);
+  console.log(`--- stdout${result.stdoutOmittedBytes > 0 ? ` (truncated; ${result.stdoutOmittedBytes} bytes omitted; showing the tail)` : " (complete; redacted)"} ---`);
+  console.log(result.stdout);
+  console.log(`--- stderr${result.stderrOmittedBytes > 0 ? ` (truncated; ${result.stderrOmittedBytes} bytes omitted; showing the tail)` : " (complete; redacted)"} ---`);
+  console.log(result.stderr);
+  console.log("--- end of child output ---");
+  record(name, result.command, "FAIL", `${exitText} (child output printed above; redacted and bounded)`);
+  return false;
+}
+
+/**
+ * Network-ALLOWED dependency preparation for the offline CLI smoke: installs
+ * the real packed tarballs into a throwaway consumer with a dedicated cache,
+ * populating that cache with the full external dependency closure (packument
+ * metadata plus tarballs) derived from the tarballs' own manifests. `npm ci`
+ * alone cannot do this: it fetches tarballs directly from the lockfile's
+ * resolved URLs and never populates the packument entries that `--offline`
+ * resolution requires (the cold-cache root cause of CI run 33956033927).
+ */
+export async function prepareOfflineCache({ tarballs, cacheDir, prepDir, npmBin = "npm", env = process.env }) {
+  return runBoundedCommand(
+    npmBin,
+    ["install", "--no-audit", "--no-fund", "--cache", cacheDir, ...tarballs],
+    { cwd: prepDir, env },
+  );
+}
+
+/**
+ * Hermetic offline CLI install smoke (check 15), in two strictly separated
+ * phases:
+ *
+ *   1. Preparation (network allowed): `prepareOfflineCache` warms a dedicated
+ *      npm cache from the real pack-1 tarballs. No dependency name is ever
+ *      hardcoded; the closure comes from the tarballs' own manifests.
+ *   2. Offline install + execute (network sabotaged): `npm install --offline`
+ *      against that dedicated cache inside the recreated `cli-smoke`
+ *      consumer, with every proxy variable pointed at an unroutable loopback
+ *      port, so success proves the install resolved from cache alone. The CLI
+ *      contract assertions (`--help` banner, fail-closed unknown option,
+ *      contracts import surface) are unchanged from the historical smoke.
+ *
+ * Preparation and cache directories live under `tmpDir` (default:
+ * `os.tmpdir()`, i.e. /tmp on CI runners) and are always removed. Throws on
+ * fail-fast (missing tarball) and on install/preparation failure with the
+ * bounded, redacted npm error detail; returns the assertion facts otherwise.
+ */
+export async function runOfflineCliSmoke({ releaseDir, npmBin = "npm", env = process.env, tmpDir = tmpdir() }) {
+  const tarballs = PACKAGE_ORDER.map((p) =>
+    join(releaseDir, "pack-1", `project-sothoth-${p}-0.1.0.tgz`),
+  );
+  for (const tarball of tarballs) {
+    if (!existsSync(tarball)) {
+      throw new Error(`missing local tarball: ${tarball}`);
+    }
+  }
+  const cacheDir = await mkdtemp(join(tmpDir, "sothoth-release-cache-"));
+  const prepDir = await mkdtemp(join(tmpDir, "sothoth-release-prep-"));
+  try {
+    // Phase 1 — network-allowed cache preparation over the real tarballs.
+    const prep = await prepareOfflineCache({ tarballs, cacheDir, prepDir, npmBin, env });
+    if (prep.status !== 0) {
+      throw new Error(`offline cache preparation failed:\n${prep.stderr || prep.stdout}`);
+    }
+
+    // Phase 2 — offline install and execute; network provably unavailable.
+    const smokeDir = join(releaseDir, "cli-smoke");
+    rmSync(smokeDir, { recursive: true, force: true });
+    mkdirSync(smokeDir, { recursive: true });
+    writeFileSync(
+      join(smokeDir, "package.json"),
+      `${JSON.stringify({ name: "sothoth-cli-smoke", private: true }, null, 2)}\n`,
+      "utf8",
+    );
+    const offlineEnv = { ...env, ...OFFLINE_NETWORK_SABOTAGE };
+    const install = await runBoundedCommand(
+      npmBin,
+      ["install", "--offline", "--no-audit", "--no-fund", "--cache", cacheDir, ...tarballs],
+      { cwd: smokeDir, env: offlineEnv },
+    );
+    if (install.status !== 0) {
+      throw new Error(`offline install failed:\n${install.stderr || install.stdout}`);
+    }
+    const installed = readdirSync(join(smokeDir, "node_modules", "@project-sothoth")).sort();
+    const installedOk =
+      installed.length === 11 && installed.join(",") === PACKAGE_ORDER.join(",");
+    const binPath = join(smokeDir, "node_modules", ".bin", "sothoth");
+    const binLinked = existsSync(binPath);
+    const help = spawnSync(binPath, ["--help"], { cwd: smokeDir, encoding: "utf8" });
+    const helpOk = help.status === 0 && help.stdout.includes("sothoth 0.1.0");
+    const unknown = spawnSync(binPath, ["--format", "json", "--bogus"], {
+      cwd: smokeDir,
+      encoding: "utf8",
+    });
+    const unknownOk =
+      unknown.status === 2 &&
+      unknown.stdout.includes("sothoth.input/unknown-option") &&
+      unknown.stdout.includes('"schema": "sothoth.cli/cli-invocation-result@1"');
+    const resolveRun = spawnSync(
+      process.execPath,
+      [
+        "--input-type=module",
+        "--eval",
+        "const m = await import('@project-sothoth/contracts'); console.log(JSON.stringify({ keys: Object.keys(m).length }));",
+      ],
+      { cwd: smokeDir, encoding: "utf8" },
+    );
+    const resolveOk =
+      resolveRun.status === 0 &&
+      JSON.parse(resolveRun.stdout.trim()).keys === 36;
+    return { ok: installedOk && binLinked && helpOk && unknownOk && resolveOk, binLinked };
+  } finally {
+    rmSync(cacheDir, { recursive: true, force: true });
+    rmSync(prepDir, { recursive: true, force: true });
+  }
+}
 
 /**
  * Pure normalization of an `npm sbom` CycloneDX document: removes exactly the
@@ -108,17 +423,6 @@ function gitPorcelain() {
   return runResult.status === 0 ? runResult.stdout.trim() : "git-status-failed";
 }
 
-function commandStep(name, command, args) {
-  const runResult = run(command, args, { stdio: "ignore" });
-  record(
-    name,
-    [command, ...args].join(" "),
-    runResult.status === 0 ? "PASS" : "FAIL",
-    `exit ${runResult.status}`,
-  );
-  return runResult.status === 0;
-}
-
 async function main() {
   mkdirSync(releaseDir, { recursive: true });
 
@@ -139,7 +443,7 @@ async function main() {
   );
 
   // 1. Typecheck.
-  commandStep("typecheck", "npm", ["run", "typecheck"]);
+  await commandStep("typecheck", "npm", ["run", "typecheck"]);
 
   // 2. Clean build: remove package build output AND the incremental build
   //    state so both packs start from freshly compiled inputs (tsc -b would
@@ -148,17 +452,17 @@ async function main() {
     rmSync(join(rootDir, "packages", p, "dist"), { recursive: true, force: true });
     rmSync(join(rootDir, "node_modules", ".cache", `${p}.tsbuildinfo`), { force: true });
   }
-  commandStep("clean build", "npm", ["run", "build"]);
+  await commandStep("clean build", "npm", ["run", "build"]);
 
   // 3. Full tests — includes the release suites: import-boundary scans,
   //    docs links, tarball contents, and the two-pack reproducibility suite.
-  commandStep("full test suite (boundary scans + docs links + release suites)", "npm", ["test"]);
+  await commandStep("full test suite (boundary scans + docs links + release suites)", "npm", ["test"]);
 
   // 4. Design checks.
-  commandStep("design scope check", "npm", ["run", "check:design-scope"]);
-  commandStep("pre-design dossiers check", "npm", ["run", "check:pre-design:dossiers"]);
-  commandStep("pre-design closure check", "npm", ["run", "check:pre-design:closure"]);
-  commandStep("pre-design scope check", "npm", ["run", "check:pre-design:scope"]);
+  await commandStep("design scope check", "npm", ["run", "check:design-scope"]);
+  await commandStep("pre-design dossiers check", "npm", ["run", "check:pre-design:dossiers"]);
+  await commandStep("pre-design closure check", "npm", ["run", "check:pre-design:closure"]);
+  await commandStep("pre-design scope check", "npm", ["run", "check:pre-design:scope"]);
 
   // 5. Deterministic asset sync: snapshot, re-sync, compare bytes.
   try {
@@ -409,70 +713,22 @@ async function main() {
     );
   }
 
-  // 10. Offline CLI install smoke from THIS round's local tarballs only.
+  // 10. Hermetic offline CLI install smoke from THIS round's local tarballs
+  //     only: a network-allowed cache-preparation phase over the real pack-1
+  //     tarballs, then an --offline install/execute with the network
+  //     sabotaged, so the smoke never depends on ambient npm-cache warmth.
   try {
-    const smokeDir = join(releaseDir, "cli-smoke");
-    rmSync(smokeDir, { recursive: true, force: true });
-    mkdirSync(smokeDir, { recursive: true });
-    writeFileSync(
-      join(smokeDir, "package.json"),
-      `${JSON.stringify({ name: "sothoth-cli-smoke", private: true }, null, 2)}\n`,
-      "utf8",
-    );
-    const tarballs = PACKAGE_ORDER.map((p) =>
-      join(releaseDir, "pack-1", `project-sothoth-${p}-0.1.0.tgz`),
-    );
-    for (const tarball of tarballs) {
-      if (!existsSync(tarball)) {
-        throw new Error(`missing local tarball: ${tarball}`);
-      }
-    }
-    const install = spawnSync(
-      "npm",
-      ["install", "--offline", "--no-audit", "--no-fund", ...tarballs],
-      { cwd: smokeDir, encoding: "utf8" },
-    );
-    if (install.status !== 0) {
-      throw new Error(`offline install failed:\n${install.stderr.slice(0, 400)}`);
-    }
-    const installed = readdirSync(join(smokeDir, "node_modules", "@project-sothoth")).sort();
-    const installedOk =
-      installed.length === 11 && installed.join(",") === PACKAGE_ORDER.join(",");
-    const binPath = join(smokeDir, "node_modules", ".bin", "sothoth");
-    const binLinked = existsSync(binPath);
-    const help = spawnSync(binPath, ["--help"], { cwd: smokeDir, encoding: "utf8" });
-    const helpOk = help.status === 0 && help.stdout.includes("sothoth 0.1.0");
-    const unknown = spawnSync(binPath, ["--format", "json", "--bogus"], {
-      cwd: smokeDir,
-      encoding: "utf8",
-    });
-    const unknownOk =
-      unknown.status === 2 &&
-      unknown.stdout.includes("sothoth.input/unknown-option") &&
-      unknown.stdout.includes('"schema": "sothoth.cli/cli-invocation-result@1"');
-    const resolveRun = spawnSync(
-      process.execPath,
-      [
-        "--input-type=module",
-        "--eval",
-        "const m = await import('@project-sothoth/contracts'); console.log(JSON.stringify({ keys: Object.keys(m).length }));",
-      ],
-      { cwd: smokeDir, encoding: "utf8" },
-    );
-    const resolveOk =
-      resolveRun.status === 0 &&
-      JSON.parse(resolveRun.stdout.trim()).keys === 36;
-    const smokeOk = installedOk && binLinked && helpOk && unknownOk && resolveOk;
+    const smoke = await runOfflineCliSmoke({ releaseDir });
     record(
       "offline CLI install smoke (local tarballs only)",
-      "npm install --offline dist/release/pack-1/*.tgz && sothoth --help",
-      smokeOk ? "PASS" : "FAIL",
-      `11 packages installed from tarballs; bin linked=${binLinked}; --help exit 0; fail-closed exit 2; tarball contracts import keys=36`,
+      "npm install --no-audit --no-fund --cache <prepared> dist/release/pack-1/*.tgz (network-allowed preparation) && npm install --offline --no-audit --no-fund --cache <prepared> dist/release/pack-1/*.tgz && sothoth --help",
+      smoke.ok ? "PASS" : "FAIL",
+      `11 packages installed from tarballs; bin linked=${smoke.binLinked}; --help exit 0; fail-closed exit 2; tarball contracts import keys=36`,
     );
   } catch (error) {
     record(
       "offline CLI install smoke (local tarballs only)",
-      "npm install --offline dist/release/pack-1/*.tgz && sothoth --help",
+      "npm install --no-audit --no-fund --cache <prepared> dist/release/pack-1/*.tgz (network-allowed preparation) && npm install --offline --no-audit --no-fund --cache <prepared> dist/release/pack-1/*.tgz && sothoth --help",
       "FAIL",
       error instanceof Error ? error.message : String(error),
     );
