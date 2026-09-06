@@ -2,7 +2,7 @@
 
 Pure document-governance compilation for Sothoth: registry and append-only ledger validation, traceability and manifest consistency, pre-design closure projections, Scope BOM Admissibility, non-authoritative change-plan projections, and gate macro expansion into acyclic check graphs. Source Facts are read and validated, never accepted, repaired, or written back.
 
-Version `0.1.0` — release candidate, not yet published on npm (see the repository release notes).
+Version `0.1.0` — published on npm. See the repository release notes for source and registry evidence.
 
 ## Public exports
 

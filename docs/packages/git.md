@@ -67,7 +67,7 @@ Mutation subcommands are rejected outright; ambiguous paths, unknown refs, and b
 
 Read-only Git source adapter for Sothoth: bind exact commit, compare, and workspace snapshots through a frozen allowlist of read-only subcommands, normalize repository-relative POSIX paths, and return digest-bearing snapshots for downstream compilers. No Git mutation, no network, no path or ref ambiguity.
 
-Version `0.1.0` — release candidate, not yet published on npm (see the repository release notes).
+Version `0.1.0` — published on npm. See the repository release notes for source and registry evidence.
 
 ## Public exports
 

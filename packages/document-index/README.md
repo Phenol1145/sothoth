@@ -2,7 +2,7 @@
 
 Deterministic CommonMark structural document indexing for Sothoth: parse exact document content through the pinned `mdast-util-from-markdown@2.0.2` parser (with its `micromark@4.0.2` tree), project headings, anchors, stable sections, explicit references, and provenance, and produce the deterministic index projection consumed downstream. Cache entries are byte-neutral; hostile input fails closed within explicit budgets.
 
-Version `0.1.0` — release candidate, not yet published on npm (see the repository release notes).
+Version `0.1.0` — published on npm. See the repository release notes for source and registry evidence.
 
 ## Public exports
 

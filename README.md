@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| Status | `0.1.0` release candidate — **not yet published on npm** |
+| Status | `0.1.0` — published on npm |
 | License | Apache-2.0 |
 | Node | `>=22.14.0` |
 | Scope | `@project-sothoth/*` — eleven packages, one release train (`SOTHOTH-RELEASE-SCOPE-BOM-0.1@4`) |
@@ -12,24 +12,39 @@
 
 ## Quick Start
 
-Sothoth is not yet available from a registry; build and run it from this repository (Node `>=22.14.0`, npm workspaces):
+Install the CLI in the project where you want an agent to use Sothoth (Node `>=22.14.0`):
 
 ```sh
-git clone https://github.com/Phenol1145/sothoth.git
-cd sothoth
-npm ci
-npm run build
-npm test
+npm install --save-dev @project-sothoth/cli@0.1.0
+npx sothoth --help
 ```
 
-Run the command-line surface from the repository:
+Give the agent an exact objective, explicit input and output paths, and an authority boundary. For example:
+
+> Use Sothoth 0.1.0 to compile the dependency schedule in `./sothoth-input/planning.json`. Write JSON to `./sothoth-output/planning.json`. Do not scan for other inputs or modify Source Facts. Report the outcome, exit code, diagnostics, and output path.
+
+The corresponding invocation is:
 
 ```sh
-node packages/cli/dist/main.js --help
-node packages/cli/dist/main.js check --format json --input request.json
+npx sothoth compile planning \
+  --format json \
+  --input ./sothoth-input/planning.json \
+  --output ./sothoth-output/planning.json
 ```
 
-After publication (a later release step, not yet performed), installation is expected to be `npm install @project-sothoth/sdk` and `npm install @project-sothoth/cli`; until then those commands will not find the packages on the registry.
+Continue with the [Quick Start](docs/quick-start.md) for a complete first collaboration, then use the [User Guide](docs/user-guide.md) for governance, document indexing, change planning, SDK integration, and failure handling.
+
+## Work with an agent
+
+Sothoth is the deterministic checker and compiler inside a human–agent workflow; it is not the authority that decides what is accepted.
+
+1. **The human defines scope and authority.** Name the objective, exact input paths, allowed output paths, and whether the agent may edit anything.
+2. **The agent prepares an explicit request.** It selects one Sothoth command, shows any missing inputs, and does not infer Source Facts from filenames or ambient configuration.
+3. **Sothoth validates or compiles.** It returns a closed outcome and Structured Diagnostics with deterministic output bytes.
+4. **The agent reports evidence.** It identifies the command, input, output, outcome, exit code, and diagnostic codes without turning readiness into acceptance.
+5. **The human decides the next action.** Only the human may authorize Source Fact changes, acceptance metadata, commits, releases, or other external side effects.
+
+Agents can use the repository's [`using-sothoth` skill](skills/using-sothoth/SKILL.md) for command routing and the required stop conditions.
 
 ## Packages (11)
 
@@ -96,19 +111,22 @@ npm run release:verify                 # full release verification battery
 
 ## Documentation
 
+- [Quick Start](docs/quick-start.md) — install Sothoth and complete the first human–agent workflow.
+- [User Guide](docs/user-guide.md) — detailed collaboration, CLI/SDK use, command routing, evidence handling, and troubleshooting.
+- [Agent skill](skills/using-sothoth/SKILL.md) — operational guidance for agents using Sothoth.
 - [ARCHITECTURE.md](ARCHITECTURE.md) — layering, dependency DAG, boundary obligations.
 - [Package references](docs/packages/contracts.md) — one reference per package: `contracts`, `core`, `graph`, `document-index`, `selectors`, `governance`, `planning`, `profile-sdk`, `git`, `sdk`, `cli` (see `docs/packages/`).
-- [0.1.0 release notes](docs/release/v0.1.0-release-notes.md) — release-candidate notes (pre-publication).
+- [0.1.0 release notes](docs/release/v0.1.0-release-notes.md) — published release identity, contents, evidence, and limitations.
 - `docs/design/` — accepted Dossiers, registrations, Architecture Baseline, and the governance control plane design.
 - `docs/release/v0.1.0-scope-bom.json` — the formal Scope BOM (`SOTHOTH-RELEASE-SCOPE-BOM-0.1@4`).
 - [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md) — contribution and security policy.
 
 ## Roadmap and limitations
 
-- `0.1.0` is the initial release candidate. It is **not yet published on npm**; publication evidence for `@project-sothoth/contracts`, `@project-sothoth/governance`, `@project-sothoth/profile-sdk`, and `@project-sothoth/sdk` is pending until it is recorded from the live registry.
+- `0.1.0` is the initial published release; npm trusted-publisher migration remains a separate operational follow-up and does not change the published package identities.
 - The CLI ships exactly eight commands; planning implements the dependency-wave dimension only; document indexing is CommonMark-structural only.
 - `@fracta/sothoth-profile` is a companion FRACTA Release Train and is never published from this repository; this repository contains no FRACTA adapters, policies, or runtime integration.
-- Toolchain drift note: the environment that produced this candidate ran npm `11.11.0` against a declared `packageManager` of `11.15.0`; the drift is recorded, not reconciled.
+- Toolchain drift note: the release environment ran npm `11.11.0` against a declared `packageManager` of `11.15.0`; the drift is recorded, not reconciled.
 
 ## License
 

@@ -2,7 +2,7 @@
 
 Closed declarative selector algebra with deterministic matching for Sothoth: parse Selectors into a canonical AST under hostile-input budgets, match them against document-index projections, enforce cardinality, and explain the selection. Results are ordered by canonical identity; zero matches produce a diagnostic by default rather than a silent empty set.
 
-Version `0.1.0` — release candidate, not yet published on npm (see the repository release notes).
+Version `0.1.0` — published on npm. See the repository release notes for source and registry evidence.
 
 ## Public exports
 

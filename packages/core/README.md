@@ -2,7 +2,7 @@
 
 Pure deterministic compilation primitives for Sothoth: canonical JSON serialization, SHA-256 digesting over canonical bytes, code-point ordering, diagnostic deduplication and ordering, outcome aggregation, and the frozen outcome-to-exit mapping. No filesystem, Git, process, network, clock, random, or locale access — the only non-package import is `node:crypto`.
 
-Version `0.1.0` — release candidate, not yet published on npm (see the repository release notes).
+Version `0.1.0` — published on npm. See the repository release notes for source and registry evidence.
 
 ## Public exports
 

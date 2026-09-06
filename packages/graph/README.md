@@ -2,7 +2,7 @@
 
 Deterministic, meaning-free directed multigraph algorithms for Sothoth: canonical graph construction, traversal, strongly connected components, condensation, topological waves, and deterministic longest paths. Results are always ordered by the caller's stable keys. The package has no domain semantics and no I/O of any kind.
 
-Version `0.1.0` — release candidate, not yet published on npm (see the repository release notes).
+Version `0.1.0` — published on npm. See the repository release notes for source and registry evidence.
 
 ## Public exports
 

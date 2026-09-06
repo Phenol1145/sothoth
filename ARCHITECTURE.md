@@ -59,5 +59,5 @@ Notes verified from the manifests:
 - Accepted Dossiers: `docs/design/dossiers/<package>.md` (one per package, each carrying its `public-surface-declaration@1`).
 - Governance control plane design: `docs/design/governance-control-plane.md`.
 - Formal release scope: `docs/release/v0.1.0-scope-bom.json` (`SOTHOTH-RELEASE-SCOPE-BOM-0.1@4`).
-- Release-candidate notes: `docs/release/v0.1.0-release-notes.md`.
+- Published release notes: `docs/release/v0.1.0-release-notes.md`.
 - Package references: `docs/packages/`.

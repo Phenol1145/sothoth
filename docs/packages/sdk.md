@@ -73,7 +73,7 @@ The facade propagates owning-package outcomes verbatim; it never softens a rejec
 
 Sole aggregate public library facade for Sothoth: one typed, versioned surface delegating every semantic operation to its owning package — governance, planning, document indexing, Git snapshots, profiles, and selectors over the contracts/core foundation. Returns closed typed outcomes with Structured Diagnostics; never chooses process exits.
 
-Version `0.1.0` — release candidate, not yet published on npm (see the repository release notes).
+Version `0.1.0` — published on npm. See the repository release notes for source and registry evidence.
 
 ## Public exports
 

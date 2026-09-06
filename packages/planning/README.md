@@ -2,7 +2,7 @@
 
 Pure scheduling compilation for Sothoth: validate dependency constraints, build the ordering graph, and assign deterministic topological waves in a single Schedule Solution. Inputs are never mutated; every scheduling axis is a projection of the one solution.
 
-Version `0.1.0` — release candidate, not yet published on npm (see the repository release notes).
+Version `0.1.0` — published on npm. See the repository release notes for source and registry evidence.
 
 ## Public exports
 

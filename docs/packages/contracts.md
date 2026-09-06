@@ -73,7 +73,7 @@ Invalid shapes produce structured `ContractIssueV1` records from the validators;
 
 Closed public contracts for the Sothoth governance control plane: one authoritative vocabulary for exact design references, record schemas, Structured Diagnostics, projections, pre-design declarations, and extension contracts. Types, constants, predicates, and structural validators only — no executable capability beyond shape validation, and zero runtime dependencies.
 
-Version `0.1.0` — release candidate, not yet published on npm (see the repository release notes).
+Version `0.1.0` — published on npm. See the repository release notes for source and registry evidence.
 
 ## Public exports
 
